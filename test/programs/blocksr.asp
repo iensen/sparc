@@ -1,0 +1,39 @@
+#maxint=1000.
+holds(on(b0,t),0):-b0!=t.
+holds(on(b3,b0),0):-b3!=b0.
+holds(on(b2,b3),0):-b2!=b3.
+holds(on(b1,t),0):-b1!=t.
+holds(on(b4,b1),0):-b4!=b1.
+holds(on(b5,t),0):-b5!=t.
+holds(on(b6,b5),0):-b6!=b5.
+holds(on(b7,b6),0):-b7!=b6.
+-holds(on(B_G,L_G),0):-not  holds(on(B_G,L_G),0),block(B_G),s_gen0(L_G),B_G!=L_G,B_G!=L_G.
+holds(on(B_G,L_G),VAR_0):-occurs(put(B_G,L_G),I_G),VAR_0=I_G+1,s_gen1(VAR_0),B_G!=L_G,B_G!=L_G.
+-holds(on(B_G,L2_G),I_G):-holds(on(B_G,L1_G),I_G),L1_G!=L2_G,s_gen0(L2_G),B_G!=L2_G,B_G!=L1_G.
+-holds(on(B2_G,B_G),I_G):-holds(on(B1_G,B_G),I_G),B1_G!=B2_G,block(B_G),block(B_G),block(B2_G),B2_G!=B_G,B1_G!=B_G.
+holds(F_G,VAR_0):-holds(F_G,I_G),not  -holds(F_G,VAR_1),VAR_0=I_G+1,VAR_1=I_G+1,s_gen1(VAR_1),s_gen1(VAR_0).
+-holds(F_G,VAR_0):--holds(F_G,I_G),not  holds(F_G,VAR_1),VAR_0=I_G+1,VAR_1=I_G+1,s_gen1(VAR_1),s_gen1(VAR_0).
+-occurs(put(B_G,L_G),I_G):-holds(on(B1_G,B_G),I_G),block(B_G),s_gen0(L_G),B_G!=L_G,B1_G!=B_G.
+-occurs(put(B1_G,B_G),I_G):-holds(on(B2_G,B_G),I_G),block(B_G),block(B_G),block(B1_G),B1_G!=B_G,B2_G!=B_G.
+occurs(put(b2,t),0):-b2!=t.
+occurs(put(b7,b2),1):-b7!=b2.
+block(b0).
+block(b1).
+block(b3).
+block(b2).
+block(b5).
+block(b4).
+block(b7).
+block(b6).
+s_gen0(t).
+s_gen0(b0).
+s_gen0(b1).
+s_gen0(b3).
+s_gen0(b2).
+s_gen0(b5).
+s_gen0(b4).
+s_gen0(b7).
+s_gen0(b6).
+s_gen1(2).
+s_gen1(1).
+s_gen1(0).

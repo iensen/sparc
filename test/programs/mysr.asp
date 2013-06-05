@@ -1,0 +1,24 @@
+says(andy,murderer(andy),0).
+says(andy,hated(cole,vinny),1).
+says(andy,friends(ben,vinny),1).
+says(ben,out_of_town(ben),1).
+says(ben,know(ben,vinny),0).
+says(cole,innocent(cole),1).
+says(cole,together(andy,vinny),1).
+says(cole,together(ben,vinny),1).
+holds(S_G):-says(P_G,S_G,1),-holds(murderer(P_G)).
+-holds(S_G):-says(P_G,S_G,0),-holds(murderer(P_G)).
+holds(murderer(andy))|holds(murderer(ben))|holds(murderer(cole)).
+-holds(murderer(P_G)):-not  holds(murderer(P_G)),s_gen0(P_G).
+holds(together(A_G,B_G)):-holds(together(B_G,A_G)).
+holds(together(A_G,B_G)):-holds(together(A_G,C_G)),holds(together(C_G,B_G)).
+holds(friends(A_G,B_G)):-holds(friends(B_G,A_G)).
+:-holds(innocent(P_G)),holds(murderer(P_G)).
+:-holds(out_of_town(A_G)),holds(together(A_G,B_G)).
+:--holds(know(A_G,B_G)),holds(friends(A_G,B_G)).
+:-holds(murderer(P_G)),holds(out_of_town(P_G)).
+murderer(P_G):-holds(murderer(P_G)).
+s_gen0(cole).
+s_gen0(vinny).
+s_gen0(ben).
+s_gen0(andy).

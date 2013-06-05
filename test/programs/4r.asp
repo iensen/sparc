@@ -1,0 +1,9 @@
+appl(label1)|-appl(label1).
+:~appl(label1).
+q(a):-appl(label1).
+appl(label2)|-appl(label2).
+:~appl(label2).
+q(b):-p(a),appl(label2).
+appl(label3)|-appl(label3).
+:~appl(label3).
+:-p(c),appl(label3).

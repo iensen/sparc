@@ -1,0 +1,430 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>BNF for Sparc.jj</TITLE>
+</HEAD>
+<BODY>
+<H1 ALIGN=CENTER>BNF for Sparc.jj</H1>
+<H2 ALIGN=CENTER>TOKENS</H2>
+<TABLE>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT,IN_PROGRAM_RULES&gt; TOKEN : {
+&lt;SORTDEFKEYWORD: "sort" (["\r","\n","\t"," "])+ "definitions" (["\r","\t"," ","\n"])+&gt;
+| &lt;PREDDEFKEYWORD: "predicate" (["\r","\n","\t"," "])+ "declarations" (["\r","\t"," ","\n"])+&gt;
+| &lt;PROGRULDEFKEYWORD: "program" (["\r","\n","\t"," "])+ "rules" (["\r","\t"," ","\n"])+&gt; : IN_PROGRAM_RULES
+| &lt;NOT: "not" (["\t","\r"," "])+&gt;
+| &lt;MOD: "mod"&gt;
+| &lt;IDENTIFIER: ["a"-"z"] (["a"-"z","A"-"Z","0"-"9","_"])*&gt;
+| &lt;VARIABLE: ["A"-"Z"] (["a"-"z","A"-"Z","0"-"9","_"])* | "_"&gt;
+| &lt;NONZERODIGIT: ["1"-"9"]&gt;
+| &lt;POSITIVE_INTEGER: &lt;NONZERODIGIT&gt; (&lt;ZERO&gt; | &lt;NONZERODIGIT&gt;)*&gt;
+| &lt;ZERO: "0"&gt;
+| &lt;PLUS: "+"&gt;
+| &lt;MULT: "*"&gt;
+| &lt;DIV: "/"&gt;
+| &lt;EQ: "="&gt;
+| &lt;NOTEQ: "!="&gt;
+| &lt;GT: "&gt;"&gt;
+| &lt;GTEQ: "&gt;="&gt;
+| &lt;SM: "&lt;"&gt;
+| &lt;SMEQ: "&lt;="&gt;
+| &lt;OP: "("&gt;
+| &lt;CP: ")"&gt;
+| &lt;OB: "{"&gt;
+| &lt;CB: "}"&gt;
+| &lt;SOB: "["&gt; : IN_REGULAREXPRESSIONSEQUENCE
+| &lt;ORRSEP: ":-"&gt;
+| &lt;CRRSEP: ":+"&gt;
+| &lt;COMMA: ","&gt;
+| &lt;DOT: "."&gt;
+| &lt;COLON: ":"&gt;
+| &lt;SEMICOLON: ";"&gt;
+| &lt;DOLLAR: "$"&gt;
+| &lt;COMPLEMENT: "~"&gt;
+| &lt;OR: "|"&gt;
+| &lt;AGGREGATE_COUNT: "#count"&gt;
+| &lt;AGGREGATE_SUM: "#sum"&gt;
+| &lt;AGGREGATE_MIN: "#min"&gt;
+| &lt;AGGREGATE_MAX: "#max"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;IN_REGULAREXPRESSIONSEQUENCE&gt; TOKEN : {
+&lt;LETTER: ["A"-"Z"] | ["a"-"z"]&gt;
+| &lt;DIGIT: ["0"-"9"]&gt;
+| &lt;SCB: "]"&gt; : DEFAULT
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;IN_PROGRAM_RULES&gt; TOKEN : {
+&lt;IDENTIFIER_WITH_OP: ["a"-"z"] (["a"-"z","A"-"Z","0"-"9","_"])* (["\t","\r","\n"])* "("&gt;
+| &lt;NEGATIVE_ATOM_WITH_OP: "-" ["a"-"z"] (["a"-"z","A"-"Z","0"-"9","_"])* (["\t","\r","\n"])* "("&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT,IN_PROGRAM_RULES,IN_REGULAREXPRESSIONSEQUENCE&gt; SKIP : {
+&lt;SINGLE_LINE_COMMENT: "%" (~["\n","\r"])* ("\r" | "\n" | "\r\n")&gt;
+| &lt;SPACE: (["\n","\r","\t"," "])+&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT,IN_PROGRAM_RULES,IN_REGULAREXPRESSIONSEQUENCE&gt; TOKEN : {
+&lt;MINUS: "-"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+</TABLE>
+<H2 ALIGN=CENTER>NON-TERMINALS</H2>
+<TABLE>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod1">program</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;SORTDEFKEYWORD&gt; <A HREF="#prod2">sortDefinitions</A> &lt;PREDDEFKEYWORD&gt; <A HREF="#prod3">predicateDeclarations</A> &lt;PROGRULDEFKEYWORD&gt; <A HREF="#prod4">programRules</A> &lt;EOF&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod2">sortDefinitions</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod5">sortDefinition</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod5">sortDefinition</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER&gt; &lt;EQ&gt; <A HREF="#prod6">sortExpression</A> &lt;DOT&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod6">sortExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod7">additiveSortExpression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod7">additiveSortExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod8">multiplicativeSortExpression</A> ( ( "+" | "-" ) <A HREF="#prod8">multiplicativeSortExpression</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod8">multiplicativeSortExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod9">unarySortExpression</A> ( &lt;MULT&gt; <A HREF="#prod9">unarySortExpression</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod10">regularExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod11">complexRegularExpressionChoices</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod11">complexRegularExpressionChoices</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod12">complexRegularExpression</A> ( &lt;OR&gt; <A HREF="#prod12">complexRegularExpression</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod12">complexRegularExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod13">complexRegularExpressionRepeatableUnit</A> )+</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod13">complexRegularExpressionRepeatableUnit</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod14">complexRegularExpressionUnit</A> ( <A HREF="#prod15">repeatition</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod14">complexRegularExpressionUnit</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod16">complexRegularExpressionUnitIdentifier</A> | <A HREF="#prod17">characterList</A> | &lt;COMPLEMENT&gt; <A HREF="#prod14">complexRegularExpressionUnit</A> | &lt;OP&gt; <A HREF="#prod11">complexRegularExpressionChoices</A> &lt;CP&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod16">complexRegularExpressionUnitIdentifier</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;IDENTIFIER&gt; | <A HREF="#prod18">number</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod15">repeatition</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod19">fromToRepeatition</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod20">nRepeatition</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod19">fromToRepeatition</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;OB&gt; <A HREF="#prod18">number</A> &lt;COMMA&gt; <A HREF="#prod18">number</A> &lt;CB&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod20">nRepeatition</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;OB&gt; <A HREF="#prod18">number</A> &lt;CB&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod17">characterList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;SOB&gt; &lt;DIGIT&gt; &lt;MINUS&gt; &lt;DIGIT&gt; &lt;SCB&gt; | &lt;SOB&gt; &lt;LETTER&gt; &lt;MINUS&gt; &lt;LETTER&gt; &lt;SCB&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod9">unarySortExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;IDENTIFIER&gt; &lt;OP&gt; <A HREF="#prod21">sortExpressionList</A> &lt;CP&gt; | &lt;IDENTIFIER&gt; | <A HREF="#prod18">number</A> &lt;DOT&gt; &lt;DOT&gt; <A HREF="#prod18">number</A> | &lt;DOLLAR&gt; <A HREF="#prod10">regularExpression</A> | &lt;OP&gt; <A HREF="#prod6">sortExpression</A> &lt;CP&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod21">sortExpressionList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod6">sortExpression</A> ( &lt;COMMA&gt; <A HREF="#prod6">sortExpression</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod18">number</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;POSITIVE_INTEGER&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;ZERO&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;NONZERODIGIT&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod3">predicateDeclarations</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod22">predicateDeclaration</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod22">predicateDeclaration</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER&gt; &lt;OP&gt; <A HREF="#prod23">identifierList</A> &lt;CP&gt; &lt;DOT&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod23">identifierList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER&gt; ( &lt;COMMA&gt; &lt;IDENTIFIER&gt; )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod4">programRules</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod24">programRule</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod24">programRule</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod25">label</A> <A HREF="#prod26">unlabeledProgramCrRule</A> | <A HREF="#prod27">unlabeledProgramRule</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod27">unlabeledProgramRule</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod28">predSymbol</A> <A HREF="#prod18">number</A> &lt;DOT&gt; &lt;DOT&gt; <A HREF="#prod18">number</A> &lt;CP&gt; &lt;DOT&gt; | <A HREF="#prod29">head</A> <A HREF="#prod30">exBody</A> | &lt;ORRSEP&gt; <A HREF="#prod31">body</A> &lt;DOT&gt; | &lt;CRRSEP&gt; <A HREF="#prod31">body</A> &lt;DOT&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod26">unlabeledProgramCrRule</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod29">head</A> <A HREF="#prod32">exCrBody</A> | &lt;CRRSEP&gt; <A HREF="#prod31">body</A> &lt;DOT&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod25">label</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER&gt; &lt;COLON&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod30">exBody</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod33">exStandartBody</A> | <A HREF="#prod32">exCrBody</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod33">exStandartBody</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;ORRSEP&gt; <A HREF="#prod31">body</A> &lt;DOT&gt; | &lt;DOT&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod32">exCrBody</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;CRRSEP&gt; <A HREF="#prod34">crBodyWithoutSep</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod34">crBodyWithoutSep</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;DOT&gt; | <A HREF="#prod31">body</A> &lt;DOT&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod29">head</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod35">disjunction</A> | <A HREF="#prod36">choice_rule</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod35">disjunction</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod37">nonRelAtom</A> ( &lt;OR&gt; <A HREF="#prod37">nonRelAtom</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod36">choice_rule</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod38">arithmeticTerm</A> <A HREF="#prod39">rel</A> )? &lt;OB&gt; <A HREF="#prod40">choice_elements</A> &lt;CB&gt; ( <A HREF="#prod39">rel</A> <A HREF="#prod38">arithmeticTerm</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod40">choice_elements</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod41">choice_element</A> ( &lt;SEMICOLON&gt; <A HREF="#prod41">choice_element</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod41">choice_element</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod37">nonRelAtom</A> ( &lt;COLON&gt; <A HREF="#prod42">extendedNonRelAtomList</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod42">extendedNonRelAtomList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod43">extendedNonRelAtom</A> ( &lt;COMMA&gt; <A HREF="#prod43">extendedNonRelAtom</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod31">body</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod44">atom</A> ( &lt;COMMA&gt; <A HREF="#prod44">atom</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod45">var</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;VARIABLE&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod37">nonRelAtom</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod28">predSymbol</A> <A HREF="#prod46">termList</A> &lt;CP&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod43">extendedNonRelAtom</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;NOT&gt; )? <A HREF="#prod28">predSymbol</A> <A HREF="#prod46">termList</A> &lt;CP&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod47">addOp</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;PLUS&gt; | &lt;MINUS&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod48">multOp</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;MULT&gt; | &lt;MOD&gt; | &lt;DIV&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod38">arithmeticTerm</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod49">additiveArithmeticTerm</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod50">atomicArithmeticTerm</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod18">number</A> | <A HREF="#prod45">var</A> | &lt;CP&gt; <A HREF="#prod38">arithmeticTerm</A> &lt;OP&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod49">additiveArithmeticTerm</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod51">multiplicativeArithmeticTerm</A> ( <A HREF="#prod47">addOp</A> <A HREF="#prod51">multiplicativeArithmeticTerm</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod51">multiplicativeArithmeticTerm</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod50">atomicArithmeticTerm</A> ( <A HREF="#prod48">multOp</A> <A HREF="#prod50">atomicArithmeticTerm</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod52">symbolicFunction</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER_WITH_OP&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod53">symbolicConstant</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod54">symbolicTerm</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod53">symbolicConstant</A> | <A HREF="#prod52">symbolicFunction</A> <A HREF="#prod46">termList</A> &lt;CP&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod55">term</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod54">symbolicTerm</A> | <A HREF="#prod38">arithmeticTerm</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod46">termList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod55">term</A> ( &lt;COMMA&gt; <A HREF="#prod55">term</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod39">rel</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;EQ&gt; | &lt;NOTEQ&gt; | &lt;GT&gt; | &lt;GTEQ&gt; | &lt;SM&gt; | &lt;SMEQ&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod28">predSymbol</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;IDENTIFIER_WITH_OP&gt; | &lt;NEGATIVE_ATOM_WITH_OP&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod44">atom</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod56">aggregate</A> | <A HREF="#prod54">symbolicTerm</A> <A HREF="#prod39">rel</A> <A HREF="#prod54">symbolicTerm</A> | <A HREF="#prod54">symbolicTerm</A> <A HREF="#prod39">rel</A> <A HREF="#prod45">var</A> | <A HREF="#prod43">extendedNonRelAtom</A> | <A HREF="#prod38">arithmeticTerm</A> <A HREF="#prod39">rel</A> <A HREF="#prod38">arithmeticTerm</A> | <A HREF="#prod45">var</A> <A HREF="#prod39">rel</A> <A HREF="#prod54">symbolicTerm</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod56">aggregate</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod38">arithmeticTerm</A> <A HREF="#prod39">rel</A> )? <A HREF="#prod57">aggregateFunction</A> &lt;OB&gt; ( <A HREF="#prod58">aggregateElements</A> )? &lt;CB&gt; ( <A HREF="#prod39">rel</A> <A HREF="#prod38">arithmeticTerm</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod58">aggregateElements</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod59">aggregateElement</A> ( &lt;COMMA&gt; <A HREF="#prod59">aggregateElement</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod59">aggregateElement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod37">nonRelAtom</A> | <A HREF="#prod38">arithmeticTerm</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod57">aggregateFunction</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;AGGREGATE_COUNT&gt; | &lt;AGGREGATE_MAX&gt; | &lt;AGGREGATE_MIN&gt; | &lt;AGGREGATE_SUM&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod60">atomSequence</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod44">atom</A> ( &lt;COMMA&gt; <A HREF="#prod44">atom</A> )*</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod61">characterRegularExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE></TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>

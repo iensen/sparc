@@ -1,0 +1,38 @@
+#!/bin/bash
+
+dlvPath=""
+if [ -f ./dlv ];
+     then
+dlvPath="./dlv" ;
+elif [ -f ./dlv.bin ];
+     then
+dlvPath="./dlv.bin" ;
+elif [ -f ./dlv.exe ];
+     then
+dlvPath="./dlv.exe" ;
+elif [ -f ./dlv.i386-linux-elf-static.bin ];
+     then
+dlvPath="./dlv.i386-linux-elf-static.bin"
+
+elif [ -f ./dlv.i386-apple-darwin.bin ];
+     then 
+dlvPath="./dlv.i386-apple-darwin.bin"
+
+elif [ -f ./dlv.x86-64-linux-elf-static.bin ];
+     then
+dlvPath="./dlv.x86-64-linux-elf-static.bin"
+
+elif [ -f  ./dlv.mingw.exe ];
+     then
+dlvPath="./dlv.mingw.exe"
+
+elif which dlv &> /dev/null ;
+     then
+dlvPath="dlv" ;
+else
+echo "ERROR DLV was not found" ;
+      exit
+fi
+
+
+java -jar sparc.jar $1 | $dlvPath -- ${*:2} 2>&1 | grep -v '^line 0:'

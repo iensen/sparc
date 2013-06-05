@@ -1,0 +1,431 @@
+
+
+\documentclass[12pt, letterpaper]{article}
+
+\setlength{\topmargin}{-1.75cm} \setlength{\textheight}{22.5cm}
+\setlength{\oddsidemargin}{0.25cm}
+\setlength{\evensidemargin}{0.25cm} \setlength{\textwidth}{16.2cm}
+\renewcommand{\figurename}{Table}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[normalem]{ulem}
+\usepackage{fontenc}
+\usepackage{hyperref}
+\usepackage{footnote}
+
+\usepackage{palatino, url, multicol, listings} % for multiple columns
+\lstset{mathescape=true, basicstyle=\ttfamily,}
+
+%\usepackage{pictex}
+%% in the .pictex output of xfig, there is command \colo
+%% however the old version of pictex may not define this
+%% so we define color here as empty
+%\def \color#1]#2{}
+
+\begin{document}
+
+\newcommand{\hide}[1]{}
+\newcommand{\exercise}[1]{}
+\newcommand{\future}[1]{}
+\newcommand{\otherquestions}[1]{}
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\pg}[1]{{\tt #1}}
+\newtheorem{definition}{Definition}
+\newcommand{\emptyclause}{\Box}
+\def\st{\bigskip\noindent}
+\newcommand{\lplus}
+{
+   \stackrel{+}{\gets}
+}
+
+\newcommand{\fe}[1] {
+  \begin{frame}
+    #1
+  \end{frame}}
+
+\newcommand{\eoa}{ {\bf End} of algorithm}
+
+\newcommand{\ft}[1] {\frametitle{#1}}
+
+\newcommand{\ie}[1] {
+  \begin{itemize}
+    #1
+  \end{itemize}
+}
+
+\newcommand{\ee}[1] {
+  \begin{enumerate}
+    #1
+  \end{enumerate}\label{marker}
+}
+\newcommand{\blk}[2] {
+  \begin{block}{#1}
+    #2
+  \end{block}
+}
+
+\newtheorem{collorary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{invariant}{Invariant}
+\newtheorem{property}{Property}
+\newtheorem{claim}{Claim}
+\newtheorem{example}{Example}
+
+
+\title{${\cal SPARC}$ manual}
+
+\date{\today}
+\maketitle
+\section{Introduction}
+A good knowledge representation methodology should allow one to:
+\begin{itemize}
+\item Identify and describe \emph{sorts} (types, kinds,
+categories) of objects
+populating a given domain.
+\item Identify and precisely
+define important \emph{properties} of these objects and
+\emph{relationships} between them.
+\end{itemize}
+An \emph{abstract model} of the
+domain will consist of sorts
+and definitions produced by this process.
+To deal with a particular problem one needs to
+describe relevant objects and their sorts
+and properties and use
+the corresponding inference engine to solve the problem.
+ASP based knowledge representation languages have powerful
+means for describing non-trivial properties of objects
+but lack the means of conveniently specifying objects
+and their sorts as well as sorts of parameters
+of the domain relations and functions. There were some
+recent attempts to remedy the problem but we do not believe
+that a sufficiently simple and powerful solution has been
+found so far. In this manual we describe a knowledge representation
+language ${\cal SPARC}$ which attempts to solve this problem and provide some examples of using the system we implemented.
+
+\section{First Steps}
+${\cal SPARC}$ system  works in two phases:
+\begin{enumerate}
+\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP) code.
+\item Running ASP code on existing ASP solvers.
+\end{enumerate}
+
+\st So, to use the system you need two things:
+\begin{enumerate}
+\item The SPARC to ASP translator. It can be downloaded here: \url{https://github.com/iensen/sparc/blob/master/sparc.jar?raw=true}.
+\item An ASP solver. We recommend using DLV for best compatibility with out translator. DLV can be downloaded here:
+ \url{http://www.dlvsystem.com/dlv/#1}
+You need to download \textit{static} version of the executable file.
+
+\end{enumerate}
+To demonstrate usage of the system, let's start with simple example.
+\begin{verbatim}
+sort definitions
+person=$bob|tim|andy.
+predicate declarations
+teacher(person).
+program rules
+teacher(bob).
+\end{verbatim}
+
+\st This is a SPARC program. It consists of three sections:
+\begin{itemize}
+ \item Sort definitions. The section starts with the keywords \textit{sort definition} followed by definitions of the sorts in the program.
+ \item Predicate declarations. The section starts with the keywords \textit{predicate declarations} followed by declarations of predicates of the program.
+ \item Program rules. The sections starts with the keywords \textit{program rules}  and consists of a collection of rules satisfying ASP syntax.
+\end{itemize}
+
+\st To translate the program, run sparc.jar with arguments specifying the SPARC program and the file where the translation will put its result:
+\begin{verbatim}
+$ java -jar sparc.jar example.sp -o example.asp
+SPARC to DLV translator V2.02
+program translated
+\end{verbatim}
+
+\st To get the answer sets of the translated program, run DLV:
+
+\begin{verbatim}
+$ dlv example.asp
+DLV [build BEN/Dec 21 2011   gcc 4.6.1]
+
+{teacher(bob)}
+\end{verbatim}
+
+\st You should see that the answer set appeared. For a detailed description of ${\cal SPARC}$ system options, see 
+\url{https://github.com/iensen/sparc/wiki/System-usage}.
+
+\st For Linux, MacOS or Cygwin (Windows) users we prepared a bash script which combines translation and solver execution into one step.
+It is available here: \url{https://github.com/iensen/sparc/raw/master/sparc}. Before using the script, make it executable by running command
+\texttt{chmod +x sparc} from the command line.
+
+The general syntax is :
+\begin{verbatim}
+ sparc input_file [dlv_options]
+\end{verbatim}
+For the complete list of dlv options, see 
+\url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
+
+Here is an example of using the script:
+\begin{verbatim}
+$ sparc example.sp -filter=teacher
+...
+{teacher(bob)}
+\end{verbatim}
+\st To see more examples of ${\cal SPARC}$ programs, visit \url{https://github.com/iensen/sparc/wiki/Examples}.
+\section{Detailed System Description}
+
+\subsection{Sort definitions}
+
+
+
+\st We define sorts as named collections of strings over a fixed alphabet $\Gamma$ consisting of:
+\begin{itemize}
+ \item latin letters: $\{a,b,c,d,..,z,A,B,C,D,..,Z\}$
+ \item digits: $\{0,1,2,..,9\}$
+ \item underscore: $\_$
+\end{itemize}
+
+\st We define string collections (languages) by means of expressions: regular expressions and set-theoretic operations, like \textit{union}, \textit{intersection} and \textit{difference}.
+We denote the set of strings of language $L$ by $\mathcal{D}(L)$. 
+In the following description, $\alpha$, $\beta$ and $\gamma$ denote characters from  $\Gamma$, $s$ denotes a string, $n$ , $n_1$ and $n_2$ 
+denote non-negative numbers, $regexp$, $regexp_1$ and  $regexp_2$ denote regular  expressions.
+
+\st In the table №1 we describe the syntax of \textit{regular expressions} used in the system.
+
+\begin{figure}[h!]
+  \caption{Regular Expressions}
+\begin{minipage}{25cm} 
+    \begin{tabular}{ | l | l | l | l |}
+    \hline
+    Syntax & Informal Description & Described language & Example \\ \hline
+    $\alpha$ ($\alpha \in \Gamma$) & character & \{a\} & $a$  \\  \hline
+    $regexp_1 regexp_2$ & concatenation & $\{s_1s_2: s_1 \in \mathcal{D}(regexp_1), s_2 \in \mathcal{D}(regexp_2)\}$ & $ab$ \\ \hline
+    $regexp_1 | regexp_2$ & disjunction & $\mathcal{D}(regexp_1) \cup \mathcal{D}(regexp_2)$ & $a|b$ \\ \hline
+    $\sim regexp$ & complement & $\{s: s\not\in \mathcal{D}(regexp) \}$ & $\sim a$ \\ \hline  
+    $regexp\{n\}$ & n-repetition & $\{\underbrace{ss\ldots s}_\textrm{n times} : s\in \mathcal{D}(regexp) \}$ & $a\{10\}$ \\ \hline
+    $regexp\{n,m\}$ & counting & $\mathcal{D}(regexp\{n\}) \cup \ldots \cup \mathcal{D}(regexp\{m\})$  & $a\{1,10\}$ \\ \hline
+    $[\alpha - \beta]$ & range & $\{\gamma :  \alpha <=\gamma <= \beta \}$ & $[a-z]$ \\ \hline
+    $(regexp)$ & parenthesis & $\mathcal{D}(regexp)$ & (a) \\ \hline
+    \end{tabular}
+ \end{minipage}
+\end{figure}
+
+
+
+\st Next we define expressions. In table №2,  {\em sort names} (denoted by $s,s_1,s_2,\ldots$)
+and  {\em functional symbols}($f,f_1,f_2,\ldots$) 
+are all  identifiers starting with a lowercase letter. {\em Variable names}(denoted by $V_1,V_2,\ldots$) 
+are identifiers starting with a capital letter. $\$regexp$ denotes a language of all strings satisfying regular expression $regexp$.
+$rel$ is a binary relation, one of $>=,<,>,<=,=$. $u,u_1,u_2, \ldots , u_n$ are strings over alphabet $\Gamma$.
+$e,e_1,\ldots, e_n$ are expressions.
+
+
+\begin{figure}[h!]
+  \caption{Expressions.}
+\begin{minipage}{25cm}
+    \begin{tabular}{ | l | l | l | l |}
+    \hline
+    Syntax & Informal Description & Described language & Example \\ \hline
+    $\$regexp$  & regular expression & $\mathcal{D}(regexp)$ & $\$[a-z]$  \\  \hline
+    $n_1..n_2$ & integer range & $\{n: n_1<=n<=n_2$ & $1..4$ \\ \hline
+    $s$ & sort name & \parbox{3cm}{$\{\mathcal{D}(e):$ $s$ was defined as $s=e\}$} & $s1$ \\ \hline
+    \parbox{4cm}{$f(e_1[V_1]$ \footnote{Square brackets denote the optional part.}
+    \footnote{The Current implementation allows variables only after expressions consisting of single sort name.}
+    $,\ldots e_n[V_n])$ \\$[:\{V_i op V_j\}] $ } & functional term 
+    & \parbox{3cm}{$\{f(u_1,\ldots, u_n) :$ \\ $u_1\in \mathcal{D}(e_1),$ \\ $\ldots u_n \in \mathcal{D}(e_n)$\\
+     $[: u_i~op~u_j ]\}$ \footnote{The last condition $u_i$ op $u_j$ 
+                          is present if and only if there is a condition
+                          of the form $V_i$ op $V_j$ in expression.}}   
+    & \parbox{2.3cm}{$put(block(X),$\\  $block(Y)):\{X!=Y\}$}\\ \hline
+    $ e_1+e_2 $ & union & $\mathcal{D}(e_1)+\mathcal{D}(e_2)$ & $\$a+f(s)$ \\ \hline
+    $ e_1*e_2 $ & intersection & $\mathcal{D}(e_1)*\mathcal{D}(e_2)$ & $\$a*f(s)$ \\ \hline 
+    $ e_1-e_2 $ & difference & $\mathcal{D}(e_1) \backslash \mathcal{D}(e_2)$ & $\$a-f(s)$ \\ \hline
+    $ (e) $     & parenthesis& $\mathcal{D}(e)$ & $(\$a+\$b)*s$ \\ \hline
+    \end{tabular}
+\end{minipage}
+  
+ \end{figure}
+\st The $\$$ sign before a regular expression is used to avoid grammar ambiguity,
+i.e., to make regular expression which are expressed by identifiers distinguishable from sort names. 
+\pagebreak
+
+
+\st \textbf{Example}
+Consider the following sort definitions:
+\begin{verbatim}
+  s=$a|b.
+  s1=s.
+  s2=$s.
+\end{verbatim}
+\st Here sort s1 consists of string 'a' and 'b',  but s2 consist of only one string 's'.
+
+\st The definition of sort named $s$ is an assignment of the form $s=e$,
+  where  $e$ is an expression not containing sort names which were not defined in former definitions.
+\section{Predicate Declarations}
+
+\noindent  The second part of a  ${\cal SPARC}$ program starts with the keyword
+\st
+$predicate\ declarations$
+
+\st and is followed by statements of the form
+
+\st
+$pred\_symbol(sortName,\dots,sortName)$
+
+\st
+
+Multiple declarations for one predicate symbol are not allowed.
+\st For any sort name $SN$, the system includes declaration  $SN(SN)$ automatically.
+
+\section{Program Rules}
+
+
+\st The third part of a ${\cal SPARC}$ program consists of standard ASP rules and/or consistency restoring (cr)-rules.
+\st
+CR-rules are of the following form:
+
+\begin{equation}
+   [label:] l_0 \lplus l_1,  \ldots, l_k, not~l_{k+1} \ldots not~l_{n}
+ \end{equation}
+where $l$'s are literals.
+Literals occurring in the heads of the rules must not be formed by predicate symbols
+occurring as sort names in sort definitions.
+\section{Directives}
+Directives should be written before sort definitions, at the very beginning of a program.
+${\cal SPARC}$ allows two types of directives:
+\subsection{\#maxint}
+Directive \#maxint specifies maximal nonnegative number which could be used in arithmetic calculations. For example,
+\begin{verbatim}
+ #maxint=15.
+\end{verbatim}
+\st limits integers to [0,15].
+\subsection{\#const}
+Directive \#const allows one to define constant values. The syntax is:
+\begin{verbatim}
+   #const constantName = constantValue.
+\end{verbatim}      
+\st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
+ and $constantValue$ is either a nonnegative number or the name of another constant defined above.  
+\section{Answer Sets}
+\noindent A set of ground literals $S$ is an {\em answer set} of a ${\cal SPARC}$ 
+program $\Pi$ with regular rules only if $S$ is an answer set of an ASP program consisting of the same rules.
+
+\st To define the semantics of a general ${\cal SPARC}$ program, we need notation for abductive support.
+By $\alpha(r)$ we denote a regular rule
+obtained from a consistency restoring rule $r$
+by replacing $\lplus$ by $\leftarrow$;
+$\alpha$ is expanded in the standard way to a set $X$ of CR-rules,
+i.e., $\alpha(A) = \{\alpha(r)\; :\; r \in A\}$.
+\st A %minimal (with respect to the preference relation $\leq$ of the program)
+collection $A$ of CR-rules of $\Pi$ such that
+\begin{enumerate}
+\item $R \cup \alpha(X)$ is consistent (i.e., has an answer set), and
+\item any $R_0$ satisfying the above condition has cardinality
+which is greater than or equal to that of $R$
+\end{enumerate}
+is called an {\em abductive support} of $\Pi$.
+\st A set of ground literals $S$ is an {\em answer set} of a ${\cal SPARC}$ program 
+$\Pi$ if $S$ is an answer set of $R \cup \alpha(A)$, where $R$ is the set of regular rules of $\Pi$, for some abductive
+support $A$ of $\Pi$.
+
+\st \textbf{Example}
+\begin{verbatim}
+sort definitions
+s1=$a.  % term "a" has sort "s1"
+predicate declarations
+p(s1).  %predicate  "p" accepts terms of sort s1 
+q(s1).  %predicate  "q" accepts terms of sort s1 
+program rules
+p(a) :- not q(a).
+-p(a).
+q(a):+.  % this is a CR-RULE. 
+\end{verbatim}
+\st Result:
+\begin{verbatim}
+  ./sparc example2.sp
+DLV [build BEN/Dec 21 2011   gcc 4.6.1]
+
+SPARC to DLV translator V2.02
+program translated
+Best model: {-p(a), appl(r_0), q(a)}
+Cost ([Weight:Level]): <[1:1]>
+
+\end{verbatim}
+
+\st Additional literal $appl(r_0)$ was added to the answer set, which means that the 
+first cr-rule from the program was applied.
+\section{Typechecking}
+During typechecking  we perform a static check of each predicate from the program rules for 
+satisfying type definitions provided in the first section.
+
+\subsection{Type errors}
+\begin{definition} (Matching)
+A ground term $t$ \textit{matches} a set of ground literals $S$ if $t\in S$.
+A term with variables $tv$  \textit{matches}  a ground literal $l$ if one of the following conditions holds:
+\begin{enumerate}
+ \item $tv$ is a variable.
+ \item $tv$ is an arithmetic term (i.e, it consists of numbers, variables and arithmetic operations), and $l$ is a number.
+ \item $tv$ is of the form $f_1(t_1,t_2,\ldots t_n)$, $l$ is of the form $f_2(u_1,u_2,\ldots u_n)$, $f_1=f_2$, and for all $1<=i<=n$ $t_i$ matches $u_i$.
+\end{enumerate}
+A term with variables $tv$  \textit{matches}  a set of  ground literals $S$ if it matches at least one of elements of $S$.
+\end{definition}
+
+We say that atom $p(t_1,t_2,\ldots,t_n)$  \textit{follows} sort definitions if the following conditions hold:
+\begin{enumerate}
+\item predicate $p$ was declared with exactly $n$ arguments, i.e., in predicate declarations' section of the program there is a declaration 
+$p(s_1,\ldots,s_n)$, where $s_1,\ldots s_n$ are sort names.
+\item for each term $1<=i<=n$ $t_i$ matches $\mathcal{D}(s_i)$. 
+\end{enumerate}
+For each atom $p(s_1,\ldots,s_n)$ type error is produced if it does not \textit{follow} sort definitions.
+
+\subsection{Type warnings}
+We say that sort $s$ is assigned to term $t$, if there is an atom $p(t_1,\ldots t_n)$,   which was declared as $p(s_1,\ldots s_n)$,and for some i $t=t_i$, $s=s_i$.
+Type warning is produced for term $t$, if $\{s_1,\ldots s_n\}$ is a set of  sorts assigned to $t$, and $ {\cal D}(s_1) \cap \ldots {\cal D}(s_n)$ is empty.
+
+\st \textbf{Example} 
+
+Consider the following SPARC program:
+\begin{verbatim}
+ sort definitions
+ s1=$1..4$ and s2=$5..15$ 
+ predicate declarations
+ p(s1).
+ q(s2).  
+ program rules
+ p(X):-q(X)
+\end{verbatim}
+ For term $X$ (which is a variable in this case), sorts $s1$ and $s2$ are derived. 
+ A warning is produced, because ${\cal D}(s_1) \cap \ldots {\cal D}(s_n)=\emptyset$.  
+\begin{verbatim} 
+%WARNING: Term X occurring in the rule p(X):-q(X).(line 8, column 2) has an empty grounding with respect to sort definitions
+\end{verbatim}
+
+\section{${\cal SPARC}$ and unsafe rules}
+
+${\cal SPARC}$ helps to avoid \textit{unsafe rule} errors in most  cases.
+\st \textbf{Example.}
+\begin{verbatim}
+sort definitions
+s1=1..5.
+predicate declarations
+p(s1).
+program rules
+p(X). 
+\end{verbatim}
+The only rule in the program is unsafe (variable X does not occur in the body).
+However, by translating the program and running ASP solver we will are able to avoid this unsafety 
+(with addition of auxiliary predicates).
+Here is execution trace:
+\begin{verbatim}
+$ ./sparc example3.sp -pfilter=p 
+DLV [build BEN/Dec 21 2011   gcc 4.6.1]
+
+SPARC to DLV translator V2.02
+program translated
+{p(1), p(2), p(3), p(4), p(5)}
+\end{verbatim}
+\section{${\cal SPARC}$ and ASPIDE}
+TODO. 
+
+\end{document}

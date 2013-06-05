@@ -1,0 +1,17 @@
+<project default="jar">
+  <target name="compile">
+    <javac srcdir= "src" 
+    excludes="**/tests/"
+   />
+  </target>
+  <target name="jar" depends="compile">
+    <jar destfile="sparc.jar"
+         basedir="bin"
+         excludes="**/tests/"
+         includes="**/*.class">
+      <manifest>
+        <attribute name="Main-Class" value="parser.SparcTranslator" />
+      </manifest>
+    </jar>
+  </target>
+</project>

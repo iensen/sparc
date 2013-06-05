@@ -1,0 +1,156 @@
+
+DOCUMENT START
+TOKENS
+<DEFAULT,IN_PROGRAM_RULES> TOKEN : {
+<MAXINTDIRECTIVE: "#maxint">
+| <CONSTDIRECTIVE: "#const">
+| <SORTDEFKEYWORD: "sort" (["\r","\n","\t"," "])+ "definitions" (["\r","\t"," ","\n"])+>
+| <PREDDEFKEYWORD: "predicate" (["\r","\n","\t"," "])+ "declarations" (["\r","\t"," ","\n"])+>
+| <PROGRULDEFKEYWORD: "program" (["\r","\n","\t"," "])+ "rules" (["\r","\t"," ","\n"])+> : IN_PROGRAM_RULES
+| <NOT: "not" (["\t","\r"," "])+>
+| <MOD: "mod">
+| <IDENTIFIER: ["a"-"z"] (["a"-"z","A"-"Z","0"-"9","_"])*>
+| <VARIABLE: ["A"-"Z"] (["a"-"z","A"-"Z","0"-"9","_"])* | "_">
+| <NONZERODIGIT: ["1"-"9"]>
+| <POSITIVE_INTEGER: <NONZERODIGIT> (<ZERO> | <NONZERODIGIT>)*>
+| <ZERO: "0">
+| <PLUS: "+">
+| <MULT: "*">
+| <DIV: "/">
+| <EQ: "=">
+| <NOTEQ: "!=">
+| <GT: ">">
+| <GTEQ: ">=">
+| <SM: "<">
+| <SMEQ: "<=">
+| <OP: "(">
+| <CP: ")">
+| <OB: "{">
+| <CB: "}">
+| <SOB: "["> : IN_REGULAREXPRESSIONSEQUENCE
+| <ORRSEP: ":-">
+| <CRRSEP: ":+">
+| <COMMA: ",">
+| <DOT: ".">
+| <COLON: ":">
+| <SEMICOLON: ";">
+| <DOLLAR: "$">
+| <COMPLEMENT: "~">
+| <OR: "|">
+| <AGGREGATE_COUNT: "#count">
+| <AGGREGATE_SUM: "#sum">
+| <AGGREGATE_MIN: "#min">
+| <AGGREGATE_MAX: "#max">
+}
+
+<IN_REGULAREXPRESSIONSEQUENCE> TOKEN : {
+<LETTER: ["A"-"Z"] | ["a"-"z"]>
+| <DIGIT: ["0"-"9"]>
+| <SCB: "]"> : DEFAULT
+}
+
+<IN_PROGRAM_RULES> TOKEN : {
+<IDENTIFIER_WITH_OP: ["a"-"z"] (["a"-"z","A"-"Z","0"-"9","_"])* (["\t","\r","\n"])* "(">
+| <NEGATIVE_ATOM_WITH_OP: "-" ["a"-"z"] (["a"-"z","A"-"Z","0"-"9","_"])* (["\t","\r","\n"])* "(">
+}
+
+<DEFAULT,IN_PROGRAM_RULES,IN_REGULAREXPRESSIONSEQUENCE> SKIP : {
+<SINGLE_LINE_COMMENT: "%" (~["\n","\r"])* ("\r" | "\n" | "\r\n")>
+| <SPACE: (["\n","\r","\t"," "])+>
+}
+
+<DEFAULT,IN_PROGRAM_RULES,IN_REGULAREXPRESSIONSEQUENCE> TOKEN : {
+<MINUS: "-">
+}
+
+NON-TERMINALS
+	program	:=	directives <SORTDEFKEYWORD> sortDefinitions <PREDDEFKEYWORD> predicateDeclarations <PROGRULDEFKEYWORD> programRules <EOF>
+	sortDefinitions	:=	( sortDefinition )*
+	sortDefinition	:=	<IDENTIFIER> <EQ> sortExpression <DOT>
+	sortExpression	:=	additiveSortExpression
+	additiveSortExpression	:=	multiplicativeSortExpression ( ( "+" | "-" ) multiplicativeSortExpression )*
+	multiplicativeSortExpression	:=	unarySortExpression ( <MULT> unarySortExpression )*
+	regularExpression	:=	complexRegularExpressionChoices
+	complexRegularExpressionChoices	:=	complexRegularExpression ( <OR> complexRegularExpression )*
+	complexRegularExpression	:=	( complexRegularExpressionRepeatableUnit )+
+	complexRegularExpressionRepeatableUnit	:=	complexRegularExpressionUnit ( repeatition )?
+	complexRegularExpressionUnit	:=	( complexRegularExpressionUnitIdentifier | characterList | <COMPLEMENT> complexRegularExpressionUnit | <OP> complexRegularExpressionChoices <CP> )
+	complexRegularExpressionUnitIdentifier	:=	( <IDENTIFIER> | number )
+	repeatition	:=	fromToRepeatition
+		|	nRepeatition
+	fromToRepeatition	:=	<OB> number <COMMA> number <CB>
+	nRepeatition	:=	<OB> number <CB>
+	characterList	:=	( <SOB> <DIGIT> <MINUS> <DIGIT> <SCB> | <SOB> <LETTER> <MINUS> <LETTER> <SCB> )
+	condition	:=	<COLON> <OB> arithmeticTerm rel arithmeticTerm <CB>
+	unarySortExpression	:=	( <IDENTIFIER> <OP> specialSortExpressionList <CP> ( condition )? | <IDENTIFIER> | number <DOT> <DOT> number | <DOLLAR> regularExpression | <OP> sortExpression <CP> )
+	simpleSortExpression	:=	simpleAdditiveSortExpression
+	simpleAdditiveSortExpression	:=	simpleMultiplicativeSortExpression
+	simpleMultiplicativeSortExpression	:=	simpleUnarySortExpression
+	simpleUnarySortExpression	:=	<IDENTIFIER>
+	specialSortExpression	:=	simpleSortExpression <OP> var <CP>
+		|	sortExpression
+	specialSortExpressionList	:=	specialSortExpression ( <COMMA> specialSortExpression )*
+	number	:=	<POSITIVE_INTEGER>
+		|	<ZERO>
+		|	<NONZERODIGIT>
+	predicateDeclarations	:=	( predicateDeclaration )*
+	predicateDeclaration	:=	<IDENTIFIER> <OP> identifierList <CP> <DOT>
+	identifierList	:=	<IDENTIFIER> ( <COMMA> <IDENTIFIER> )*
+	programRules	:=	( programRule )*
+	programRule	:=	( label unlabeledProgramCrRule | unlabeledProgramRule )
+	unlabeledProgramRule	:=	( predSymbol number <DOT> <DOT> number <CP> <DOT> | head exBody | <ORRSEP> body <DOT> | <CRRSEP> body <DOT> )
+	unlabeledProgramCrRule	:=	( head exCrBody | <CRRSEP> body <DOT> )
+	label	:=	<IDENTIFIER> <COLON>
+	exBody	:=	exStandartBody
+		|	exCrBody
+	exStandartBody	:=	<ORRSEP> body <DOT>
+		|	<DOT>
+	exCrBody	:=	<CRRSEP> crBodyWithoutSep
+	crBodyWithoutSep	:=	<DOT>
+		|	body <DOT>
+	head	:=	( disjunction | choice_rule )
+	disjunction	:=	nonRelAtom ( <OR> nonRelAtom )*
+	choice_rule	:=	( arithmeticTerm ( rel )? )? <OB> choice_elements <CB> ( ( rel )? arithmeticTerm )?
+	choice_elements	:=	choice_element ( <SEMICOLON> choice_element )*
+	choice_element	:=	nonRelAtom ( <COLON> extendedSimpleAtomList )?
+	extendedSimpleAtomList	:=	simpleAtom ( <COMMA> simpleAtom )*
+	body	:=	atom ( <COMMA> atom )*
+	var	:=	<VARIABLE>
+	nonRelAtom	:=	predSymbol termList <CP>
+	simpleAtom	:=	( symbolicTerm rel symbolicTerm | symbolicTerm rel var | arithmeticTerm rel arithmeticTerm | var rel symbolicTerm | arithmeticTerm eqrel symbolicTerm | symbolicTerm eqrel arithmeticTerm | extendedNonRelAtom )
+	extendedNonRelAtom	:=	( <NOT> )? predSymbol termList <CP>
+	addOp	:=	<PLUS>
+		|	<MINUS>
+	multOp	:=	<MULT>
+		|	<MOD>
+		|	<DIV>
+	arithmeticTerm	:=	additiveArithmeticTerm
+	atomicArithmeticTerm	:=	( number | var | <OP> arithmeticTerm <CP> )
+	additiveArithmeticTerm	:=	multiplicativeArithmeticTerm ( addOp multiplicativeArithmeticTerm )*
+	multiplicativeArithmeticTerm	:=	atomicArithmeticTerm ( multOp atomicArithmeticTerm )*
+	symbolicFunction	:=	<IDENTIFIER_WITH_OP>
+	symbolicConstant	:=	<IDENTIFIER>
+	symbolicTerm	:=	( symbolicConstant | symbolicFunction termList <CP> )
+	term	:=	( symbolicTerm | var | arithmeticTerm )
+	termList	:=	term ( <COMMA> term )*
+	rel	:=	<EQ>
+		|	<NOTEQ>
+		|	<GT>
+		|	<GTEQ>
+		|	<SM>
+		|	<SMEQ>
+	eqrel	:=	<EQ>
+		|	<NOTEQ>
+	predSymbol	:=	( <IDENTIFIER_WITH_OP> | <NEGATIVE_ATOM_WITH_OP> )
+	atom	:=	( aggregate | symbolicTerm rel symbolicTerm | symbolicTerm rel var | arithmeticTerm rel arithmeticTerm | var rel symbolicTerm | arithmeticTerm eqrel symbolicTerm | symbolicTerm eqrel arithmeticTerm | extendedNonRelAtom )
+	aggregate	:=	( arithmeticTerm rel )? aggregateFunction <OB> aggregateElements <CB> ( rel arithmeticTerm )?
+	aggregateElements	:=	aggregateElement ( <SEMICOLON> aggregateElement )*
+	aggregateElement	:=	( nonRelAtom | arithmeticTerm ) ( <COMMA> ( nonRelAtom | arithmeticTerm ) )* ( <COLON> extendedSimpleAtomList )?
+	aggregateFunction	:=	( <AGGREGATE_COUNT> | <AGGREGATE_MAX> | <AGGREGATE_MIN> | <AGGREGATE_SUM> )
+	atomSequence	:=	atom ( <COMMA> atom )*
+	characterRegularExpression	:=	
+	directives	:=	( directive )*
+	directive	:=	<MAXINTDIRECTIVE> <EQ> number <DOT>
+		|	<CONSTDIRECTIVE> <IDENTIFIER> <EQ> number <DOT>
+
+DOCUMENT END

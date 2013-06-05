@@ -1,0 +1,9 @@
+p(1).
+p(2).
+p(3).
+q(VAR_0):-p(X_G),VAR_0=X_G+2,s_gen0(VAR_0).
+s_gen0(3).
+s_gen0(2).
+s_gen0(1).
+s_gen0(5).
+s_gen0(4).

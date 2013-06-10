@@ -44,6 +44,35 @@ class ASTterm extends SimpleNode {
 	  }
 	  return result;
   }
+  
+  
+  /**
+   * Check if the terms has arithmetic operations
+   * @return true if it has an arithmetic operation ( +,-,*,/) and false otherwise 
+   */
+  public boolean hasArithmeticOperations() {
+	  String termString=this.toString();
+	  String operations="+-*/";
+	  for (char c:operations.toCharArray())
+	  {
+		  if(termString.indexOf(c)!=-1)
+			  return true;
+	  }
+	  return false;
+  }
+  
+  
+  /**
+   * Check if the term is ground
+   * @return true or false
+   */
+  public boolean isGround()
+  {
+	 return !hasArithmeticOperations() && !hasVariables(); 
+  }
+  
+  
+  
   public String toString() {
 	  return toString(false);
   }

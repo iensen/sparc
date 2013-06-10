@@ -8,19 +8,24 @@ public interface SparcTranslatorVisitor
   public Object visit(ASTsortDefinitions node, Object data);
   public Object visit(ASTsortDefinition node, Object data);
   public Object visit(ASTsortExpression node, Object data);
-  public Object visit(ASTadditiveSortExpression node, Object data);
-  public Object visit(ASTmultiplicativeSortExpression node, Object data);
-  public Object visit(ASTregularExpression node, Object data);
-  public Object visit(ASTcomplexRegularExpressionChoices node, Object data);
-  public Object visit(ASTcomplexRegularExpression node, Object data);
-  public Object visit(ASTcomplexRegularExpressionRepeatableUnit node, Object data);
-  public Object visit(ASTcomplexRegularExpressionUnit node, Object data);
-  public Object visit(ASTcomplexRegularExpressionUnitIdentifier node, Object data);
-  public Object visit(ASTrepeatition node, Object data);
-  public Object visit(ASTcharacterList node, Object data);
+  public Object visit(ASTsetExpression node, Object data);
+  public Object visit(ASTmultiplicativeSetExpression node, Object data);
+  public Object visit(ASTadditiveSetExpression node, Object data);
+  public Object visit(ASTsortName node, Object data);
+  public Object visit(ASTunarySetExpression node, Object data);
+  public Object visit(ASTcurlyBrackets node, Object data);
+  public Object visit(ASTconstantTermList node, Object data);
+  public Object visit(ASTconstantTerm node, Object data);
   public Object visit(ASTcondition node, Object data);
-  public Object visit(ASTunarySortExpression node, Object data);
+  public Object visit(ASTorCondition node, Object data);
+  public Object visit(ASTandCondition node, Object data);
+  public Object visit(ASTunaryCondition node, Object data);
+  public Object visit(ASTfunctionalSymbol node, Object data);
   public Object visit(ASTsortExpressionList node, Object data);
+  public Object visit(ASTconcatenation node, Object data);
+  public Object visit(ASTbasicSort node, Object data);
+  public Object visit(ASTidentifierRange node, Object data);
+  public Object visit(ASTnumericRange node, Object data);
   public Object visit(ASTpredicateDeclarations node, Object data);
   public Object visit(ASTpredicateDeclaration node, Object data);
   public Object visit(ASTidentifierList node, Object data);
@@ -58,4 +63,4 @@ public interface SparcTranslatorVisitor
   public Object visit(ASTatomSequence node, Object data);
   public Object visit(ASTcharacterRegularExpression node, Object data);
 }
-/* JavaCC - OriginalChecksum=16749072d0b53687997cb331efbe7cbd (do not edit this line) */
+/* JavaCC - OriginalChecksum=834ffba391af50cedde5a923fe1aef40 (do not edit this line) */

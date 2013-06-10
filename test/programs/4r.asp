@@ -1,9 +1,15 @@
-appl(label1)|-appl(label1).
-:~appl(label1).
-q(a):-appl(label1).
-appl(label2)|-appl(label2).
-:~appl(label2).
-q(b):-p(a),appl(label2).
-appl(label3)|-appl(label3).
-:~appl(label3).
-:-p(c),appl(label3).
+p(a):-not  -p(a).
+appl(r_0)|-appl(r_0).
+:~appl(r_0).
+-p(a):-appl(r_0).
+p(b):-not  -p(b).
+appl(r_1)|-appl(r_1).
+:~appl(r_1).
+-p(b):-appl(r_1).
+p(c):-not  -p(c).
+appl(r_2)|-appl(r_2).
+:~appl(r_2).
+-p(c):-appl(r_2).
+r(a):-p(a).
+-r(a):-p(b).
+-r(a):-p(c).

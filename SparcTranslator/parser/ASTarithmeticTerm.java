@@ -2,7 +2,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
-import java.util.HashMap;
+
 
 public class ASTarithmeticTerm extends SimpleNode {
 	public ASTarithmeticTerm(int id) {
@@ -18,24 +18,8 @@ public class ASTarithmeticTerm extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public void applyRenaming(HashMap<String, Integer> map) throws ParseException {
-       applyRenaming(this,map);
-	}
 
-	private void applyRenaming(SimpleNode n, HashMap<String, Integer> map) throws ParseException {
-		if (n.getId()==SparcTranslatorTreeConstants.JJTVAR) {
-			if (!map.containsKey(n.image)) {
-				throw new ParseException("variable" + n.image + " at line "
-						+ n.getBeginLine() + " column " + n.getBeginColumn()+
-						 " is not associated with any sort name");
-			} else {
-				n.image="["+map.get(n.image)+"]";
-			}
-		}
-		for(int i=0;i<n.jjtGetNumChildren();i++) {
-			applyRenaming((SimpleNode)(n.jjtGetChild(i)),map);
-		}
-	}
+
 
 	public String toString(boolean useOriginalImages) {
 		if(this.jjtGetNumChildren()==0) {

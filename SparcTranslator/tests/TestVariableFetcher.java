@@ -12,15 +12,11 @@ import parser.ASTprogramRules;
 import parser.ASTsortExpression;
 import parser.ASTterm;
 import parser.ParseException;
-import parser.RChoiceRemover;
-import parser.RIdentifierSplitVisitor;
-import parser.RRepeatitionRemover;
 import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
-import translating.DynamicSortExpression;
 import translating.TermFetcher;
-import translating.VariableFetcher;
+
 
 public class TestVariableFetcher {
 
@@ -72,12 +68,6 @@ public class TestVariableFetcher {
 
 		ASTprogram program = (ASTprogram) p.program();
 		appendToVariableNamesIn(program, "_G");
-		RIdentifierSplitVisitor v = new RIdentifierSplitVisitor();
-		program.jjtAccept(v, null);
-		RRepeatitionRemover removeNMrepeatitions = new RRepeatitionRemover();
-		program.jjtAccept(removeNMrepeatitions, null);
-		RChoiceRemover choiceremover = new RChoiceRemover();
-		program.jjtAccept(choiceremover, null);
 		this.sortNameToExpression = p.sortNameToExpression;
 		this.predicateArgumentSorts = p.predicateArgumentSorts;
 		programRules = (ASTprogramRules) program.jjtGetChild(2);

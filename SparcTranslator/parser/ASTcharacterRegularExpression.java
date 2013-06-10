@@ -18,4 +18,4 @@ class ASTcharacterRegularExpression extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=d9bdc3ccd8fe5a84e46b933e34eec641 (do not edit this line) */
+/* JavaCC - OriginalChecksum=88204958631ce7c47bc104f8d6260e89 (do not edit this line) */

@@ -28,7 +28,7 @@ public class testConditions {
 	    p.sortNameToExpression.put("block", h);
 	    SimpleNode e;
 		try {
-			e=p.unarySortExpression();
+			e=p.unarySetExpression();
 			System.out.println(e.toString());
 		} catch (ParseException exc) {
 			// TODO Auto-generated catch block

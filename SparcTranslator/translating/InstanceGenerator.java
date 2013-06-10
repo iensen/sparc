@@ -5,18 +5,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 
-import parser.ASTadditiveSortExpression;
-import parser.ASTmultiplicativeSortExpression;
-import parser.ASTregularExpression;
+import parser.ASTadditiveSetExpression;
+import parser.ASTbasicSort;
+import parser.ASTconcatenation;
+import parser.ASTcondition;
+import parser.ASTconstantTerm;
+import parser.ASTconstantTermList;
+import parser.ASTcurlyBrackets;
+import parser.ASTfunctionalSymbol;
+import parser.ASTidentifierRange;
+import parser.ASTmultiplicativeSetExpression;
+import parser.ASTnumericRange;
+import parser.ASTsetExpression;
 import parser.ASTsortExpression;
 import parser.ASTsortExpressionList;
-
-import parser.ASTunarySortExpression;
+import parser.ASTsortName;
+import parser.ASTunarySetExpression;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
-import re.RegularExpression;
-import sorts.BuiltInSorts;
 import sorts.Condition;
 
 /**
@@ -25,7 +32,6 @@ import sorts.Condition;
 public class InstanceGenerator {
 	ArrayList<GSort> generatedSorts; // generated and included into translation
 										// sorts
-	HashSet<String> busySortName; // sort names which were already used
 	HashMap<String, ASTsortExpression> sortNameToExpression;
 	int ruleBeginLine;
 	int ruleBeginColumn;
@@ -47,17 +53,7 @@ public class InstanceGenerator {
 			HashMap<String, ArrayList<String>> predicateArgumentSorts,
 			HashMap<String, ASTsortExpression> sortNameToExpression) {
 		this.sortNameToExpression = sortNameToExpression;
-		busySortName = new HashSet<String>();
 		generatedSorts = new ArrayList<GSort>();
-		// add predicates from program as busy sort names to avoid collisions:
-		for (String sortName : predicateArgumentSorts.keySet())
-			busySortName.add(sortName);
-		HashMap<String, ASTsortExpression> bsorts = BuiltInSorts
-				.getBuiltInSorts();
-		for (String sortName : bsorts.keySet()) {
-			busySortName.add(sortName);
-		}
-		// for generating new sort names;
 	}
 
 	/**
@@ -81,16 +77,31 @@ public class InstanceGenerator {
 		}
 		// generate new sort
 		HashSet<String> instances = generateInstances_p(expr);
+
 		generatedSorts.add(new GSort(expr, sortName, instances));
 	}
+	
+    //TO BE REMOVED AFTER EMPTY SORT CHECKER IS REWRITTEN:
+	public HashSet<String> generateInstances(ASTsortExpression expr)  {
+		HashSet<String> result=null;
+		try {
+			result= generateInstances_p(expr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
 	/**
-	 * Get sort instances of given sort 
-	 * @param sortName  of the sort
+	 * Get sort instances of given sort
+	 * 
+	 * @param sortName
+	 *            of the sort
 	 * @return list of instances
 	 */
 	public ArrayList<String> getSortInstances(String sortName) {
-		for(GSort sort:generatedSorts) {
-			if(sort.sortName.equals(sortName)) {
+		for (GSort sort : generatedSorts) {
+			if (sort.sortName.equals(sortName)) {
 				return new ArrayList<String>(sort.instances);
 			}
 		}
@@ -153,9 +164,199 @@ public class InstanceGenerator {
 	 */
 	private HashSet<String> generateInstances_p(ASTsortExpression se)
 			throws ParseException {
+		int id = ((SimpleNode) se.jjtGetChild(0)).getId();
+		switch (id) {
+		case SparcTranslatorTreeConstants.JJTSETEXPRESSION:
+			return generateInstances((ASTsetExpression) se.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTNUMERICRANGE:
+			return generateInstances((ASTnumericRange) se.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTIDENTIFIERRANGE:
+			return generateInstances((ASTidentifierRange) se.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTCONCATENATION:
+			return generateInstances((ASTconcatenation) se.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL:
+			return generateInstances((ASTfunctionalSymbol) se.jjtGetChild(0));
+		}
 
-		return generateInstances((ASTadditiveSortExpression) se.jjtGetChild(0));
+		return generateInstances((ASTadditiveSetExpression) se.jjtGetChild(0));
 
+	}
+
+	private HashSet<String> generateInstances(ASTfunctionalSymbol funcSymbol) throws ParseException {
+		ASTsortExpressionList elist = (ASTsortExpressionList) (funcSymbol
+				.jjtGetChild(0));
+		ArrayList<HashSet<String>> alist = new ArrayList<HashSet<String>>();
+		for (int i = 0; i < elist.jjtGetNumChildren(); i++) {
+			ASTsortName sname=(ASTsortName)elist.jjtGetChild(i);
+			alist.add(generateInstances_p(sortNameToExpression.get(sname.toString())));
+		}
+
+		String initprefix = funcSymbol.image.substring(0, funcSymbol.image.indexOf('('));
+		ASTcondition cond = null;
+		if(funcSymbol.jjtGetNumChildren()>1) {
+			cond=(ASTcondition)funcSymbol.jjtGetChild(1);
+		}
+		return generateInstances(initprefix, null, alist, 0, cond);
+	}
+
+	/**
+	 * Generate instances of the concatenation of basic sorts from sortlist
+	 * starting from given index
+	 * 
+	 * @param sortList
+	 *            list of basic sorts
+	 * @param index
+	 *            starting index
+	 * @return set of generated instances
+	 * @throws ParseException
+	 */
+	private HashSet<String> generateInstances(ArrayList<ASTbasicSort> sortList,
+			int index) throws ParseException {
+		if (index == sortList.size()) {
+			return new HashSet<String>();
+		}
+		HashSet<String> instancesPrefix = generateInstances(sortList.get(index));
+		HashSet<String> instancesSuffix = generateInstances(sortList, index + 1);
+		if (instancesSuffix.size() == 0) {
+			return instancesPrefix;
+		} else {
+			HashSet<String> result = new HashSet<String>();
+			for (String prefix : instancesPrefix)
+				for (String suffix : instancesSuffix)
+					result.add(prefix + suffix);
+
+			return result;
+		}
+
+	}
+
+	/**
+	 * Generate all instances of given basic sort
+	 * 
+	 * @param asTbasicSort
+	 *            AST node represeting given basic sort
+	 * @return set of generated instances
+	 * @throws ParseException
+	 */
+	private HashSet<String> generateInstances(ASTbasicSort basicSortExp)
+			throws ParseException {
+		int id = ((SimpleNode) basicSortExp.jjtGetChild(0)).getId();
+		switch (id) {
+		case SparcTranslatorTreeConstants.JJTNUMERICRANGE:
+			return generateInstances((ASTnumericRange) basicSortExp
+					.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTIDENTIFIERRANGE:
+			return generateInstances((ASTidentifierRange) basicSortExp
+					.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTSORTNAME:
+			ASTsortExpression expr = sortNameToExpression
+					.get(basicSortExp.image);
+			// from parsing phase we know that "expr" is restricted to basic
+			// sorts,
+			// but we still follow the general procedure
+			return generateInstances_p(expr);
+		case SparcTranslatorTreeConstants.JJTCONSTANTTERMLIST:
+			return generateInstances((ASTconstantTermList)basicSortExp
+					.jjtGetChild(0));
+		}
+		return null;
+	}
+
+	/**
+	 * Generate all instances of concatenation
+	 * 
+	 * @param jjtGetChild
+	 *            AST node describing the concatenation
+	 * @return all the instances obtained by the concatenation
+	 * @throws ParseException
+	 */
+	private HashSet<String> generateInstances(ASTconcatenation concatenationExpr)
+			throws ParseException {
+		ArrayList<ASTbasicSort> sortList = new ArrayList<ASTbasicSort>();
+		for (int i = 0; i < concatenationExpr.jjtGetNumChildren(); i++) {
+			sortList.add((ASTbasicSort) concatenationExpr.jjtGetChild(i));
+		}
+		return generateInstances(sortList, 0);
+	}
+
+	/**
+	 * Generate lexicographically next string with length <=maxLength
+	 * 
+	 * @param currentString
+	 * @param maxLength
+	 * @return
+	 */
+	String generateNextString(String currentString, int maxLength) {
+		int currentIndex = currentString.length() - 1;
+		while (currentIndex >= 0 && currentString.charAt(currentIndex) == 'z') {
+			currentIndex--;
+		}
+		if (currentIndex == -1) {
+			// need to increase length:
+			if (currentString.length() == maxLength) {
+				return null;
+			} else {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < maxLength + 1; i++) {
+					sb.append('a');
+				}
+				return sb.toString();
+			}
+		} else {
+			StringBuilder nextString = new StringBuilder();
+			if (currentIndex - 1 >= 0) {
+				nextString.append(currentString.substring(0, currentIndex));
+			}
+			nextString.append((char) (currentString.charAt(currentIndex) + 1));
+			for (int i = currentIndex + 1; i < currentString.length(); i++) {
+				nextString.append('a');
+			}
+			return nextString.toString();
+		}
+	}
+
+	/**
+	 * Generate all strings s ,such that from<=s<=to and |from|<=|s|<=|to|
+	 * 
+	 * @param from
+	 *            first string from the range
+	 * @param to
+	 *            last string from the range
+	 * @return set of generated strings
+	 */
+	HashSet<String> generateStrings(String from, String to) {
+		HashSet<String> result = new HashSet<String>();
+		result.add(from);
+		String currentString = from;
+		int maxLength = to.length();
+		while ((currentString = generateNextString(currentString, maxLength)) != null) {
+			result.add(currentString);
+		}
+		return result;
+	}
+
+	/**
+	 * Generate all strings s of given identifier range from..to ,such that
+	 * from<=s<=to and |from|<=|s|<=|to| @ * @return set of generated strings
+	 */
+	private HashSet<String> generateInstances(ASTidentifierRange identifierRange) {
+		String[] range = identifierRange.image.split(" ");
+		return generateStrings(range[0], range[1]);
+	}
+
+	/**
+	 * Generate all instances of a set expression
+	 * 
+	 * @param setExpr
+	 *            node of abstract syntax tree representing set expression
+	 * @return set of strings belonging to language described by se
+	 * @throws ParseException
+	 *             if setExpr produces too many instances
+	 */
+	private HashSet<String> generateInstances(ASTsetExpression setExpr)
+			throws ParseException {
+		return generateInstances((ASTadditiveSetExpression) setExpr
+				.jjtGetChild(0));
 	}
 
 	/**
@@ -165,12 +366,12 @@ public class InstanceGenerator {
 	 * @throws ParseException
 	 *             if se produces too many instances
 	 */
-	private HashSet<String> generateInstances(ASTadditiveSortExpression adde)
+	private HashSet<String> generateInstances(ASTadditiveSetExpression adde)
 			throws ParseException {
 		// TODO Auto-generated method stub
 		HashSet<String> result = new HashSet<String>();
 		for (int i = 0; i < adde.jjtGetNumChildren(); i++) {
-			HashSet<String> newInstances = generateInstances((ASTmultiplicativeSortExpression) (adde
+			HashSet<String> newInstances = generateInstances((ASTmultiplicativeSetExpression) (adde
 					.jjtGetChild(i)));
 			if (newInstances == null) {
 				throw new ParseException("Rule at " + ruleBeginLine
@@ -195,44 +396,47 @@ public class InstanceGenerator {
 	 *             if se produces too many instances
 	 */
 	private HashSet<String> generateInstances(
-			ASTmultiplicativeSortExpression multe) throws ParseException {
+			ASTmultiplicativeSetExpression multe) throws ParseException {
 		HashSet<String> result = new HashSet<String>();
 		for (int i = 0; i < multe.jjtGetNumChildren(); i++) {
 			if (i == 0) {
-				result = generateInstances((ASTunarySortExpression) (multe
+				result = generateInstances((ASTunarySetExpression) (multe
 						.jjtGetChild(i)));
 			} else {
 				result = intersectSets(result,
-						generateInstances((ASTunarySortExpression) (multe
+						generateInstances((ASTunarySetExpression) (multe
 								.jjtGetChild(i))));
 				;
 			}
 		}
 		return result;
 	}
-    /**
-     * Create term string from provided predicate names and arguments
-     * 
-     */
-	private String createTermString(String termName,ArrayList<String> arguments) {
-		StringBuilder result=new StringBuilder();
+
+	/**
+	 * Create term string from provided predicate names and arguments
+	 * 
+	 */
+	private String createTermString(String termName, ArrayList<String> arguments) {
+		StringBuilder result = new StringBuilder();
 		result.append(termName);
-		if(arguments.size()!=0) {
+		if (arguments.size() != 0) {
 			result.append("(");
-			boolean first=true;
-			for(String argument:arguments) {
-				if(first) {
-					first=false;
-				}
-				else {
+			boolean first = true;
+			for (String argument : arguments) {
+				if (first) {
+					first = false;
+				} else {
 					result.append(',');
 				}
 				result.append(argument);
 			}
 			result.append(")");
-	   }
-	   return result.toString();
+		}
+		return result.toString();
 	}
+
+	// TODO: Condition needs to be redone
+
 	/**
 	 * Recursively generate strings with given prefix and suffix composed from
 	 * all possible combinations of strings from alist ended by closing
@@ -246,22 +450,19 @@ public class InstanceGenerator {
 	 *            start index of alist from which strings will be taken
 	 * @return set of generated strings
 	 */
-	private HashSet<String> generateInstances(String termName,ArrayList<String> arguments,
-			ArrayList<HashSet<String>> alist, int index,Condition cond) {
-		if(arguments==null) arguments=new ArrayList<String>();
+	private HashSet<String> generateInstances(String termName,
+			ArrayList<String> arguments, ArrayList<HashSet<String>> alist,
+			int index, ASTcondition cond) {
+		if (arguments == null)
+			arguments = new ArrayList<String>();
 		HashSet<String> result = new HashSet<String>();
 		// last element
 		if (index == alist.size() - 1) {
 
 			for (String s : alist.get(index)) {
 				// closing parenthesis
-				//TODO: add condition check!
-			
 				arguments.add(s);
-				if(cond==null || 
-					cond.checkStrings(arguments.get(cond.getFirstArgument()),
-							arguments.get(cond.getSecondArgument())))
-				{
+				if (cond == null || new Condition().check(cond, arguments)) {
 					result.add(createTermString(termName, arguments));
 				}
 
@@ -271,8 +472,8 @@ public class InstanceGenerator {
 			// recursive call
 			for (String s : alist.get(index)) {
 				arguments.add(s);
-				result.addAll(generateInstances(termName ,arguments, alist,
-						index + 1,cond));
+				result.addAll(generateInstances(termName, arguments, alist,
+						index + 1, cond));
 				arguments.remove(index);
 			}
 		}
@@ -288,64 +489,81 @@ public class InstanceGenerator {
 	 * @throws ParseException
 	 *             there are too many instances
 	 */
-	private HashSet<String> generateInstances(ASTunarySortExpression une)
+	private HashSet<String> generateInstances(ASTunarySetExpression une)
 			throws ParseException {
-		if (une.jjtGetNumChildren() > 0
-				&& ((SimpleNode) (une.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTSORTEXPRESSIONLIST) {
-			ASTsortExpressionList elist = (ASTsortExpressionList) (une
-					.jjtGetChild(0));
-			ArrayList<HashSet<String>> alist = new ArrayList<HashSet<String>>();
-			for (int i = 0; i < elist.jjtGetNumChildren(); i++) {
-				alist.add(generateInstances_p((ASTsortExpression) (elist
-						.jjtGetChild(i))));
-			}
-			
-			String initprefix = une.image.substring(0,
-					une.image.indexOf('('));
-			Condition cond=null;
-			
-			//remove condition:
-			if(initprefix.indexOf('{')!=-1) {
-			    cond=new Condition(initprefix.substring(initprefix.indexOf('{'),initprefix.indexOf('}')+1));
-				initprefix=
-						initprefix.substring(0,initprefix.indexOf('{'));
-			}
-		
-			return generateInstances(initprefix,null, alist, 0,cond);
-		} else if (une.image.endsWith(")")) {
-			return generateInstances_p((ASTsortExpression) une.jjtGetChild(0));
-		} else if (une.image.matches("[a-z][a-z,A-Z,0-9,_]*")) {// sort name
-			return generateInstances_p(sortNameToExpression.get(une.image));
-		} else if (une.image.startsWith("$")) {// regular expression
-			RegularExpression re = new RegularExpression(
-					(ASTregularExpression) une.jjtGetChild(0));
-			return re.generate();
-		} else { // range
-			HashSet<String> result = new HashSet<String>();
-			String[] range = une.image.split(" ");
-			int from = Integer.parseInt(range[0]);
-			int to = Integer.parseInt(range[1]);
-			for (int i = from; i <= to; i++) {
-				result.add(Integer.toString(i));
-			}
-			return result;
+		// t=< POUND_SIGN > sortName()
+		// n=curlyBrackets()
+		// setExpression() < CP >
+		SimpleNode child = (SimpleNode) une.jjtGetChild(0);
+		if (child.getId() == SparcTranslatorTreeConstants.JJTSORTNAME) {
+			return generateInstances_p(sortNameToExpression.get(child
+					.toString()));
+		} else if (child.getId() == SparcTranslatorTreeConstants.JJTCURLYBRACKETS) {
+			ASTcurlyBrackets curlyBrackets = (ASTcurlyBrackets) child;
+			ASTconstantTermList termList = (ASTconstantTermList) curlyBrackets
+					.jjtGetChild(0);
+			return generateInstances(termList);
+		} else { // setExpression
+			return generateInstances((ASTsetExpression) child);
 		}
 	}
+	
+	private HashSet<String> generateInstances(ASTconstantTermList termList) {
+		HashSet<String> result = new HashSet<String>();
+		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
+			ASTconstantTerm constantTerm = (ASTconstantTerm) termList
+					.jjtGetChild(i);
+			result.add(constantTerm.toString());
+		}
+		return result;
+	}
 
-}
+	/**
+	 * Generate instances of a numeric range
+	 * 
+	 * @param r
+	 *            AST node describing the numeric range
+	 * @return set of instances belonging to the sort
+	 */
+	HashSet<String> generateInstances(ASTnumericRange r) {
+		String[] range = r.image.split(" ");
+		int from = Integer.parseInt(range[0]);
+		int to = Integer.parseInt(range[1]);
+		return generateInstances(from, to);
+	}
 
-/**
- * class representing sort name and instances which belong to the sort
- */
-class GSort {
-	ASTsortExpression se;
-	String sortName;
-	HashSet<String> instances;
+	/**
+	 * Generate instances of a numeric range, consisting of consecutive numbers
+	 * [from..to]
+	 * 
+	 * @param from
+	 *            first number from numeric range
+	 * @param to
+	 *            last number
+	 * @return
+	 */
 
-	public GSort(ASTsortExpression se, String sortName,
-			HashSet<String> instances) {
-		this.se = se;
-		this.sortName = sortName;
-		this.instances = instances;
+	HashSet<String> generateInstances(int from, int to) {
+		HashSet<String> result = new HashSet<String>();
+		for (int i = from; i <= to; i++) {
+			result.add(Integer.toString(i));
+		}
+		return result;
+	}
+
+	/**
+	 * class representing sort name and instances which belong to the sort
+	 */
+	class GSort {
+		ASTsortExpression se;
+		String sortName;
+		HashSet<String> instances;
+
+		public GSort(ASTsortExpression se, String sortName,
+				HashSet<String> instances) {
+			this.se = se;
+			this.sortName = sortName;
+			this.instances = instances;
+		}
 	}
 }

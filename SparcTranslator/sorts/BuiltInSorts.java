@@ -6,9 +6,7 @@ import java.util.HashMap;
 
 import parser.ASTsortExpression;
 import parser.ParseException;
-import parser.RChoiceRemover;
-import parser.RIdentifierSplitVisitor;
-import parser.RRepeatitionRemover;
+
 import parser.SimpleNode;
 import parser.SparcTranslator;
 
@@ -57,12 +55,6 @@ public class BuiltInSorts {
 			try {
 				e = p.sortExpression();
 				// process regular expressions
-				RIdentifierSplitVisitor v = new RIdentifierSplitVisitor();
-				e.jjtAccept(v, null);
-				RRepeatitionRemover removeNMrepeatitions = new RRepeatitionRemover();
-				e.jjtAccept(removeNMrepeatitions, null);
-				RChoiceRemover choiceremover = new RChoiceRemover();
-				e.jjtAccept(choiceremover, null);
 			} catch (ParseException exc) {
 				// TODO Auto-generated catch block
 				exc.printStackTrace();

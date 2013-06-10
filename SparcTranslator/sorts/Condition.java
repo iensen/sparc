@@ -1,9 +1,22 @@
 package sorts;
 
+import java.util.ArrayList;
+
+import parser.ASTandCondition;
+import parser.ASTcondition;
+import parser.ASTorCondition;
+import parser.ASTunaryCondition;
+import parser.SimpleNode;
+import parser.SparcTranslatorTreeConstants;
+
 /**
  * Condition parser
  * 
  */
+enum TermType{
+	integer,identifier,functionalSymbol;
+}
+
 public class Condition {
 	/**
 	 * Constructor, parses condition into class fields
@@ -11,80 +24,134 @@ public class Condition {
 	 * @param conditionString
 	 *            string to parse
 	 */
-	public Condition(String conditionString) {
-		// example conditionString: {&([0])&!=&([1])&}
-		// remove parenthesis
-		conditionString = conditionString.replace("(", "");
-		conditionString = conditionString.replace(")", "");
-		int index = 0;
-		// find first argument index
-		while (conditionString.charAt(index) != '[')
-			++index;
-		++index;
-		StringBuilder firstArgumentStr = new StringBuilder();
-		while (conditionString.charAt(index) != ']') {
-			firstArgumentStr.append(conditionString.charAt(index));
-			++index;
+
+	public Condition() {
+
+	}
+ 
+	
+	/**
+	 * Check condition on arguments
+	 * @param cond AST node specifying the condition
+	 * @param arguments
+	 * @return true if the condition is satisfied and false otherwise
+	 */
+   public boolean check(ASTcondition cond, ArrayList<String> arguments) {
+	   return checkCondition((ASTorCondition)cond.jjtGetChild(0),arguments);
+   }
+   
+	/**
+	 * Check condition (disjunction) on arguments
+	 * @param cond AST node specifying the condition
+	 * @param arguments
+	 * @return true if the condition is satisfied and false otherwise
+	 */
+	private boolean checkCondition(ASTorCondition orCondition,
+		ArrayList<String> arguments) {
+		for(int i=0;i<orCondition.jjtGetNumChildren();i++) {
+			if(checkCondition((ASTandCondition)orCondition.jjtGetChild(i),arguments))
+			{
+			   return true;
+			}
 		}
-		firstArgument = Integer.parseInt(firstArgumentStr.toString());
-		index++;// switch to start of relation
-		StringBuilder relationString = new StringBuilder();
-		while (conditionString.charAt(index) != '[') {
-			relationString.append(conditionString.charAt(index));
-			++index;
+		
+	    return false;
+   }
+
+	/**
+	 * Check condition (conjunction) on arguments
+	 * @param cond AST node specifying the condition
+	 * @param arguments
+	 * @return true if the condition is satisfied and false otherwise
+	 */
+	private boolean checkCondition(ASTandCondition andCondition,ArrayList<String> arguments) {
+	    for (int i=0;i<andCondition.jjtGetNumChildren();i++) {
+	    	if(!checkCondition((ASTunaryCondition)andCondition.jjtGetChild(i),arguments)) {
+	    		return false;
+	    	}
+	    }
+	    return true;
+	}
+	/**
+	 * Retrieve type of the term
+	 * @param s string containint the term
+	 */
+	private TermType getTermType(String s){
+		if(s.indexOf(')')!=-1) {
+			return TermType.functionalSymbol;
 		}
+		else{
+			for(int i=0;i<s.length();i++) {
+				if(!Character.isDigit(s.charAt(i))) {
+					return TermType.identifier;
+				}
+			}
+			return TermType.integer;
+		}
+	}
+	/**
+	 * Check condition (relation or general condition) on arguments
+	 * @param cond AST node specifying the condition
+	 * @param arguments
+	 * @return true if the condition is satisfied and false otherwise
+	 */
+	private boolean checkCondition(ASTunaryCondition unaryCond,ArrayList<String> arguments) {
+		if(unaryCond.jjtGetNumChildren()==0
+		   && ((SimpleNode)unaryCond.jjtGetChild(0)).getId()==
+		SparcTranslatorTreeConstants.JJTCONDITION ) {
+			return check((ASTcondition)unaryCond.jjtGetChild(0),arguments);	
+		}
+		String [] relationArray=unaryCond.image.split(" ");
+		
+		int arg1=Integer.parseInt(relationArray[0]);
+		int arg2=Integer.parseInt(relationArray[2]);
+		String relationString=relationArray[1];
+		Relation relation=null;
 		// parse relation
 		if (relationString.toString().equals("<")) {
-			relation = Relation.SMALLER;
+		relation = Relation.SMALLER;
 		} else if (relationString.toString().equals(">")) {
-			relation = Relation.GREATER;
+		relation = Relation.GREATER;
 		} else if (relationString.toString().equals("!=")) {
-			relation = Relation.NOTEQUAL;
+		relation = Relation.NOTEQUAL;
 		} else if (relationString.toString().equals(">=")) {
-			relation = Relation.GREATEROREQUAL;
+		relation = Relation.GREATEROREQUAL;
 		} else if (relationString.toString().equals("<=")) {
-			relation = Relation.SMALLEROREQUAL;
+		relation = Relation.SMALLEROREQUAL;
 		} else if (relationString.toString().equals("=")) {
-			relation = Relation.EQUAL;
+		relation = Relation.EQUAL;
 		}
-
-		index++;
-		// find second argument
-		StringBuilder secondArgumentStr = new StringBuilder();
-		while (conditionString.charAt(index) != ']') {
-			secondArgumentStr.append(conditionString.charAt(index));
-			++index;
+		
+		String argument1=arguments.get(arg1);
+		String argument2=arguments.get(arg2);
+		TermType type1=getTermType(argument1);
+		TermType type2=getTermType(argument2);
+		if(type1!=type2) {
+			if(relation!=Relation.NOTEQUAL) {
+				return false;
+			}
+			else {
+				return true;
+			}
 		}
-		secondArgument = Integer.parseInt(secondArgumentStr.toString());
+		
+		else switch(type1) {
+		 case integer: return checkIntegerRelation(relation,Integer.parseInt(argument1),Integer.parseInt(argument2));
+		 case identifier: return checkStringRelation(relation,argument1,argument2);
+		 case functionalSymbol: return checkFunctionalRelation(relation,argument1,argument2); 
+		 default: return false;
+		}
 	}
 
-	private int firstArgument;
 
-	/**
-	 * @return first condition argument
-	 */
-	public int getFirstArgument() {
-		return firstArgument;
+	private boolean checkFunctionalRelation(Relation relation,String f1,String f2) {
+		switch(relation) {
+		  case NOTEQUAL: return f1.compareTo(f2)!=0;
+		  case EQUAL: return f1.compareTo(f2)==0;
+		  default: return false;
+		} 
 	}
-
-	private int secondArgument;
-
-	/**
-	 * @return second argument
-	 */
-	public int getSecondArgument() {
-		return secondArgument;
-	}
-
-	private Relation relation;
-
-	/**
-	 * @return relation
-	 */
-	public Relation getRelation() {
-		return relation;
-	}
-	public static boolean checkRelation(Relation relation,int o1,int o2) {
+    private boolean checkIntegerRelation(Relation relation,int o1,int o2) {
 		switch(relation) {
 		  case SMALLER: return o1<o2;
 		  case GREATER: return o1>o2;
@@ -96,11 +163,8 @@ public class Condition {
 		}
 	}
 	
-	public static boolean checkRelation(Relation relation,String s1,String s2) {
-		if((s1.indexOf('(')!=-1 || s1.indexOf('(')!=-1) && 
-				(relation!=Relation.EQUAL && relation !=Relation.NOTEQUAL)) {
-					return false;
-				}
+	private boolean checkStringRelation(Relation relation,String s1,String s2) {
+
 		switch(relation) {
 		  case SMALLER: return s1.compareTo(s2)<0;
 		  case GREATER: return s1.compareTo(s2)>0;
@@ -110,13 +174,5 @@ public class Condition {
 		  case EQUAL: return s1.compareTo(s2)==0;
 		  default: return false;
 		}
-	}
-	
-	public boolean checkInts(int o1,int o2) {
-	    return checkRelation(relation,o1,o2);
-	}
-	
-	public boolean checkStrings(String s1,String s2) {
-		return checkRelation(relation,s1,s2);
 	}
 }

@@ -8,7 +8,7 @@ public enum Relation {
 	Relation(String image) {
 		this.image = image;
 	}
-
+    
 	public String toString() {
 		return image;
 	}

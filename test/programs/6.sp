@@ -1,7 +1,10 @@
-sort definitions
-s=$a.
-predicate declarations
-p(s).
-q(s).
-program rules
-p(a) :- not q(X).
+sorts
+#int=1..5.
+predicates
+p(#int).
+q(#int).
+rules
+p(1).
+p(2).
+p(3).
+q(X+2):-p(X).

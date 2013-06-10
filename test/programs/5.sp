@@ -1,11 +1,13 @@
-sort definitions
-int=1..5.
-predicate declarations
-p(int).
-q(int).
-program rules
+sorts
+#s1={a,b,c}.
 
-q(X+2):-p(X).
-p(1).
-p(2).
-p(3).
+predicates
+
+p(#s1).
+q(#s1).
+
+rules
+
+label1: q(a):+.
+label2: q(b):+p(a).
+label3: :+p(c).

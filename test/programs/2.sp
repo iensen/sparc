@@ -1,15 +1,9 @@
-sort definitions
-s1=$a|b|c.
-predicate declarations
-p(s1).
-r(s1).
-program rules
-p(eee) :- not -p(a).
--p(a) :+.
-p(b):- not -p(b).
--p(b) :+.
-p(c) :- not -p(c).
--p(c):+.
-r(a):-p(a).
--r(a):-p(b).
--r(a):-p(c).
+sorts
+#s1={a}.  % term "a" has sort "s1"
+predicates
+p(#s1).  %predicate  "p" accepts terms of the sort s1 
+q(#s1).  %predicate  "q" accepts terms of the sort s1 
+rules
+p(b) :- not q(a).
+-p(a).
+q(a):+.  % this is a CR-RULE.

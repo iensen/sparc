@@ -25,85 +25,85 @@ public interface SparcTranslatorConstants {
   /** RegularExpression Id. */
   int MOD = 7;
   /** RegularExpression Id. */
-  int IDENTIFIER = 8;
+  int OR = 8;
   /** RegularExpression Id. */
-  int VARIABLE = 9;
+  int AND = 9;
   /** RegularExpression Id. */
-  int NONZERODIGIT = 10;
+  int IDENTIFIER = 10;
   /** RegularExpression Id. */
-  int POSITIVE_INTEGER = 11;
+  int VARIABLE = 11;
   /** RegularExpression Id. */
-  int ZERO = 12;
+  int NONZERODIGIT = 12;
   /** RegularExpression Id. */
-  int PLUS = 13;
+  int POSITIVE_INTEGER = 13;
   /** RegularExpression Id. */
-  int MULT = 14;
+  int ZERO = 14;
   /** RegularExpression Id. */
-  int DIV = 15;
+  int PLUS = 15;
   /** RegularExpression Id. */
-  int EQ = 16;
+  int MULT = 16;
   /** RegularExpression Id. */
-  int NOTEQ = 17;
+  int DIV = 17;
   /** RegularExpression Id. */
-  int GT = 18;
+  int EQ = 18;
   /** RegularExpression Id. */
-  int GTEQ = 19;
+  int NOTEQ = 19;
   /** RegularExpression Id. */
-  int SM = 20;
+  int GT = 20;
   /** RegularExpression Id. */
-  int SMEQ = 21;
+  int GTEQ = 21;
   /** RegularExpression Id. */
-  int OP = 22;
+  int SM = 22;
   /** RegularExpression Id. */
-  int CP = 23;
+  int SMEQ = 23;
   /** RegularExpression Id. */
-  int OB = 24;
+  int OP = 24;
   /** RegularExpression Id. */
-  int CB = 25;
+  int CP = 25;
   /** RegularExpression Id. */
-  int ORRSEP = 26;
+  int OB = 26;
   /** RegularExpression Id. */
-  int CRRSEP = 27;
+  int CB = 27;
   /** RegularExpression Id. */
-  int WEAKSEP = 28;
+  int ORRSEP = 28;
   /** RegularExpression Id. */
-  int COMMA = 29;
+  int CRRSEP = 29;
   /** RegularExpression Id. */
-  int DOT = 30;
+  int WEAKSEP = 30;
   /** RegularExpression Id. */
-  int COLON = 31;
+  int COMMA = 31;
   /** RegularExpression Id. */
-  int SEMICOLON = 32;
+  int DOT = 32;
   /** RegularExpression Id. */
-  int DOLLAR = 33;
+  int COLON = 33;
   /** RegularExpression Id. */
-  int COMPLEMENT = 34;
+  int SEMICOLON = 34;
   /** RegularExpression Id. */
-  int OR = 35;
+  int DOLLAR = 35;
   /** RegularExpression Id. */
-  int AGGREGATE_COUNT = 36;
+  int COMPLEMENT = 36;
   /** RegularExpression Id. */
-  int AGGREGATE_SUM = 37;
+  int HEAD_OR = 37;
   /** RegularExpression Id. */
-  int AGGREGATE_MIN = 38;
+  int AGGREGATE_COUNT = 38;
   /** RegularExpression Id. */
-  int AGGREGATE_MAX = 39;
+  int AGGREGATE_SUM = 39;
   /** RegularExpression Id. */
-  int SOB = 40;
+  int AGGREGATE_MIN = 40;
   /** RegularExpression Id. */
-  int LETTER = 41;
+  int AGGREGATE_MAX = 41;
   /** RegularExpression Id. */
-  int DIGIT = 42;
+  int OSB = 42;
   /** RegularExpression Id. */
-  int SCB = 43;
+  int OCB = 43;
   /** RegularExpression Id. */
-  int IDENTIFIER_WITH_OP = 44;
+  int POUND_SIGN = 44;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM_WITH_OP = 45;
+  int IDENTIFIER_WITH_OP = 45;
   /** RegularExpression Id. */
-  int PARAM_END = 46;
+  int NEGATIVE_ATOM_WITH_OP = 46;
   /** RegularExpression Id. */
-  int PARAM_BEGIN = 47;
+  int NEGATIVE_SORT_ATOM_WITH_OP = 47;
   /** RegularExpression Id. */
   int SINGLE_LINE_COMMENT = 48;
   /** RegularExpression Id. */
@@ -128,6 +128,8 @@ public interface SparcTranslatorConstants {
     "<PROGRULDEFKEYWORD>",
     "<NOT>",
     "\"mod\"",
+    "\"or\"",
+    "\"and\"",
     "<IDENTIFIER>",
     "<VARIABLE>",
     "<NONZERODIGIT>",
@@ -161,13 +163,11 @@ public interface SparcTranslatorConstants {
     "\"#min\"",
     "\"#max\"",
     "\"[\"",
-    "<LETTER>",
-    "<DIGIT>",
     "\"]\"",
+    "\"#\"",
     "<IDENTIFIER_WITH_OP>",
     "<NEGATIVE_ATOM_WITH_OP>",
-    "\"]\"",
-    "\"[\"",
+    "<NEGATIVE_SORT_ATOM_WITH_OP>",
     "<SINGLE_LINE_COMMENT>",
     "<SPACE>",
     "\"-\"",

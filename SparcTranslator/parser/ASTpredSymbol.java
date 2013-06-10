@@ -2,31 +2,52 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
-public
-class ASTpredSymbol extends SimpleNode {
+public class ASTpredSymbol extends SimpleNode {
 
-  boolean negative=false;
-  public ASTpredSymbol(int id) {
-    super(id);
-  }
+	boolean negative = false;
+	boolean hasPoundSign = false;
+	String translatedImage = null;
 
-  public ASTpredSymbol(SparcTranslator p, int id) {
-    super(p, id);
-  }
+	public ASTpredSymbol(int id) {
+		super(id);
+	}
 
+	public ASTpredSymbol(SparcTranslator p, int id) {
+		super(p, id);
+	}
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
-  
-  public String toString() {
-	StringBuilder result=new StringBuilder();
-	 if(negative) {
-		 result.append("-");
-	 }
-	 result.append(image);
-	 return result.toString();
-  }
+	public void setPoundSign(boolean p) {
+		this.hasPoundSign = p;
+	}
+
+	public boolean hasPoundSign() {
+		return hasPoundSign;
+	}
+
+	/** Accept the visitor. **/
+	public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+
+	public void setTranslatedImage(String image) {
+		this.translatedImage = image;
+	}
+
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		if (negative) {
+			result.append("-");
+		}
+		if (translatedImage != null) {
+			result.append(translatedImage);
+		} else {
+			result.append(image);
+		}
+
+		return result.toString();
+	}
 }
-/* JavaCC - OriginalChecksum=91ab978165e8da7e3386c834953008b7 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=91ab978165e8da7e3386c834953008b7 (do not edit this
+ * line)
+ */

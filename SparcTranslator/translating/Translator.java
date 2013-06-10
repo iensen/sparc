@@ -28,6 +28,7 @@ import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
+import translating.InstanceGenerator.GSort;
 
 public class Translator {
 	// mapping from sort names to sort expressions assigned to the sorts
@@ -107,7 +108,8 @@ public class Translator {
 		labelId = 0;
 
 		for (String s : generatingSorts) {
-			gen.addSort(s, sortNameToExpression.get(s));
+			String s2=predicateArgumentSorts.get("#"+s).get(0);
+			gen.addSort(s2, sortNameToExpression.get(s));
 		}
 
 		translateDirectives(program);
@@ -523,12 +525,14 @@ public class Translator {
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 			for (ASTterm term : localFetchedTerms.keySet()) {
 				String sortName = localFetchedTerms.get(term);
-				newAtoms.add(createSortAtom(sortName, term));
+				String sortName2=predicateArgumentSorts.get("#"+sortName).get(0);
+				newAtoms.add(createSortAtom(sortName2, term));
 				if (!fetchedTerms.containsKey(term.toString())) {
 					fetchedTerms.put(term.toString(), new ArrayList<String>());
 				}
 				fetchedTerms.get(term.toString()).add(sortName);
-				gen.addSort(sortName, sortNameToExpression.get(sortName));
+
+				gen.addSort(sortName2, sortNameToExpression.get(sortName));
 			}
 			if (isAggregateElement) {
 				addAtomsToAggregateElement((ASTaggregateElement) node, newAtoms);
@@ -577,12 +581,13 @@ public class Translator {
 		ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 		for (ASTterm term : globalFetchedTerms.keySet()) {
 			String sortName = globalFetchedTerms.get(term);
-			newAtoms.add(createSortAtom(sortName, term));
+			String sortName2=predicateArgumentSorts.get("#"+sortName).get(0);
+			newAtoms.add(createSortAtom(sortName2, term));
 			if (!fetchedTerms.containsKey(term.toString())) {
 				fetchedTerms.put(term.toString(), new ArrayList<String>());
 			}
 			fetchedTerms.get(term.toString()).add(sortName);
-			gen.addSort(sortName, sortNameToExpression.get(sortName));
+			gen.addSort(sortName2, sortNameToExpression.get(sortName));
 		}
 		addAtomsToRulesBody(rule, newAtoms);
 	}

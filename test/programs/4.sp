@@ -1,13 +1,15 @@
-sort definitions
-s1=$a|b|c.
-
-predicate declarations
-
-p(s1).
-q(s1).
-
-program rules
-
-label1: q(a):+.
-label2: q(b):+p(a).
-label3: :+p(c).
+sorts
+#s1={a,b,c}.
+predicates
+p(#s1).
+r(#s1).
+rules
+p(a) :- not -p(a).
+-p(a) :+.
+p(b):- not -p(b).
+-p(b) :+.
+p(c) :- not -p(c).
+-p(c):+.
+r(a):-p(a).
+-r(a):-p(b).
+-r(a):-p(c).

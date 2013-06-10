@@ -1,46 +1,54 @@
 package typechecking;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import parser.ASTadditiveSortExpression;
+
+import parser.ASTadditiveSetExpression;
 import parser.ASTaggregate;
 import parser.ASTaggregateElement;
 import parser.ASTaggregateElements;
-import parser.ASTarithmeticTerm;
 import parser.ASTatom;
+import parser.ASTbasicSort;
 import parser.ASTbody;
 import parser.ASTchoice_element;
 import parser.ASTchoice_elements;
 import parser.ASTchoice_rule;
+import parser.ASTconcatenation;
+import parser.ASTcondition;
+import parser.ASTconstantTerm;
+import parser.ASTconstantTermList;
+import parser.ASTcurlyBrackets;
 import parser.ASTdisjunction;
 import parser.ASTextendedNonRelAtom;
 import parser.ASTextendedSimpleAtomList;
+import parser.ASTfunctionalSymbol;
 import parser.ASThead;
-import parser.ASTmultiplicativeSortExpression;
+import parser.ASTidentifierRange;
+import parser.ASTmultiplicativeSetExpression;
 import parser.ASTnonRelAtom;
+import parser.ASTnumericRange;
 import parser.ASTpredSymbol;
 import parser.ASTprogramRule;
 import parser.ASTprogramRules;
-import parser.ASTregularExpression;
+import parser.ASTsetExpression;
 import parser.ASTsimpleAtom;
 import parser.ASTsortExpression;
 import parser.ASTsortExpressionList;
-import parser.ASTsymbolicConstant;
 import parser.ASTsymbolicFunction;
 import parser.ASTsymbolicTerm;
 import parser.ASTterm;
 import parser.ASTtermList;
-import parser.ASTunarySortExpression;
+import parser.ASTunarySetExpression;
 import parser.ASTunlabeledProgramCrRule;
 import parser.ASTunlabeledProgramRule;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
-import re.RegularExpression;
+import sorts.BuiltInSorts;
 import sorts.Condition;
-import sorts.Relation;
-import translating.InstanceGenerator;
+
 
 /**
  * Recursive descent typechecking implementation
@@ -55,8 +63,11 @@ public class TypeChecker {
 	protected HashMap<String, Long> constantsMapping;
 	// name of SPARC file (used for error reporting).
 	private String inputFileName = "";
-    // sort instance generator:
-	private InstanceGenerator gen;
+	// List of all terms occuring in brackets
+	private HashSet<String> curlyBracketTerms;
+	// List of all defined record names
+	private HashSet<String> definedRecordNames;
+
 	/**
 	 * Constructor
 	 * 
@@ -67,11 +78,13 @@ public class TypeChecker {
 	public TypeChecker(HashMap<String, ASTsortExpression> sortNameToExpression,
 			HashMap<String, ArrayList<String>> predicateArgumentSorts,
 			HashMap<String, Long> constantsMapping,
-			InstanceGenerator gen) {
+			HashSet<String> curlyBracketTerms,
+			HashSet<String> definedRecordNames) {
 		this.sortNameToExpression = sortNameToExpression;
 		this.predicateArgumentSorts = predicateArgumentSorts;
 		this.constantsMapping = constantsMapping;
-		this.gen=gen;
+		this.curlyBracketTerms = curlyBracketTerms;
+		this.definedRecordNames = definedRecordNames;
 	}
 
 	/**
@@ -114,6 +127,7 @@ public class TypeChecker {
 					.jjtGetChild(0));
 		}
 	}
+
 	/**
 	 * Fetch variables from given node
 	 * 
@@ -133,6 +147,7 @@ public class TypeChecker {
 		}
 		return result;
 	}
+
 	/**
 	 * Do typechecking of an unlabeled rule given by AST node.
 	 * 
@@ -145,14 +160,15 @@ public class TypeChecker {
 			throws ParseException {
 		if (rule.image.trim().equals(":~")) {// weak constraint
 
-			HashSet<String> varsInParams=null;
-		//	System.out.println(rule.jjtGetNumChildren());
-			if(rule.jjtGetNumChildren()>1)
-			    varsInParams = 
-					  fetchVariableNames((SimpleNode) rule.jjtGetChild(1));
-			else varsInParams=new HashSet<String>();
-			HashSet<String> varsInBody = 
-					  fetchVariableNames((SimpleNode) rule.jjtGetChild(0));
+			HashSet<String> varsInParams = null;
+			// System.out.println(rule.jjtGetNumChildren());
+			if (rule.jjtGetNumChildren() > 1)
+				varsInParams = fetchVariableNames((SimpleNode) rule
+						.jjtGetChild(1));
+			else
+				varsInParams = new HashSet<String>();
+			HashSet<String> varsInBody = fetchVariableNames((SimpleNode) rule
+					.jjtGetChild(0));
 			for (String s : varsInParams) {
 				if (!varsInBody.contains(s)) {
 					throw new ParseException(inputFileName + ": "
@@ -161,7 +177,7 @@ public class TypeChecker {
 							+ rule.getBeginColumn()
 							+ " does not occur in the body");
 				}
-				
+
 			}
 			checkBody(((ASTbody) (rule.jjtGetChild(0))));
 		} else if (rule.jjtGetNumChildren() > 0
@@ -319,30 +335,123 @@ public class TypeChecker {
 			ASTsortExpressionList exprList, String predicateName,
 			int beginLine, int beginColumn) throws ParseException {
 		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
-			ASTterm termToCheck=(ASTterm)termList.jjtGetChild(i);
-			String sortName= predicateArgumentSorts.get(predicateName).get(i);
-			if (
-					termToCheck.hasVariables() && 
-					!checkTermWithVariables(termToCheck,sortName) ||
-					!termToCheck.hasVariables() && 
-					!checkTerm(termToCheck,
-					(ASTsortExpression) (exprList.jjtGetChild(i)))) {
-				throw new ParseException(inputFileName + ": "
-						+ "argument number " + (i + 1) + " of predicate "
-						+ predicateName + "/" + termList.jjtGetNumChildren()
-						+ ", \""
-						+ ((ASTterm) termList.jjtGetChild(i)).toString()
-						+ "\"," + " at line " + +beginLine + ", column "
-						+ beginColumn + " violates definition of sort " + "\""
-						+ sortName + "\"");
+			ASTterm termToCheck = (ASTterm) termList.jjtGetChild(i);
+			String sortName = predicateArgumentSorts.get(predicateName).get(i);
+			boolean isGround = termToCheck.isGround();
+			if (!isGround
+					&& !checkNonGroundTerm(termToCheck)
+					|| isGround
+					&& !checkTerm(termToCheck,
+							(ASTsortExpression) (exprList.jjtGetChild(i)))) {
+				if (isGround)
+					throw new ParseException(inputFileName + ": "
+							+ "argument number " + (i + 1) + " of predicate "
+							+ predicateName + "/"
+							+ termList.jjtGetNumChildren() + ", \""
+							+ ((ASTterm) termList.jjtGetChild(i)).toString()
+							+ "\"," + " at line " + +beginLine + ", column "
+							+ beginColumn + " violates definition of sort "
+							+ "\"" + sortName + "\"");
+				else {
+					throw new ParseException(inputFileName + ": "
+							+ "non-ground term \"" + termToCheck.toString()
+							+ "\" occuring  in program as " + +(i + 1)
+							+ " argument of predicate " + predicateName + "/"
+							+ termList.jjtGetNumChildren()
+						    + " at line " + +beginLine + ", column "
+							+ beginColumn + " is not a program term");
+				}
 			}
 		}
 	}
 
-	private boolean checkTermWithVariables(ASTterm termToCheck, String sortName) throws ParseException {
-            gen.addSort(sortName, sortNameToExpression.get(sortName));
-            Unifier unif=new Unifier(this);
-            return unif.unify(termToCheck,gen.getSortInstances(sortName));
+	/**
+	 * Check if the term with variables is a term of given progam
+	 * 
+	 * @param termToCheck
+	 * @param sortName
+	 * @return true if termToCheck is a program term
+	 * @throws ParseException
+	 */
+	private boolean checkNonGroundTerm(ASTterm termToCheck) {
+		SimpleNode child = (SimpleNode) termToCheck.jjtGetChild(0);
+		switch(child.getId()) {
+	    	case SparcTranslatorTreeConstants.JJTARITHMETICTERM:
+	    		return checkConstants(termToCheck);
+	    	case SparcTranslatorTreeConstants.JJTSYMBOLICTERM:
+	    		return checkNonGroundTerm((ASTsymbolicTerm) termToCheck
+						.jjtGetChild(0));
+	    	default:
+	    		return true;
+		}
+	}
+
+	private boolean checkNonGroundTerm(ASTsymbolicTerm symTerm) {
+		SimpleNode child0 = (SimpleNode) symTerm.jjtGetChild(0);
+		if (child0.getId() == SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT) {
+			TermCreator tc = new TermCreator(child0.image);
+			return isDomainElement(tc.createSimpleSymbolicTerm());
+		} else {// symbolic Function
+
+			String functionSymbol = child0.image.substring(0,
+					child0.image.length() - 1);
+			if (!definedRecordNames.contains(functionSymbol))
+				return false;
+
+			ASTtermList child1 = (ASTtermList) symTerm.jjtGetChild(1);
+
+			for (int i = 0; i < child1.jjtGetNumChildren(); i++) {
+				ASTterm term = (ASTterm) child1.jjtGetChild(i);
+				if (term.isGround()) {
+					if (!isDomainElement(term))
+						return false;
+				} else {
+					if (!checkNonGroundTerm(term))
+						return false;
+
+				}
+			}
+			return true;
+
+		}
+	}
+
+	/**
+	 * Check all constants in given n (a subnode of a root of arithmetic term)
+	 * 
+	 * @param n
+	 * @return true if all constants are in the range 0..maxint and false
+	 *         otherwise
+	 */
+	private boolean checkConstants(SimpleNode n) {
+		if (n.getId() == SparcTranslatorTreeConstants.JJTATOMICARITHMETICTERM) {
+			if (n.jjtGetNumChildren() == 0) {
+				int integer = Integer.parseInt(n.image);
+				return integer >= 0 && integer <= BuiltInSorts.getMaxInt();
+			}
+		}
+		boolean result = true;
+		for (int i = 0; i < n.jjtGetNumChildren(); i++) {
+			result = result & checkConstants((SimpleNode) n.jjtGetChild(i));
+		}
+		return result;
+	}
+
+	/**
+	 * Check if term t belongs to program domain
+	 * 
+	 * @param t
+	 * @return true if t is an element of program domain and false otherwise
+	 */
+	private boolean isDomainElement(ASTterm t) {
+		String termString = t.toString();
+		if (curlyBracketTerms.contains(termString))
+			return true;
+		for (ASTsortExpression se : sortNameToExpression.values()) {
+			if (checkTerm(t, se))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -469,7 +578,7 @@ public class TypeChecker {
 			checkChoiceRule((ASTchoice_rule) (head.jjtGetChild(0)));
 		}
 	}
-
+	
 	/**
 	 * Do typechecking of choice rule given by AST node
 	 * 
@@ -570,41 +679,150 @@ public class TypeChecker {
 	 *         evaluates to a value satisfying pattern described by regular
 	 *         expression and false otherwise
 	 */
-	private boolean checkTerm(ASTarithmeticTerm term, ASTregularExpression reg) {
-		TermEvaluator tr = new TermEvaluator(term);
-		if (!tr.isEvaluable()) {
-			return true;
-		} else {
-			RegularExpression regex = new RegularExpression(reg);
-			try {
-				return regex.check(Long.toString(tr.evaluate()));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return false;
-		}
-	}
 
 	/**
 	 * Check term for satisfying given sort expression
 	 * 
-	 * @param term
+	 * @param symterm
 	 *            to be checked
 	 * @param expr
 	 *            sort expression
 	 * @return true if given term is not valuable(i.e, it has variables) or it
 	 *         evaluates to a value satisfying pattern described by sort
 	 *         expression and false otherwise
-	 * @throws ParseException
-	 *             if comparison between incomparable elements occurs (e.g, 1>a)
 	 */
-	private boolean checkTerm(ASTterm symterm, ASTsortExpression expr)
-			throws ParseException {
+
+	private boolean checkTerm(ASTterm symterm, ASTsortExpression expr) {
 		if (((SimpleNode) (symterm.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTVAR) {
 			return true;
 		}
+		//
+		int id = ((SimpleNode) expr.jjtGetChild(0)).getId();
+		switch (id) {
+		case SparcTranslatorTreeConstants.JJTSETEXPRESSION:
+			return checkTerm(symterm, (ASTsetExpression) expr.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTNUMERICRANGE:
+			return checkTerm(symterm, (ASTnumericRange) expr.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTIDENTIFIERRANGE:
+			return checkTerm(symterm, (ASTidentifierRange) expr.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTCONCATENATION:
+			return checkTerm(symterm, (ASTconcatenation) expr.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL:
+			return checkTerm(symterm, (ASTfunctionalSymbol) expr.jjtGetChild(0));
+		default:
+			return false;
+		}
+	}
+
+	private boolean checkTerm(ASTterm symterm, ASTfunctionalSymbol funcSymbol) {
+		ASTsortExpressionList elist = (ASTsortExpressionList) (funcSymbol
+				.jjtGetChild(0));
+	
+		String initprefix = funcSymbol.image.substring(0, funcSymbol.image.indexOf('('));
+		ASTcondition cond = null;
+		if(funcSymbol.jjtGetNumChildren()>1) {
+			cond=(ASTcondition)funcSymbol.jjtGetChild(1);
+		}
+		return checkTerm(symterm,initprefix,elist,cond);
+	}
+
+	private boolean checkTerm(ASTterm symterm, ASTconcatenation conc) {
+		String termString = symterm.toString();
+		if (termString.indexOf(')') != -1)
+			return false;
+		int termLength = termString.length();
+		int basicSortLength = conc.jjtGetNumChildren();
+		int calculatedDp[][] = new int[termLength][basicSortLength];
+		for (int i = 0; i < termLength; i++) {
+			Arrays.fill(calculatedDp[i], -1);
+		}
+		return checkConcatenation(termString, conc, 0, 0, calculatedDp);
+	}
+
+	private boolean checkConcatenation(String term, ASTconcatenation conc,
+			int stringIndex, int basicSortIndex, int calculatedDp[][]) {
+
+
+		// length
+		int termLength = term.length();
+		int concLength = conc.jjtGetNumChildren();
+		int result = 0;
+
+		if (basicSortIndex == concLength && stringIndex == termLength) {
+			return true;
+		}
+		if (basicSortIndex == concLength || stringIndex == termLength) {
+			return false;
+		}
+		if (calculatedDp[stringIndex][basicSortIndex] != -1)
+			return calculatedDp[stringIndex][basicSortIndex] != 0;
+		
+		for (int tryLength = 1; termLength - tryLength >= concLength-basicSortIndex-1; tryLength++) {
+			TermCreator tc = new TermCreator(term.substring(stringIndex,
+					stringIndex + tryLength));
+			if (checkTerm(tc.createSimpleSymbolicTerm(),
+					(ASTbasicSort) conc.jjtGetChild(basicSortIndex))
+					&& checkConcatenation(term, conc, stringIndex + tryLength,
+							basicSortIndex + 1, calculatedDp)) {
+				result = 1;
+				break;
+			}
+		}
+		return (calculatedDp[stringIndex][basicSortIndex] = result) > 0;
+	}
+
+	private boolean checkTerm(ASTterm term, ASTbasicSort basicSort) {
+		int id = ((SimpleNode) basicSort.jjtGetChild(0)).getId();
+		switch (id) {
+		case SparcTranslatorTreeConstants.JJTNUMERICRANGE:
+			return checkTerm(term, (ASTnumericRange) basicSort.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTIDENTIFIERRANGE:
+			return checkTerm(term,
+					(ASTidentifierRange) basicSort.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTCONCATENATION:
+			return checkTerm(term, (ASTconcatenation) basicSort.jjtGetChild(0));
+		case SparcTranslatorTreeConstants.JJTSORTNAME:
+			return checkTerm(term,
+					sortNameToExpression.get(((ASTsortExpression) basicSort
+							.jjtGetChild(0)).image));
+		case SparcTranslatorTreeConstants.JJTCONSTANTTERMLIST:
+			return checkTerm(term,(ASTconstantTermList)basicSort
+							.jjtGetChild(0));
+		default:
+			return false;
+		}
+
+	}
+
+	private boolean checkTerm(ASTterm symterm, ASTidentifierRange range) {
+		String termString = symterm.toString();
+		if (termString.indexOf('(') != -1)
+			return false;
+		String[] rangeStrings = range.image.split(" ");
+		return termString.length() >= rangeStrings[0].length()
+				&& termString.length() <= rangeStrings[1].length()
+				&& termString.compareTo(rangeStrings[0]) >= 0
+				&& termString.compareTo(rangeStrings[1]) <= 0;
+	}
+
+	private boolean checkTerm(ASTterm symterm, ASTnumericRange range) {
+		String termString = symterm.toString();
+		if (termString.indexOf('(') != -1)
+			return false;
+		for (char c : termString.toCharArray()) {
+			if (Character.isLetter(c))
+				return false;
+		}
+		String[] rangeStrings = range.image.split(" ");
+		int value = Integer.parseInt(symterm.toString());
+		return value >= Integer.parseInt(rangeStrings[0])
+				&& value <= Integer.parseInt(rangeStrings[1]);
+	}
+
+	private boolean checkTerm(ASTterm symterm, ASTsetExpression setExpr) {
+		// TODO Auto-generated method stub
 		return checkTerm(symterm,
-				(ASTadditiveSortExpression) expr.jjtGetChild(0));
+				(ASTadditiveSetExpression) setExpr.jjtGetChild(0));
 	}
 
 	/**
@@ -617,24 +835,19 @@ public class TypeChecker {
 	 * @return true if given term is not valuable(i.e, it has variables) or it
 	 *         evaluates to a value satisfying pattern described by additive
 	 *         sort expression and false otherwise
-	 * @throws ParseException
-	 *             if comparison between incomparable elements occurs (e.g, 1>a)
 	 */
-	private boolean checkTerm(ASTterm symterm, ASTadditiveSortExpression expr)
-			throws ParseException {
+	private boolean checkTerm(ASTterm symterm, ASTadditiveSetExpression expr) {
 		boolean result = false;
 		for (int i = 0; i < expr.jjtGetNumChildren(); i++) {
 			boolean curBelong = (expr.image.charAt(i) == '+');
 			if (curBelong) {
 				if (checkTerm(symterm,
-						(ASTmultiplicativeSortExpression) expr.jjtGetChild(i))) {
+						(ASTmultiplicativeSetExpression) expr.jjtGetChild(i))) {
 					result = true;
 				}
 			} else {
-				// there are may be a better approach to this, but for now--
-				// don't substract anything if there are variables in the term!
-				if (!symterm.hasVariables() && checkTerm(symterm,
-						(ASTmultiplicativeSortExpression) expr.jjtGetChild(i))) {
+				if (checkTerm(symterm,
+						(ASTmultiplicativeSetExpression) expr.jjtGetChild(i))) {
 					result = false;
 				}
 			}
@@ -655,11 +868,10 @@ public class TypeChecker {
 	 * @throws ParseException
 	 *             if comparison between incomparable elements occurs (e.g, 1>a)
 	 */
-	private boolean checkTerm(ASTterm term, ASTmultiplicativeSortExpression expr)
-			throws ParseException {
+	private boolean checkTerm(ASTterm term, ASTmultiplicativeSetExpression expr){
 		boolean result = true;
 		for (int i = 0; i < expr.jjtGetNumChildren(); i++) {
-			if (!checkTerm(term, (ASTunarySortExpression) expr.jjtGetChild(0))) {
+			if (!checkTerm(term, (ASTunarySetExpression) expr.jjtGetChild(0))) {
 				result = false;
 			}
 		}
@@ -680,121 +892,40 @@ public class TypeChecker {
 	 * @throws ParseException
 	 *             if comparison between incomparable elements occurs (e.g, 1>a)
 	 */
-	boolean checkTerm(ASTterm term, ASTunarySortExpression expr)
-			throws ParseException {
-		if (expr.image.endsWith(")")) {
-			return checkTerm(term, (ASTsortExpression) expr.jjtGetChild(0));
-		} else if (expr.image.matches("[a-z][a-z,A-Z,0-9,_]*")) {
-			return checkTerm(term, sortNameToExpression.get(expr.image));
-		} else if (expr.image.endsWith("(")) { // functional term
+	boolean checkTerm(ASTterm term, ASTunarySetExpression expr) {
+		SimpleNode child = (SimpleNode) expr.jjtGetChild(0);
+		switch (child.getId()) {
+		case SparcTranslatorTreeConstants.JJTSORTNAME:
 			return checkTerm(term,
-					expr.image.substring(0, expr.image.length() - 1),
-					(ASTsortExpressionList) expr.jjtGetChild(0));
-		} else if (expr.image.startsWith("$")) { // regular expression
-			return checkTerm(term, (ASTregularExpression) expr.jjtGetChild(0));
-		} else // range
-		{
-			String[] range = expr.image.split(" ");
-			int from = Integer.parseInt(range[0]);
-			int to = Integer.parseInt(range[1]);
-			return CheckRangeTerm(term, from, to);
-		}
-	}
-
-	/**
-	 * Check term evaluation range
-	 * 
-	 * @param term
-	 *            to be checked
-	 * @param from
-	 *            range minimal number
-	 * @param to
-	 *            range maximal number
-	 * @return true if term evaluates to a value from range [from..to] or it is
-	 *         arithmetic has variables, otherwise return false
-	 */
-	private boolean CheckRangeTerm(ASTterm term, int from, int to) {
-		if (((SimpleNode) term.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTSYMBOLICTERM) {
-			if (constantsMapping.containsKey(term.toString())) {
-				TermCreator tc = new TermCreator(constantsMapping.get(
-						term.toString()).toString());
-				return CheckRangeTerm(tc.createSimpleArithmeticTerm(), from, to);
-			} else {
-				return false;
-			}
-		} else {
-			TermEvaluator teval = new TermEvaluator(
-					(ASTarithmeticTerm) term.jjtGetChild(0));
-			if (teval.isEvaluable()) {
-				long value = 0;
-				try {
-					value = teval.evaluate();
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				return from <= value && value <= to;
-			} else {
-				return true;
-			}
-		}
-	}
-
-	/**
-	 * Check if term may evaluate into a string satisfying pattern described by
-	 * regular expression.
-	 * 
-	 * @param term
-	 *            term to be checked
-	 * @param reg
-	 *            regular expression specifying pattern
-	 * @return true if term is arithmetic and there are some variables or there
-	 *         is a substitution for variables of term such that, being applied,
-	 *         it makes the term to evaluate to a string satisfying the pattern
-	 *         described by regular expression
-	 */
-	private boolean checkTerm(ASTterm term, ASTregularExpression reg) {
-
-		if (((SimpleNode) term.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
-			return checkTerm((ASTarithmeticTerm) term.jjtGetChild(0), reg);
-		} else {
-			return checkTerm((ASTsymbolicTerm) term.jjtGetChild(0), reg);
-		}
-	}
-
-	/**
-	 * Check if term may evaluate into a string satisfying pattern described by
-	 * regular expression.
-	 * 
-	 * @param term
-	 *            term to be checked
-	 * @param reg
-	 *            regular expression specifying pattern
-	 * @return true if there is a substitution for variables of term such that,
-	 *         being applied, it makes the term to evaluate to a string
-	 *         satisfying the pattern described by regular expression
-	 */
-	private boolean checkTerm(ASTsymbolicTerm term, ASTregularExpression reg) {
-		if (term.jjtGetNumChildren() > 1) {
+					(ASTsortExpression) sortNameToExpression.get(child.image));
+		case SparcTranslatorTreeConstants.JJTCURLYBRACKETS:
+			return checkTerm(term, (ASTcurlyBrackets) child);
+		case SparcTranslatorTreeConstants.JJTSETEXPRESSION:
+			return checkTerm(term, (ASTsetExpression) child);
+		default:
 			return false;
-		} else {
-			return checkTerm((ASTsymbolicConstant) term.jjtGetChild(0), reg);
 		}
 	}
 
-	/**
-	 * Check symbolic constant for satisfying the pattern described by regular
-	 * expression reg
-	 * 
-	 * @param term
-	 *            to be checked
-	 * @param reg
-	 *            regular expression specifying the pattern
-	 * @return true if symbolic constant satisfies the pattern described by
-	 *         regular expression reg
-	 */
-	private boolean checkTerm(ASTsymbolicConstant term, ASTregularExpression reg) {
-		RegularExpression regexp = new RegularExpression(reg);
-		return regexp.check(term.image);
+	private boolean checkTerm(ASTterm term, ASTcurlyBrackets curLyBrackets) {
+
+		ASTconstantTermList constList = (ASTconstantTermList) curLyBrackets
+				.jjtGetChild(0);
+	    return checkTerm(term,constList);
+	}
+	
+	private boolean checkTerm(ASTterm term, ASTconstantTermList constList) {
+		String termString = term.toString();
+		boolean result = false;
+		for (int i = 0; i < constList.jjtGetNumChildren(); i++) {
+			ASTconstantTerm curTerm = (ASTconstantTerm) constList
+					.jjtGetChild(i);
+			if (curTerm.toString().compareTo(termString) == 0) {
+				result = true;
+				break;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -814,12 +945,12 @@ public class TypeChecker {
 	 *             if order comparison between two unordered elements occurs
 	 */
 	boolean checkTerm(ASTterm term, String termName,
-			ASTsortExpressionList exprList) throws ParseException {
-		if (((SimpleNode) term.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
+			ASTsortExpressionList exprList,ASTcondition cond) {
+		if (((SimpleNode) term.jjtGetChild(0)).getId() != SparcTranslatorTreeConstants.JJTSYMBOLICTERM) {
 			return false;
 		} else {
 			return checkTerm((ASTsymbolicTerm) term.jjtGetChild(0), termName,
-					exprList);
+					exprList,cond);
 		}
 	}
 
@@ -840,27 +971,17 @@ public class TypeChecker {
 	 *             if order comparison between two unordered elements occurs
 	 */
 	private boolean checkTerm(ASTsymbolicTerm term, String termName,
-			ASTsortExpressionList exprList) throws ParseException {
+			ASTsortExpressionList exprList,ASTcondition cond) {
 		if (term.jjtGetNumChildren() == 1) {
 			return false;
 		} else {
 			// TODO:
-			String condition = "";
-			if (termName.indexOf('{') != -1) {
-				condition = termName.substring(termName.indexOf('{'),
-						termName.indexOf('}') + 1);
-                  termName=termName.substring(0,termName.indexOf('{'));
-				//ASTsymbolicFunction child = (ASTsymbolicFunction) (term
-				//		.jjtGetChild(0));
-				//child.image = child.image
-				//		.substring(0, child.image.length() - 1)
-				//		+ termName.substring(termName.indexOf('{')) + '(';
-			}
-			boolean result= checkSymbolicTermName(
+		
+			boolean result = checkSymbolicTermName(
 					(ASTsymbolicFunction) (term.jjtGetChild(0)), termName)
 					&& checkTermList((ASTtermList) term.jjtGetChild(1),
 							exprList)
-					&& checkCondition(condition,
+					&& checkCondition(cond,
 							(ASTtermList) term.jjtGetChild(1));
 			return result;
 		}
@@ -871,232 +992,22 @@ public class TypeChecker {
 	 * relation between some two elements of term list
 	 * 
 	 * @param conditionStr
-	 *            string denoting the condition, it is of the form [idx1]
-	 *            [relation] [idx2] , where idx1 and idx2 are indexes of
-	 *            elements of term list which will be checked
+	 *           AST node representing the condition
 	 * @param termList
 	 * @return true if condition is met
 	 * @throws ParseException
 	 *             if condition specify less or greater relation between
 	 *             different types of terms (arithmetic and symbolic)
 	 */
-	private boolean checkCondition(String conditionStr, ASTtermList termList)
-			throws ParseException {
-		if (conditionStr.equals("")) {
-			return true;
+	private boolean checkCondition(ASTcondition cond, ASTtermList termList) {
+       //create list of strings from term list:
+		ArrayList<String> terms=new ArrayList<String>();
+		for(int i=0;i<termList.jjtGetNumChildren();i++) {
+			ASTterm curTerm=(ASTterm)termList.jjtGetChild(i);
+			terms.add(curTerm.toString());
 		}
-		Condition cond = new Condition(conditionStr);
-		return checktwoTerms(
-				(ASTterm) termList.jjtGetChild(cond.getFirstArgument()),
-				(ASTterm) termList.jjtGetChild(cond.getSecondArgument()),
-				cond.getRelation());
-
-	}
-
-	/**
-	 * Check symbolic and arithmetic terms for satisfying given relation
-	 * 
-	 * @param t1
-	 *            first term to check
-	 * @param t2
-	 *            second term to check
-	 * @param rel
-	 *            given relation
-	 * @return true if given terms satisfy given relation
-	 * @throws ParseException
-	 *             if types of terms are different (i.e, one of them is
-	 *             arithmetic and the other one is symbolic) and relation is not
-	 *             equality or non-equality
-	 */
-	private boolean checktwoTerms(ASTterm t1, ASTterm t2, Relation rel)
-			throws ParseException {
-		// if there is one variable
-		if (((SimpleNode) t1.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTVAR
-				|| ((SimpleNode) t2.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTVAR)
-			return true;
-
-		// arithmetic+arithmetic:
-		if (((SimpleNode) (t1.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTARITHMETICTERM
-				&& ((SimpleNode) (t2.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
-			return checkTwoArithmeticTerms(
-					(ASTarithmeticTerm) (t1.jjtGetChild(0)),
-					(ASTarithmeticTerm) (t2.jjtGetChild(0)), rel);
-
-		}
-		// symb+symb:
-		else if (((SimpleNode) (t1.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTSYMBOLICTERM
-				&& ((SimpleNode) (t2.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTSYMBOLICTERM) {
-			return checkTwoSymbolicTerms((ASTsymbolicTerm) (t1.jjtGetChild(0)),
-					(ASTsymbolicTerm) (t2.jjtGetChild(0)), rel);
-		}
-		// symbolic+arithmetic
-		else {
-			if (((SimpleNode) (t1.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
-				ASTterm buf = t1;
-				t1 = t2;
-				t2 = buf;
-			}
-			return checkSymbolicAndArithmeticTerm(
-					(ASTsymbolicTerm) (t1.jjtGetChild(0)),
-					(ASTarithmeticTerm) (t2.jjtGetChild(0)), rel);
-		}
-	}
-
-	/**
-	 * Check symbolic and arithmetic terms for satisfying given relation
-	 * 
-	 * @param asTsymbolicTerm
-	 *            symbolic term to check
-	 * @param asTarithmeticTerm
-	 *            arithmetic term to check
-	 * @param rel
-	 *            given relation (may be only equal or not equal)
-	 * @return true if given terms satisfy given relation
-	 * @throws ParseException
-	 *             if relation is not equality or non-equality
-	 */
-	private boolean checkSymbolicAndArithmeticTerm(
-			ASTsymbolicTerm asTsymbolicTerm,
-			ASTarithmeticTerm asTarithmeticTerm, Relation rel)
-			throws ParseException {
-		if (rel != Relation.EQUAL && rel != Relation.NOTEQUAL) {
-			throw new ParseException(inputFileName + ": "
-					+ "TYPE ERROR: symbolic term at line "
-					+ asTsymbolicTerm.getBeginLine() + ", column "
-					+ asTsymbolicTerm.getBeginColumn()
-					+ " is incomparable with " + " arithmetic term at line "
-					+ asTarithmeticTerm.getBeginLine() + ", column "
-					+ asTarithmeticTerm.getBeginColumn()
-					+ " with respect to relations <,>,<=,>=");
-
-		} else {
-			if (rel == Relation.EQUAL) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-	}
-
-	/**
-	 * Check two symbolic terms for satisfying given relation
-	 * 
-	 * @param asTsymbolicTerm
-	 *            first term to check
-	 * @param asTsymbolicTerm2
-	 *            second term to check
-	 * @param rel
-	 *            relation between terms to be checked
-	 * @return true if terms may satisfy given relation after making any
-	 *         variable/value substitutions
-	 */
-	private boolean checkTwoSymbolicTerms(ASTsymbolicTerm asTsymbolicTerm,
-			ASTsymbolicTerm asTsymbolicTerm2, Relation rel)
-			throws ParseException {
-		SimpleNode childof1=(SimpleNode)asTsymbolicTerm.jjtGetChild(0);
-		SimpleNode childof2=(SimpleNode)asTsymbolicTerm2.jjtGetChild(0);
-		
-		if (rel != Relation.EQUAL && rel != Relation.NOTEQUAL && 
-				(childof1.getId()!=SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT ||
-				 childof2.getId()!=SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT)) {
-			throw new ParseException(inputFileName + ": "
-					+ "TYPE ERROR: symbolic term at line "
-					+ asTsymbolicTerm.getBeginLine() + ", column "
-					+ asTsymbolicTerm.getBeginColumn()
-					+ " is incomparable with " + " symbolicTerm term at line "
-					+ asTsymbolicTerm2.getBeginLine() + ", column "
-					+ asTsymbolicTerm2.getBeginColumn()
-					+ " with respect to relations <,>,<=,>=");
-
-		} else {
-			if (asTsymbolicTerm.jjtGetNumChildren() != asTsymbolicTerm2
-					.jjtGetNumChildren()) {
-				if (rel == Relation.EQUAL) {
-					return false;
-				} else {
-					return true;
-				}
-			} else if (asTsymbolicTerm.jjtGetNumChildren() == 1) {
-				ASTsymbolicConstant constant1 = (ASTsymbolicConstant) asTsymbolicTerm
-						.jjtGetChild(0);
-				ASTsymbolicConstant constant2 = (ASTsymbolicConstant) asTsymbolicTerm2
-						.jjtGetChild(0);
-				return Condition.checkRelation(rel, constant1.image,constant2.image);
-
-			} else { // two childrens
-				ASTsymbolicConstant function1 = (ASTsymbolicConstant) asTsymbolicTerm
-						.jjtGetChild(0);
-				ASTsymbolicConstant function2 = (ASTsymbolicConstant) asTsymbolicTerm2
-						.jjtGetChild(0);
-
-				ASTtermList tlist1 = (ASTtermList) asTsymbolicTerm
-						.jjtGetChild(1);
-				ASTtermList tlist2 = (ASTtermList) asTsymbolicTerm2
-						.jjtGetChild(1);
-
-				boolean listequal = tlist1.jjtGetNumChildren() == tlist2
-						.jjtGetNumChildren();
-				if (listequal) {
-					for (int i = 0; i < tlist1.jjtGetNumChildren(); i++) {
-						if (!checktwoTerms((ASTterm) tlist1.jjtGetChild(i),
-								(ASTterm) tlist2.jjtGetChild(i), rel)) {
-							listequal = false;
-						}
-					}
-				}
-				boolean imageequal = function1.image.equals(function2.image);
-
-				return rel == Relation.EQUAL && imageequal && listequal
-						|| rel == Relation.NOTEQUAL
-						&& (!imageequal || !listequal);
-
-			}
-
-		}
-	}
-
-	/**
-	 * Check two arithmetic terms for satisfying given relation
-	 * 
-	 * @param asTarithmeticTerm
-	 *            first term to check
-	 * @param asTarithmeticTerm2
-	 *            second term to check
-	 * @param rel
-	 *            relation between terms to be checked
-	 * @return true if terms may satisfy given relation after making any
-	 *         variable/value substitutions
-	 */
-	private boolean checkTwoArithmeticTerms(
-			ASTarithmeticTerm asTarithmeticTerm,
-			ASTarithmeticTerm asTarithmeticTerm2, Relation rel) {
-		TermEvaluator ev1 = new TermEvaluator(asTarithmeticTerm);
-		TermEvaluator ev2 = new TermEvaluator(asTarithmeticTerm2);
-		if (!ev1.isEvaluable() || !ev2.isEvaluable()) {
-			return true;
-		}
-		long value1 = 0, value2 = 0;
-		try {
-			value1 = ev1.evaluate();
-			value2 = ev2.evaluate();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		switch (rel) {
-		case EQUAL:
-			return value1 == value2;
-		case NOTEQUAL:
-			return value1 != value2;
-		case GREATEROREQUAL:
-			return value1 >= value2;
-		case SMALLEROREQUAL:
-			return value1 <= value2;
-		case GREATER:
-			return value1 > value2;
-		case SMALLER:
-			return value1 < value2;
-		}
-		return false;
+		Condition condition=new Condition();
+		return condition.check(cond, terms);
 	}
 
 	/**
@@ -1106,13 +1017,13 @@ public class TypeChecker {
 	 * @param termList
 	 *            term list
 	 * @param exprList
-	 *            sort expression list
+	 *            sort expression list (consisting of special sort expession, sortNames)
 	 * @return true if each element of term list satisfies pattern described by
 	 *         corresponding element of
 	 * @throws ParseException
 	 */
 	private boolean checkTermList(ASTtermList termList,
-			ASTsortExpressionList exprList) throws ParseException {
+			ASTsortExpressionList exprList) {
 
 		if (termList.jjtGetNumChildren() != exprList.jjtGetNumChildren()) {
 			return false;
@@ -1120,7 +1031,7 @@ public class TypeChecker {
 			boolean result = true;
 			for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
 				if (!checkTerm((ASTterm) termList.jjtGetChild(i),
-						(ASTsortExpression) (exprList.jjtGetChild(i)))) {
+						sortNameToExpression.get(((SimpleNode)exprList.jjtGetChild(i)).image))) {
 					result = false;
 				}
 			}
@@ -1128,15 +1039,6 @@ public class TypeChecker {
 		}
 	}
 
-	/**
-	 * Check if symbolic function has name equal to term name
-	 * 
-	 * @param symbol
-	 *            symbolic function
-	 * @param termName
-	 *            term name
-	 * @return true if the names are equal and false otherwise
-	 */
 	private boolean checkSymbolicTermName(ASTsymbolicFunction symbol,
 			String termName) {
 

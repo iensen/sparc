@@ -3,14 +3,14 @@ import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+
 import org.junit.Test;
 import parser.ASTprogram;
 import parser.ASTprogramRules;
+
 import parser.ParseException;
-import parser.RChoiceRemover;
-import parser.RIdentifierSplitVisitor;
-import parser.RRepeatitionRemover;
 import parser.SparcTranslator;
+
 import typechecking.TypeChecker;
 public class TestTypeChecker {
 	
@@ -103,13 +103,12 @@ public class TestTypeChecker {
 		  }
 		  SparcTranslator p= new SparcTranslator(sr);
 		  ASTprogram program=(ASTprogram) p.program();
-		  RIdentifierSplitVisitor v=new RIdentifierSplitVisitor();
-		  program.jjtAccept(v,null);
-		  RRepeatitionRemover removeNMrepeatitions=new  RRepeatitionRemover();
-		  program.jjtAccept(removeNMrepeatitions,null);
-		  RChoiceRemover choiceremover=new RChoiceRemover();
-		  program.jjtAccept(choiceremover,null);
-		  TypeChecker tc=new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts,p.constantsMapping,null);
+	
+			
+		  TypeChecker tc=new TypeChecker(p.sortNameToExpression, 
+				  p.predicateArgumentSorts,p.constantsMapping,
+				  p.curlyBracketTerms,
+				  p.definedRecordNames);
 		  tc.checkRules((ASTprogramRules)program.jjtGetChild(2));
 	 }
 

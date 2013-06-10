@@ -1,15 +1,15 @@
 #maxint=1000.
-sort definitions
-block=$b[0-7].
-location=block+$t.
-fluent=on(block(X),location(Y)):{X!=Y}.
-action=put(block(X),location(Y)):{X!=Y}.
-step=0..2.
-predicate declarations
-holds(fluent,step).
-occurs(action,step).
+sorts
+#block=[b][0..7].
+#location=#block+{t}.
+#fluent=on(#block(X),#location(Y)):X!=Y.
+#action=put(#block(X),#location(Y)):X!=Y.
+#step=0..2.
+predicates
+holds(#fluent,#step).
+occurs(#action,#step).
 
-program rules
+rules
 %initial:
 holds(on(b0,t),0).
 holds(on(b3,b0),0).
@@ -28,7 +28,7 @@ holds(on(B,L),I+1) :- occurs(put(B,L),I).
 %% rule 2
 %Another useful rule says that no block can support more than one block
 %directly on top of it
--holds(on(B2,B),I) :- holds(on(B1,B),I),B1 != B2,block(B).
+-holds(on(B2,B),I) :- holds(on(B1,B),I),B1 != B2,#block(B).
 %inertia axioms:
 
 holds(F,I+1) :- holds(F,I), not -holds(F,I+1).
@@ -37,7 +37,7 @@ holds(F,I+1) :- holds(F,I), not -holds(F,I+1).
 
 %impossibility:
 -occurs(put(B,L),I) :- holds(on(B1,B),I). %% rule 5a
--occurs(put(B1,B),I) :- holds(on(B2,B),I),block(B). %% rule 5b
+-occurs(put(B1,B),I) :- holds(on(B2,B),I),#block(B). %% rule 5b
 
 %some actions:
 occurs(put(b2,t),0).

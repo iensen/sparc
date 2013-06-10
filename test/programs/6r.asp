@@ -1,2 +1,2 @@
-p(a):-not  q(X_G),s_gen0(X_G).
-s_gen0(a).
+p(a):-not  q(X_G),s(X_G).
+s(a).

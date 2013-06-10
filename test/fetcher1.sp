@@ -1,5 +1,5 @@
 sort definitions
-s=$a.
+s={a}.
 predicate declarations
 p(s).
 program rules

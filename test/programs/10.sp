@@ -1,8 +1,9 @@
-sort definitions
-s=1..2.
-predicate declarations
-node(s).
-a(s).
-program rules
-%node(1).
-a(X) :- node(X), #count{V : not node(X),node(V)} >0.
+sorts
+#s1=1..10.
+#s2=5..15.
+predicates
+p(#s1).
+q(#s2).
+rules
+q(6).
+p(X):-q(X).

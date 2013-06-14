@@ -1,10 +1,10 @@
--in(V2_G,V_G):-in(V1_G,V_G),V1_G!=V2_G,s_gen0(V2_G).
--in(V_G,V2_G):-in(V_G,V1_G),V1_G!=V2_G,s_gen0(V2_G).
-reached(V2_G):-init(V1_G),in(V1_G,V2_G).
-reached(V2_G):-reached(V1_G),in(V1_G,V2_G).
--reached(V_G):-not  reached(V_G),s_gen0(V_G).
-:--reached(V_G).
-in(X_G,Y_G)|-in(X_G,Y_G):-edge(X_G,Y_G).
+-in(V2_G,V_G):-in(V1_G,V_G),V1_G!=V2_G,vertex(V_G),vertex(V1_G),vertex(V2_G).
+-in(V_G,V2_G):-in(V_G,V1_G),V1_G!=V2_G,vertex(V_G),vertex(V1_G),vertex(V2_G).
+reached(V2_G):-init(V1_G),in(V1_G,V2_G),vertex(V1_G),vertex(V2_G).
+reached(V2_G):-reached(V1_G),in(V1_G,V2_G),vertex(V2_G),vertex(V1_G).
+-reached(V_G):-not  reached(V_G),vertex(V_G).
+:--reached(V_G),vertex(V_G).
+in(X_G,Y_G) | -in(X_G,Y_G):-edge(X_G,Y_G),vertex(X_G),vertex(Y_G).
 init(1).
 edge(1,2).
 edge(2,3).
@@ -12,9 +12,9 @@ edge(3,4).
 edge(4,5).
 edge(5,6).
 edge(6,1).
-s_gen0(3).
-s_gen0(2).
-s_gen0(1).
-s_gen0(6).
-s_gen0(5).
-s_gen0(4).
+vertex(3).
+vertex(2).
+vertex(1).
+vertex(6).
+vertex(5).
+vertex(4).

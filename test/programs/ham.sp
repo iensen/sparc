@@ -1,22 +1,24 @@
-sort definitions
-vertex=1..6.
+sorts
+#vertex=1..6.
 
-predicate declarations
-in(vertex,vertex).
-edge(vertex,vertex).
-reached(vertex).
-init(vertex).
-program rules
+predicates
+
+in(#vertex,#vertex).
+edge(#vertex,#vertex).
+reached(#vertex).
+init(#vertex).
+
+rules
 % each vertex is visited exactly once:
-% 1. each vertex has exactly one incoming edge
+% 1.1 each vertex has at most one incoming edge
  -in(V2,V) :-
            in(V1,V),
            V1 != V2.
-% 2. each vertex has exactly one outcoming edge
+% 1.2 each vertex has at most one outcoming edge
 -in(V,V2) :- 
           in(V,V1),
            V1 != V2.
-%For the second condition, we recursively define relation reached(V) which
+%2.For the second condition, we recursively define relation reached(V) which
 %holds if P visits vertex V on its way from the initial vertex:
 
 
@@ -37,6 +39,3 @@ edge(3,4).
 edge(4,5).
 edge(5,6).
 edge(6,1).
-
-
-

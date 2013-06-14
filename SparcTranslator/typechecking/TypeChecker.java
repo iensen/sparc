@@ -133,7 +133,6 @@ public class TypeChecker {
 	 * 
 	 * @param n
 	 *            node to explore
-	 * @return variable->sort_expression mapping, where sort expression
 	 *         describes a language of string each of which may be used as a
 	 *         substitution for given variable
 	 */
@@ -1001,6 +1000,8 @@ public class TypeChecker {
 	 */
 	private boolean checkCondition(ASTcondition cond, ASTtermList termList) {
        //create list of strings from term list:
+		if(cond!=null) {
+			
 		ArrayList<String> terms=new ArrayList<String>();
 		for(int i=0;i<termList.jjtGetNumChildren();i++) {
 			ASTterm curTerm=(ASTterm)termList.jjtGetChild(i);
@@ -1008,6 +1009,9 @@ public class TypeChecker {
 		}
 		Condition condition=new Condition();
 		return condition.check(cond, terms);
+		}
+		else 
+			return true;
 	}
 
 	/**

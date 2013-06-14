@@ -652,6 +652,16 @@ public class Translator {
 		   || node.getId()==SparcTranslatorTreeConstants.JJTNONRELATOM) {
 			scope=true;// root of predicate;
 		}
+		
+		if(node.getId()==SparcTranslatorTreeConstants.JJTATOM || 
+			node.getId()==SparcTranslatorTreeConstants.JJTSIMPLEATOM) {
+			if(node.image!=null && node.image.equals("="))
+			{
+			fetchVariables(unboundedVariables,boundedVariables,(SimpleNode)node.jjtGetChild(0),true);
+			fetchVariables(unboundedVariables,boundedVariables,(SimpleNode)node.jjtGetChild(1),false);
+			}
+		}
+		
 		for(int i=0;i<node.jjtGetNumChildren();i++) {
 			fetchVariables(unboundedVariables,boundedVariables,(SimpleNode)node.jjtGetChild(i),scope);
 		}

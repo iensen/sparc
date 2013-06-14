@@ -1,18 +1,19 @@
-sort definitions
-num=1..9.
-region=1..9.
-coords=c(num,num).
 
+sorts
+#num=1..9.
+#region=1..9.
+#coords=c(#num,#num).
 
-predicate declarations
-pos(num,coords).
-in_region(coords,num).
+predicates
+pos(#num,#coords).
+in_region(#coords,#num).
+same_region(#coords,#coords).
 
-program rules
+rules
 
 %each cell should contain a value
 pos(1,c(X,Y)) | pos(2,c(X,Y)) | pos(3,c(X,Y)) | pos(4,c(X,Y)) | pos(5,c(X,Y)) |
-pos(6,c(X,Y)) | pos(7,c(X,Y)) | pos(8,c(X,Y)) | pos(9,c(X,Y)) :- coords(c(X,Y)).
+pos(6,c(X,Y)) | pos(7,c(X,Y)) | pos(8,c(X,Y)) | pos(9,c(X,Y)) :- #coords(c(X,Y)).
 
 %No row contains the same number twice.
 -pos(N,c(X,Y2)) :-pos(N,c(X,Y1)),
@@ -23,12 +24,10 @@ pos(6,c(X,Y)) | pos(7,c(X,Y)) | pos(8,c(X,Y)) | pos(9,c(X,Y)) :- coords(c(X,Y)).
 
 %No region contains the same number twice:
 
--pos(N,c(X2,Y2)) :- 
-                 pos(N,c(X1,Y1)),
-                 X1 != X2,
-                 Y1 != Y2,
-                 in_region(c(X1,Y1),R),
-                 in_region(c(X2,Y2),R).
+:-               pos(N,P1),
+                 pos(N,P2),
+                 P1!=P2,
+                 same_region(P1,P2).
 
 % in region definition:
 in_region(c(X,Y),R) :- 
@@ -38,6 +37,9 @@ in_region(c(X,Y),R) :-
                     Z4 = Y+2,
                     Z5 = Z4/3,
                     R = Z3 + Z5.
+
+%same region:
+same_region(X,Y):-in_region(X,R),in_region(Y,R).
 
 %PUZZLE INSTANCE:
 
@@ -65,11 +67,3 @@ pos(9,c(3,8)).
 pos(4,c(7,8)).
 pos(7,c(9,8)).
 pos(5,c(1,9)).
-
-
-
-
-
-
-
-

@@ -15,7 +15,7 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
   public HashSet<String > definedRecordNames;
 
   boolean inHead=false;
-    public static void main(String [] args)  {    int argc = args.length;    System.err.println("SPARC to DLV translator V2.10");    ArrayList < String > inputFiles = new ArrayList < String > ();    Reader sr = null;    Writer out = null;    // check for inappropriate arguments
+    public static void main(String [] args)  {    int argc = args.length;    System.err.println("SPARC to DLV translator V2.21");    ArrayList < String > inputFiles = new ArrayList < String > ();    Reader sr = null;    Writer out = null;    // check for inappropriate arguments
     if (argc == 1 && (args [0].equals("-h") || args [0].equals("-help")     || args [0].equals("-H") || args [0].equals("-Help")))    {      show_usage();      return;    }    /* if first argument is provided and
        it is not -h -help -H -Help - it is the first input file*/    /* We read input files until we get -o or the end of args array*/    int currentArgIndex = 0;    // add input files
     while (currentArgIndex < args.length && !args [currentArgIndex].startsWith("-"))    {      inputFiles.add(args [currentArgIndex]);      ++currentArgIndex;    }    if (currentArgIndex < args.length && args [currentArgIndex].startsWith("-"))    {      /// name of output file should follow -o option
@@ -34,9 +34,22 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
       }      tc.checkRules((ASTprogramRules) e.jjtGetChild(2));    
       // translate program in the first file      tr.translateProgram((ASTprogram) e, p.generatingSorts, (inputFiles.size() > 1) ? false : true);
       //process other files      for (int fileIndex = 1; fileIndex < inputFiles.size(); fileIndex++)      {        try        {          sr = new FileReader(inputFiles.get(fileIndex));        }        catch (FileNotFoundException fileException)        {          System.err.println("%INPUT FILE ERROR: " + fileException.getMessage());          ;          return;        }        p.ReInit(sr);        tr.setInputFileName(getShortFileName(inputFiles.get(fileIndex)));        tc.setInputFileName(getShortFileName(inputFiles.get(fileIndex)));        SimpleNode rules = p.programRules();
-        //do typechecking of rules from other files        tc.checkRules((ASTprogramRules) rules);        /* we only write warnings after we translated the last file:*/        tr.translateAndWriteRules((ASTprogramRules) rules, fileIndex == inputFiles.size() - 1);      }    }    catch (ParseException pe)    {      System.err.println(pe.getMessage());      ;      return;    }    System.err.println("program translated");  }
+        //do typechecking of rules from other files        tc.checkRules((ASTprogramRules) rules);        /* we only write warnings after we translated the last file:*/        tr.translateAndWriteRules((ASTprogramRules) rules, fileIndex == inputFiles.size() - 1);      }    }    catch (ParseException pe)    {      System.err.println(pe.getMessage());      ;      return;    }    System.err.println("program translated");  }
+
+    private boolean isInteger(String s)
+  {
+    if(s.length()==1 && s.charAt(0)=='0')
+     return true;
+    if(s.charAt(0)=='0')
+     return false;
+    for (int i=0;i<s.length();i++)
+    {     if(!Character.isDigit(s.charAt(i)))
+       return false;
+    }
+    return true;  }
+  
   /**
-  * @return file name without full path.
+  * @return absolute path.
   */  private static String getShortFileName(String fullPath)  {    File file = new File(fullPath);    return file.getName();  }  /**
   * Output help message
   */  private static void show_usage()  {    System.err.println("usage0(reads from console and outputs to console): sparc");    System.err.println("usage1(reads from file and outputs to console): sparc input_file_1,...,input_file_n");    System.err.println("usage2(reads from file and outputs to file): sparc input_file_1,...,input_file_n -o output_file");  }  /**
@@ -202,9 +215,9 @@ void concatenationTermList()#constantTermList:
 }
 
 void constantTerm():
-{Token t1,t2,t3;}
+{Token t1,t2,t3;String s;}
 {
-  LOOKAHEAD({constantsMapping.containsKey(getToken(1).image)})  t1=number()
+  LOOKAHEAD(  { ((s=getToken(1).image)!=null) && (constantsMapping.containsKey(s) || isInteger(s))}  )  t1=number()
   {
     jjtThis.image=t1.image;
       }|
@@ -365,7 +378,20 @@ SimpleNode numericRange():
     {         throw new ParseException("sort predicate " + n.image +
           " at line " + n.beginLine + 
       " column " +n.beginColumn + " must have exactly one argument");
-    }    return jjtThis;  }}void simpleAtom() :{  SimpleNode n;}{  LOOKAHEAD(symbolicTerm() rel() symbolicTerm())  symbolicTerm() rel() symbolicTerm()|   LOOKAHEAD(symbolicTerm() rel() var())  symbolicTerm() rel() var()|   LOOKAHEAD(arithmeticTerm() rel() arithmeticTerm())  arithmeticTerm() rel() arithmeticTerm()|   LOOKAHEAD(var() rel() symbolicTerm())  var() rel() symbolicTerm()|   LOOKAHEAD(arithmeticTerm() eqrel() symbolicTerm())  arithmeticTerm() eqrel() symbolicTerm()|   LOOKAHEAD(symbolicTerm() eqrel() arithmeticTerm())  symbolicTerm() eqrel() arithmeticTerm()|   n = extendedNonRelAtom()  {    jjtThis.image = n.image;  }}SimpleNode extendedNonRelAtom() :{  Token t;  jjtThis.image = "";
+    }    return jjtThis;  }}void simpleAtom() :{  SimpleNode n; Token t;}{  LOOKAHEAD(symbolicTerm() rel() symbolicTerm())  symbolicTerm() t=rel() symbolicTerm()
+  {
+    jjtThis.image=t.image;  }|   LOOKAHEAD(symbolicTerm() rel() var())  symbolicTerm() t=rel() var()
+  {
+    jjtThis.image=t.image;  }|   LOOKAHEAD(arithmeticTerm() rel() arithmeticTerm())  arithmeticTerm() t=rel() arithmeticTerm()
+  {
+    jjtThis.image=t.image;  }|   LOOKAHEAD(var() rel() symbolicTerm())  var() t=rel() symbolicTerm()
+  {
+    jjtThis.image=t.image;  }|   LOOKAHEAD(arithmeticTerm() eqrel() symbolicTerm())  arithmeticTerm() t=eqrel() symbolicTerm()
+  {
+    jjtThis.image=t.image;  }|   LOOKAHEAD(symbolicTerm() eqrel() arithmeticTerm())  symbolicTerm() t=eqrel() arithmeticTerm()
+  {
+    jjtThis.image=t.image;  }
+  |   n = extendedNonRelAtom()  {    jjtThis.image = n.image;  }}SimpleNode extendedNonRelAtom() :{  Token t;  jjtThis.image = "";
   SimpleNode tList=null,n;}{  [    t = < NOT >    {      jjtThis.image = t.image;    }  ]  n=predSymbol() [ tList=termList() < CP > ]  {
     ASTpredSymbol predS=(ASTpredSymbol)n;
     if(predS.hasPoundSign && (tList ==null || tList.jjtGetNumChildren()!=1))

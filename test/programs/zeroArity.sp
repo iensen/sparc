@@ -1,7 +1,8 @@
-
-predicate declarations
+predicates
 p().
 q().
-program rules
+r().
+rules
 p.
 q.
+r:- not q.

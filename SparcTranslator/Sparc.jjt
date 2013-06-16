@@ -56,7 +56,9 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
   * Add built-in sorts to sort expressions
   */  public void addBuiltInSorts()  {    HashMap < String, ASTsortExpression > builtInSorts = BuiltInSorts.getBuiltInSorts();    for (String sortName : builtInSorts.keySet())    {      sortNameToExpression.put(sortName, builtInSorts.get(sortName));    }  }  /**
   * Add warning to set of warnings
-  */  public void addWarning(String warning)  {    warnings.add(warning);  }  public ArrayList < String > getWarnings()  {    return warnings;  }}PARSER_END(SparcTranslator)< DEFAULT, IN_PROGRAM_RULES>TOKEN :{  < MAXINTDIRECTIVE : "#maxint" >|   < CONSTDIRECTIVE : "#const" >|   < SORTDEFKEYWORD : "sorts" ([ "\r", "\t", " ", "\n" ])+ >|   < PREDDEFKEYWORD : "predicates" ([ "\r", "\t", " ", "\n" ])+ >|   < PROGRULDEFKEYWORD :     "rules" ([ "\r", "\t", " ", "\n" ])+ > : IN_PROGRAM_RULES|   < NOT : "not" ([ "\t", "\r", " " ])+ >|   < MOD : "mod" >
+  */  public void addWarning(String warning)  {    warnings.add(warning);  }  public ArrayList < String > getWarnings()  {    return warnings;  }}PARSER_END(SparcTranslator)< DEFAULT, IN_PROGRAM_RULES>TOKEN :{  < MAXINTDIRECTIVE : "#maxint" >|   < CONSTDIRECTIVE : "#const" >|   < SORTDEFKEYWORD : "sorts" ([ "\r", "\t", " ", "\n" ])+ >|   < PREDDEFKEYWORD : "predicates" ([ "\r", "\t", " ", "\n" ])+ >|   < PROGRULDEFKEYWORD :     "rules" ([ "\r", "\t", " ", "\n" ])+ > : IN_PROGRAM_RULES|   < NOT : "not" ([ "\t", "\r", " " ])+ >|
+  < NOTOP: "not" ([ "\t", "\r", " " ])* "(" >
+|   < MOD : "mod" >
 |
   <OR : "or" >
 |
@@ -109,7 +111,15 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
     return jjtThis;    
   }|
   n=functionalSymbol()
-  {    jjtThis.beginLine=n.beginLine;
+  {
+    if(!FunctionalSymbolChecker.checkFunctionalSymbolSorts((ASTfunctionalSymbol)n,
+                        sortNameToExpression))
+    {
+       throw new ParseException("the definition of record "+n.image+" at line " + n.beginLine +
+      
+        " column " + n.beginColumn + " has a condition which involves "+
+         "checking less/greater relations on elements of non-basic sorts");
+    }    jjtThis.beginLine=n.beginLine;
     jjtThis.beginColumn=n.beginColumn;
     return jjtThis; 
   }}
@@ -244,8 +254,7 @@ void concatenationTerm()#constantTerm:
   } }
 SimpleNode condition(HashMap < String, Integer > varMap) :{  Token t, t1, t2;}{  orCondition(varMap)
   {
-    return jjtThis;  }
-}
+    return jjtThis;  }}
 
 void orCondition(HashMap < String, Integer > varMap):
 {}
@@ -274,14 +283,20 @@ void unaryCondition(HashMap < String, Integer > varMap) :
   t4=var()
   {
     jjtThis.image += " "+ varMap.get(t4.image).toString();
+ 
   }
 
   |
   < OP > condition(varMap) < CP >
+  |
+  t=<NOTOP > condition(varMap) < CP >
+  {    jjtThis.image=t.image;
+  }
    
 }
 
-SimpleNode functionalSymbol() :{  Token t1, t2,t3;  Token from, to;  HashMap < String, Integer > map;  SimpleNode c = null;}{
+SimpleNode functionalSymbol() :{  Token t1, t2,t3;  Token from, to;  HashMap < String, Integer > map;
+  HashSet<Integer > BasicSorts;  SimpleNode c = null;}{
      t1 = < IDENTIFIER> t3=<OP >
   {  }  map = specialSortExpressionList() t2= < CP > [ < COLON > c = condition(map) ]  {
     
@@ -310,7 +325,7 @@ void basicSort():
    {
      throw new ParseException("Line " + t.beginLine + ", column "+t.beginColumn+": " + "sort \"" + t.image + "\" was not defined");
    }   
-    ASTsortExpression ex=sortNameToExpression.get(se.image);    if (!BasicSortChecker.isBasic(ex))
+    ASTsortExpression ex=sortNameToExpression.get(se.image);    if (!BasicSortChecker.isBasic(ex,sortNameToExpression))
     {      throw new ParseException("ERROR: Sort \"" + se.image + "\" at line " + t.beginLine + ", column" + t.beginColumn + 
       "is not a basic sort");
     }

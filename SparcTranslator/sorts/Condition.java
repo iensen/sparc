@@ -126,9 +126,12 @@ public class Condition {
 	 */
 	private boolean checkCondition(ASTunaryCondition unaryCond,
 			ArrayList<String> arguments) {
-		if (unaryCond.jjtGetNumChildren() == 0
+		if (unaryCond.jjtGetNumChildren() == 1
 				&& ((SimpleNode) unaryCond.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTCONDITION) {
-			return check((ASTcondition) unaryCond.jjtGetChild(0), arguments);
+			if(unaryCond.image != null && unaryCond.image.trim().equals("not"))
+			    return !check((ASTcondition) unaryCond.jjtGetChild(0), arguments);
+			else 
+				return check((ASTcondition) unaryCond.jjtGetChild(0), arguments);
 		}
 		String[] relationArray = unaryCond.image.split(" ");
 

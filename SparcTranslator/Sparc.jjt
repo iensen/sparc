@@ -302,7 +302,12 @@ void unaryCondition(HashMap < String, Integer > varMap) :
     
     definedRecordNames.add(t1.image);
     jjtThis.beginLine=t1.beginLine;
-    jjtThis.beginColumn=t1.beginColumn;    jjtThis.image = t1.image +t3.image + t2.image;    return jjtThis;  }}Token specialSortExpression() #void :{  Token t=null;}{  < POUND_SIGN >sortName() [< OP > t = < VARIABLE > < CP >]  {    return t;  }}HashMap < String, Integer > specialSortExpressionList() #sortExpressionList :{  HashMap < String, Integer > variableMapping   = new HashMap < String, Integer > ();  int agr = 0;  Token t;}{  t = specialSortExpression()  {    if (t != null)    {      variableMapping.put(t.image, agr);    }    agr++;  }  (    < COMMA > t = specialSortExpression()    {      if (t != null)      {        variableMapping.put(t.image, agr);      }      agr++;    }  )*  {    return variableMapping;  }}
+    jjtThis.beginColumn=t1.beginColumn;    jjtThis.image = t1.image +t3.image + t2.image;    return jjtThis;  }}Token specialSortExpression() #void :{  Token t=null;}{  < POUND_SIGN >sortName() [< OP > t = < VARIABLE > < CP >]  {    return t;  }}HashMap < String, Integer > specialSortExpressionList() #sortExpressionList :{  HashMap < String, Integer > variableMapping   = new HashMap < String, Integer > ();  int agr = 0;  Token t;}{  t = specialSortExpression()  {    if (t != null)    {
+      if(variableMapping.containsKey(t.image))
+      {        throw new ParseException("variable "+t.image+" at line "+t.beginLine+", column "+
+                                 t.beginColumn+" is used more than once in "+
+                                 "record definition" );
+      }      variableMapping.put(t.image, agr);    }    agr++;  }  (    < COMMA > t = specialSortExpression()    {      if (t != null)      {        variableMapping.put(t.image, agr);      }      agr++;    }  )*  {    return variableMapping;  }}
 
 SimpleNode concatenation():
 {}

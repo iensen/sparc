@@ -1166,6 +1166,12 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
       t = specialSortExpression();
     if (t != null)
     {
+      if(variableMapping.containsKey(t.image))
+      {
+        {if (true) throw new ParseException("variable "+t.image+" at line "+t.beginLine+", column "+
+                                 t.beginColumn+" is used more than once in "+
+                                 "record definition" );}
+      }
       variableMapping.put(t.image, agr);
     }
     agr++;
@@ -3915,26 +3921,6 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     finally { jj_save(25, xla); }
   }
 
-  private boolean jj_3R_35() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_59()) {
-    jj_scanpos = xsp;
-    if (jj_3R_60()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_59() {
-    if (jj_scan_token(EQ)) return true;
-    return false;
-  }
-
-  private boolean jj_3_26() {
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
   private boolean jj_3R_84() {
     if (jj_3R_33()) return true;
     return false;
@@ -4252,8 +4238,23 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     return false;
   }
 
+  private boolean jj_3R_24() {
+    if (jj_3R_29()) return true;
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(DOT)) return true;
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
   private boolean jj_3R_67() {
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_51() {
+    if (jj_3R_71()) return true;
+    if (jj_3R_72()) return true;
+    if (jj_scan_token(CP)) return true;
     return false;
   }
 
@@ -4262,11 +4263,15 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     return false;
   }
 
-  private boolean jj_3R_24() {
+  private boolean jj_3_8() {
+    if (jj_3R_28()) return true;
     if (jj_3R_29()) return true;
     if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(DOT)) return true;
-    if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_3R_30()) return true;
     return false;
   }
 
@@ -4288,30 +4293,6 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     return false;
   }
 
-  private boolean jj_3R_51() {
-    if (jj_3R_71()) return true;
-    if (jj_3R_72()) return true;
-    if (jj_scan_token(CP)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_3R_28()) return true;
-    if (jj_3R_29()) return true;
-    if (jj_scan_token(DOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_24()) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_3R_30()) return true;
-    return false;
-  }
-
   private boolean jj_3R_31() {
     Token xsp;
     xsp = jj_scanpos;
@@ -4327,6 +4308,11 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     return false;
   }
 
+  private boolean jj_3_1() {
+    if (jj_3R_24()) return true;
+    return false;
+  }
+
   private boolean jj_3_15() {
     if (jj_3R_31()) return true;
     if (jj_3R_35()) return true;
@@ -4334,16 +4320,16 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(OP)) return true;
-    return false;
-  }
-
   private boolean jj_3_14() {
     if (jj_3R_34()) return true;
     if (jj_3R_35()) return true;
     if (jj_3R_31()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(OP)) return true;
     return false;
   }
 
@@ -4418,11 +4404,6 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     return false;
   }
 
-  private boolean jj_3R_26() {
-    if (jj_3R_39()) return true;
-    return false;
-  }
-
   private boolean jj_3_7() {
     if (jj_3R_27()) return true;
     return false;
@@ -4431,6 +4412,11 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
   private boolean jj_3R_78() {
     if (jj_3R_86()) return true;
     if (jj_3R_77()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_3R_39()) return true;
     return false;
   }
 
@@ -4558,6 +4544,26 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
 
   private boolean jj_3R_60() {
     if (jj_scan_token(NOTEQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_35() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_59()) {
+    jj_scanpos = xsp;
+    if (jj_3R_60()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_59() {
+    if (jj_scan_token(EQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3_26() {
+    if (jj_3R_38()) return true;
     return false;
   }
 

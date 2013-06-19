@@ -922,7 +922,12 @@ void unaryCondition(HashMap < String, Integer > varMap) :
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  HashMap < String, Integer > variableMapping   = new HashMap < String, Integer > ();  int agr = 0;  Token t;}{/*@bgen(jjtree) sortExpressionList */
   try {
-/*@egen*/  t = specialSortExpression()  {    if (t != null)    {      variableMapping.put(t.image, agr);    }    agr++;  }  (    < COMMA > t = specialSortExpression()    {      if (t != null)      {        variableMapping.put(t.image, agr);      }      agr++;    }  )*/*@bgen(jjtree)*/
+/*@egen*/  t = specialSortExpression()  {    if (t != null)    {
+      if(variableMapping.containsKey(t.image))
+      {        throw new ParseException("variable "+t.image+" at line "+t.beginLine+", column "+
+                                 t.beginColumn+" is used more than once in "+
+                                 "record definition" );
+      }      variableMapping.put(t.image, agr);    }    agr++;  }  (    < COMMA > t = specialSortExpression()    {      if (t != null)      {        variableMapping.put(t.image, agr);      }      agr++;    }  )*/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

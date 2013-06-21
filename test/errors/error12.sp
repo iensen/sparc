@@ -1,4 +1,4 @@
-%empty sort.
+%undefined sort in predicate declaration.
 sorts
 #s={f(a)}.
 #s2={f(a)}+{a}.

@@ -1,4 +1,4 @@
-%t contains a number not in nat
+%t is an arithmetic term without variables which can be evaluated to a number not belonging to correponding sort.
 #maxint=5.
 sorts
 #s={1,3}. 

@@ -1,4 +1,4 @@
-%t contains a number not in nat
+%t is a ground term not belonging to corresponding sort
 #maxint=5.
 sorts
 #s={a,b,f(a)}. 

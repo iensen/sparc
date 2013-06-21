@@ -56,7 +56,7 @@ public class TermEvaluator {
 			throws ParseException {
 		long result = 0;
 		for (int i = 0; i < aterm.jjtGetNumChildren(); i++) {
-			if (i == 0 || aterm.image.charAt(i - 1) == '+') {
+			if (aterm.image.charAt(i) == '+') {
 				result += evaluate((ASTmultiplicativeArithmeticTerm) aterm
 						.jjtGetChild(i));
 			} else {

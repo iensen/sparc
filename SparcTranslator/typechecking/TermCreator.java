@@ -63,7 +63,7 @@ public class TermCreator {
 				SparcTranslatorTreeConstants.JJTARITHMETICTERM);
 		// root
 		ASTterm term = new ASTterm(SparcTranslatorTreeConstants.JJTTERM);
-		aaterm.image = image;
+		aaterm.image = adaterm.image=image;
 		// attach subtrees to the root
 		materm.jjtAddChild(aaterm, 0);
 		adaterm.jjtAddChild(materm, 0);

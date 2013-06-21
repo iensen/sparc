@@ -109,7 +109,7 @@ public class Translator {
 
 		for (String s : generatingSorts) {
 			String s2=predicateArgumentSorts.get("#"+s).get(0);
-			gen.addSort(s2, sortNameToExpression.get(s));
+			gen.addSort(s2, sortNameToExpression.get(s),true);
 		}
 
 		translateDirectives(program);
@@ -532,7 +532,7 @@ public class Translator {
 				}
 				fetchedTerms.get(term.toString()).add(sortName);
 
-				gen.addSort(sortName2, sortNameToExpression.get(sortName));
+				gen.addSort(sortName2, sortNameToExpression.get(sortName),true);
 			}
 			if (isAggregateElement) {
 				addAtomsToAggregateElement((ASTaggregateElement) node, newAtoms);
@@ -587,7 +587,7 @@ public class Translator {
 				fetchedTerms.put(term.toString(), new ArrayList<String>());
 			}
 			fetchedTerms.get(term.toString()).add(sortName);
-			gen.addSort(sortName2, sortNameToExpression.get(sortName));
+			gen.addSort(sortName2, sortNameToExpression.get(sortName),true);
 		}
 		addAtomsToRulesBody(rule, newAtoms);
 	}

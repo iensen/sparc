@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
 import parser.ASTadditiveSetExpression;
 import parser.ASTbasicSort;
 import parser.ASTconcatenation;
@@ -44,13 +43,10 @@ public class InstanceGenerator {
 	/**
 	 * Constructor
 	 * 
-	 * @param predicateArgumentSorts
-	 *            a mapping from predicate names to the sorts of it's arguments
 	 * @param sortNameToExpression
 	 *            a mapping from sort names to expressions assigned to them
 	 */
 	public InstanceGenerator(
-			HashMap<String, ArrayList<String>> predicateArgumentSorts,
 			HashMap<String, ASTsortExpression> sortNameToExpression) {
 		this.sortNameToExpression = sortNameToExpression;
 		generatedSorts = new ArrayList<GSort>();
@@ -66,7 +62,7 @@ public class InstanceGenerator {
 	 * @throws ParseException
 	 *             if the sort has too many instances (over limit)
 	 */
-	public void addSort(String sortName, ASTsortExpression expr)
+	public void addSort(String sortName, ASTsortExpression expr,boolean generateSorts)
 			throws ParseException {
 
 		// check if sort was already generated
@@ -76,22 +72,23 @@ public class InstanceGenerator {
 			}
 		}
 		// generate new sort
-		HashSet<String> instances = generateInstances_p(expr);
+		HashSet<String> instances = generateInstances_p(expr,generateSorts);
 
 		generatedSorts.add(new GSort(expr, sortName, instances));
 	}
-	
-    //TO BE REMOVED AFTER EMPTY SORT CHECKER IS REWRITTEN:
-	public HashSet<String> generateInstances(ASTsortExpression expr)  {
-		HashSet<String> result=null;
+
+	public HashSet<String> generateInstances(ASTsortExpression expr,
+			boolean generateRecords) {
+		HashSet<String> result = null;
 		try {
-			result= generateInstances_p(expr);
+			result = generateInstances_p(expr, generateRecords);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
 	}
+
 	/**
 	 * Get sort instances of given sort
 	 * 
@@ -157,17 +154,20 @@ public class InstanceGenerator {
 	 * sort expression
 	 * 
 	 * @param se
-	 *            expression
+	 *         expression
+	 * @param generateRecords
+	 *         records are generated if the flag is true
 	 * @return set of instances satisfying expression
 	 * @throws ParseException
 	 *             if se produces too many instances
 	 */
-	private HashSet<String> generateInstances_p(ASTsortExpression se)
-			throws ParseException {
+	private HashSet<String> generateInstances_p(ASTsortExpression se,
+			boolean generateRecords) throws ParseException {
 		int id = ((SimpleNode) se.jjtGetChild(0)).getId();
 		switch (id) {
 		case SparcTranslatorTreeConstants.JJTSETEXPRESSION:
-			return generateInstances((ASTsetExpression) se.jjtGetChild(0));
+			return generateInstances((ASTsetExpression) se.jjtGetChild(0),
+					generateRecords);
 		case SparcTranslatorTreeConstants.JJTNUMERICRANGE:
 			return generateInstances((ASTnumericRange) se.jjtGetChild(0));
 		case SparcTranslatorTreeConstants.JJTIDENTIFIERRANGE:
@@ -175,26 +175,33 @@ public class InstanceGenerator {
 		case SparcTranslatorTreeConstants.JJTCONCATENATION:
 			return generateInstances((ASTconcatenation) se.jjtGetChild(0));
 		case SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL:
-			return generateInstances((ASTfunctionalSymbol) se.jjtGetChild(0));
+			if (generateRecords)
+				return generateInstances((ASTfunctionalSymbol) se
+						.jjtGetChild(0));
+			else
+				return new HashSet<String>();
 		}
 
-		return generateInstances((ASTadditiveSetExpression) se.jjtGetChild(0));
+		return generateInstances((ASTadditiveSetExpression) se.jjtGetChild(0),generateRecords);
 
 	}
 
-	private HashSet<String> generateInstances(ASTfunctionalSymbol funcSymbol) throws ParseException {
+	private HashSet<String> generateInstances(ASTfunctionalSymbol funcSymbol)
+			throws ParseException {
 		ASTsortExpressionList elist = (ASTsortExpressionList) (funcSymbol
 				.jjtGetChild(0));
 		ArrayList<HashSet<String>> alist = new ArrayList<HashSet<String>>();
 		for (int i = 0; i < elist.jjtGetNumChildren(); i++) {
-			ASTsortName sname=(ASTsortName)elist.jjtGetChild(i);
-			alist.add(generateInstances_p(sortNameToExpression.get(sname.toString())));
+			ASTsortName sname = (ASTsortName) elist.jjtGetChild(i);
+			alist.add(generateInstances_p(
+					sortNameToExpression.get(sname.toString()), true));
 		}
 
-		String initprefix = funcSymbol.image.substring(0, funcSymbol.image.indexOf('('));
+		String initprefix = funcSymbol.image.substring(0,
+				funcSymbol.image.indexOf('('));
 		ASTcondition cond = null;
-		if(funcSymbol.jjtGetNumChildren()>1) {
-			cond=(ASTcondition)funcSymbol.jjtGetChild(1);
+		if (funcSymbol.jjtGetNumChildren() > 1) {
+			cond = (ASTcondition) funcSymbol.jjtGetChild(1);
 		}
 		return generateInstances(initprefix, null, alist, 0, cond);
 	}
@@ -254,10 +261,10 @@ public class InstanceGenerator {
 			// from parsing phase we know that "expr" is restricted to basic
 			// sorts,
 			// but we still follow the general procedure
-			return generateInstances_p(expr);
+			return generateInstances_p(expr,false);
 		case SparcTranslatorTreeConstants.JJTCONSTANTTERMLIST:
-			return generateInstances((ASTconstantTermList)basicSortExp
-					.jjtGetChild(0));
+			return generateInstances((ASTconstantTermList) basicSortExp
+					.jjtGetChild(0),false);
 		}
 		return null;
 	}
@@ -349,30 +356,36 @@ public class InstanceGenerator {
 	 * 
 	 * @param setExpr
 	 *            node of abstract syntax tree representing set expression
+	 * @param generateRecords
+	 *            if the flag is true records are generated
 	 * @return set of strings belonging to language described by se
 	 * @throws ParseException
 	 *             if setExpr produces too many instances
 	 */
-	private HashSet<String> generateInstances(ASTsetExpression setExpr)
-			throws ParseException {
-		return generateInstances((ASTadditiveSetExpression) setExpr
-				.jjtGetChild(0));
+	private HashSet<String> generateInstances(ASTsetExpression setExpr,
+			boolean generateRecords) throws ParseException {
+		return generateInstances(
+				(ASTadditiveSetExpression) setExpr.jjtGetChild(0),
+				generateRecords);
 	}
 
 	/**
 	 * @param adde
 	 *            additive expression
 	 * @return set of strings belonging to language described by se
+	 * @param generateRecords
+	 *            if the flag is true records are generated
 	 * @throws ParseException
 	 *             if se produces too many instances
 	 */
-	private HashSet<String> generateInstances(ASTadditiveSetExpression adde)
-			throws ParseException {
+	private HashSet<String> generateInstances(ASTadditiveSetExpression adde,
+			boolean generateRecords) throws ParseException {
 		// TODO Auto-generated method stub
 		HashSet<String> result = new HashSet<String>();
 		for (int i = 0; i < adde.jjtGetNumChildren(); i++) {
-			HashSet<String> newInstances = generateInstances((ASTmultiplicativeSetExpression) (adde
-					.jjtGetChild(i)));
+			HashSet<String> newInstances = generateInstances(
+					(ASTmultiplicativeSetExpression) (adde.jjtGetChild(i)),
+					generateRecords);
 			if (newInstances == null) {
 				throw new ParseException("Rule at " + ruleBeginLine
 						+ ", column " + ruleBeginColumn
@@ -391,21 +404,24 @@ public class InstanceGenerator {
 	/**
 	 * @param multe
 	 *            multiplicative expression
+	 * @param generateRecords
+	 *            if the flag is true records are generated
 	 * @return set of strings belonging to language described by multe
 	 * @throws ParseException
 	 *             if se produces too many instances
 	 */
 	private HashSet<String> generateInstances(
-			ASTmultiplicativeSetExpression multe) throws ParseException {
+			ASTmultiplicativeSetExpression multe, boolean generateRecords)
+			throws ParseException {
 		HashSet<String> result = new HashSet<String>();
 		for (int i = 0; i < multe.jjtGetNumChildren(); i++) {
 			if (i == 0) {
 				result = generateInstances((ASTunarySetExpression) (multe
-						.jjtGetChild(i)));
+						.jjtGetChild(i)),generateRecords);
 			} else {
 				result = intersectSets(result,
 						generateInstances((ASTunarySetExpression) (multe
-								.jjtGetChild(i))));
+								.jjtGetChild(i)),generateRecords));
 				;
 			}
 		}
@@ -485,11 +501,13 @@ public class InstanceGenerator {
 	 * 
 	 * @param une
 	 *            unary expression
+	 * @param generateRecords
+	 *            if the flag is true records are generated
 	 * @return set of strings belonging to language described by une
 	 * @throws ParseException
 	 *             there are too many instances
 	 */
-	private HashSet<String> generateInstances(ASTunarySetExpression une)
+	private HashSet<String> generateInstances(ASTunarySetExpression une,boolean generateRecords)
 			throws ParseException {
 		// t=< POUND_SIGN > sortName()
 		// n=curlyBrackets()
@@ -497,23 +515,26 @@ public class InstanceGenerator {
 		SimpleNode child = (SimpleNode) une.jjtGetChild(0);
 		if (child.getId() == SparcTranslatorTreeConstants.JJTSORTNAME) {
 			return generateInstances_p(sortNameToExpression.get(child
-					.toString()));
+					.toString()),generateRecords);
 		} else if (child.getId() == SparcTranslatorTreeConstants.JJTCURLYBRACKETS) {
 			ASTcurlyBrackets curlyBrackets = (ASTcurlyBrackets) child;
 			ASTconstantTermList termList = (ASTconstantTermList) curlyBrackets
 					.jjtGetChild(0);
-			return generateInstances(termList);
+			return generateInstances(termList,generateRecords);
 		} else { // setExpression
-			return generateInstances((ASTsetExpression) child);
+			return generateInstances((ASTsetExpression) child,generateRecords);
 		}
 	}
-	
-	private HashSet<String> generateInstances(ASTconstantTermList termList) {
+
+	private HashSet<String> generateInstances(ASTconstantTermList termList,boolean generateRecords) {
 		HashSet<String> result = new HashSet<String>();
 		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
 			ASTconstantTerm constantTerm = (ASTconstantTerm) termList
 					.jjtGetChild(i);
-			result.add(constantTerm.toString());
+			String constantString=constantTerm.toString();
+			boolean isRecord=constantString.indexOf('(')!=-1;
+			if(isRecord && generateRecords || !isRecord)
+			    result.add(constantTerm.toString());
 		}
 		return result;
 	}

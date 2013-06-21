@@ -16,7 +16,7 @@ import parser.SparcTranslator;
  */
 public class BuiltInSorts {
 	// maximal integer
-	static private long maxInt = 100000000;
+	static private long maxInt = 1000000;
 	// names of built-in sorts
 	public static String[] sortNames = { "nat" };
 	// sort expressions for built-in sorts
@@ -51,10 +51,10 @@ public class BuiltInSorts {
 		for (int i = 0; i < sortNames.length; i++) {
 			Reader sr = new StringReader(sortExpr[i]);
 			SparcTranslator p = new SparcTranslator(sr);
+			p.constantsMapping=new HashMap<String,Long>(); // to avoid null pointer exception
 			SimpleNode e = null;
 			try {
 				e = p.sortExpression();
-				// process regular expressions
 			} catch (ParseException exc) {
 				// TODO Auto-generated catch block
 				exc.printStackTrace();

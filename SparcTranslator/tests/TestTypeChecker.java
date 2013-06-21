@@ -11,6 +11,7 @@ import parser.ASTprogramRules;
 import parser.ParseException;
 import parser.SparcTranslator;
 
+import translating.InstanceGenerator;
 import typechecking.TypeChecker;
 public class TestTypeChecker {
 	
@@ -104,11 +105,11 @@ public class TestTypeChecker {
 		  SparcTranslator p= new SparcTranslator(sr);
 		  ASTprogram program=(ASTprogram) p.program();
 	
-			
+		  InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
 		  TypeChecker tc=new TypeChecker(p.sortNameToExpression, 
 				  p.predicateArgumentSorts,p.constantsMapping,
 				  p.curlyBracketTerms,
-				  p.definedRecordNames);
+				  p.definedRecordNames,gen);
 		  tc.checkRules((ASTprogramRules)program.jjtGetChild(2));
 	 }
 

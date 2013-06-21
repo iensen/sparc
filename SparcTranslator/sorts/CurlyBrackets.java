@@ -43,7 +43,7 @@ public class CurlyBrackets {
 				&& ((SimpleNode) constantTerm.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTCONSTANTTERMLIST) {
 			for (int i = 0; i < constantTerm.jjtGetNumChildren(); i++) {
 				retrieveAllTerms(
-						(ASTconstantTerm) (constantTerm.jjtGetChild(i)), terms);
+						(ASTconstantTermList) (constantTerm.jjtGetChild(i)), terms);
 			}
 		}
 	}
@@ -66,12 +66,12 @@ public class CurlyBrackets {
 	 */
 	private static void retrieveAllFunctionalSymbolsR(SimpleNode n, HashSet<String> functionalSymbols) {
 		if(n.getId()==SparcTranslatorTreeConstants.JJTCONSTANTTERM) {
-			if(n.image.indexOf(' ')!=-1) {
-				functionalSymbols.add(n.image.substring(0,n.image.length()-1));
+			if(n.image.indexOf('(')!=-1) {
+				functionalSymbols.add(n.image.substring(0,n.image.indexOf('(')));
 			}
-			for(int i=0;i<n.jjtGetNumChildren();i++) {
-				retrieveAllFunctionalSymbolsR((SimpleNode)n.jjtGetChild(i), functionalSymbols);
-			}
+		}
+		for(int i=0;i<n.jjtGetNumChildren();i++) {
+			retrieveAllFunctionalSymbolsR((SimpleNode)n.jjtGetChild(i), functionalSymbols);
 		}
 	}
 }

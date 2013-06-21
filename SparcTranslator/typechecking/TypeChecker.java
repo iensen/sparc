@@ -9,6 +9,7 @@ import parser.ASTadditiveSetExpression;
 import parser.ASTaggregate;
 import parser.ASTaggregateElement;
 import parser.ASTaggregateElements;
+import parser.ASTarithmeticTerm;
 import parser.ASTatom;
 import parser.ASTbasicSort;
 import parser.ASTbody;
@@ -48,6 +49,7 @@ import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
 import sorts.BuiltInSorts;
 import sorts.Condition;
+import translating.InstanceGenerator;
 
 
 /**
@@ -67,7 +69,8 @@ public class TypeChecker {
 	private HashSet<String> curlyBracketTerms;
 	// List of all defined record names
 	private HashSet<String> definedRecordNames;
-
+    // used for checking if sort contains a number
+	private InstanceGenerator gen;
 	/**
 	 * Constructor
 	 * 
@@ -79,12 +82,15 @@ public class TypeChecker {
 			HashMap<String, ArrayList<String>> predicateArgumentSorts,
 			HashMap<String, Long> constantsMapping,
 			HashSet<String> curlyBracketTerms,
-			HashSet<String> definedRecordNames) {
+			HashSet<String> definedRecordNames,
+			InstanceGenerator gen
+			) {
 		this.sortNameToExpression = sortNameToExpression;
 		this.predicateArgumentSorts = predicateArgumentSorts;
 		this.constantsMapping = constantsMapping;
 		this.curlyBracketTerms = curlyBracketTerms;
 		this.definedRecordNames = definedRecordNames;
+		this.gen=gen;
 	}
 
 	/**
@@ -275,6 +281,24 @@ public class TypeChecker {
 		checkAtomTermList(list, pred.image, pred.getBeginLine(),
 				pred.getBeginColumn());
 	}
+	
+	boolean isNumber(String s) {
+		for(int i=0;i<s.length();i++) {
+			if(!Character.isDigit(s.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	boolean containsNumber(HashSet<String> termSet) {
+		for (String s:termSet) {
+			if(isNumber(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Do typechecking of a predicate given by name and given in form of a term
@@ -301,17 +325,17 @@ public class TypeChecker {
 					+ termList.jjtGetNumChildren() + " at line " + beginLine
 					+ ", column " + beginColumn + " was not declared");
 		}
-		ASTsortExpressionList sortList = new ASTsortExpressionList(
-				SparcTranslatorTreeConstants.JJTSORTEXPRESSIONLIST);
+		ArrayList<String> sortNames=new ArrayList<String>();
 		for (String sortName : predicateArgumentSorts.get(predicateName)) {
-			sortList.jjtAddChild(sortNameToExpression.get(sortName),
-					sortList.jjtGetNumChildren());
+			sortNames.add(sortName);
 		}
 
-		checkTermListWithEx(termList, sortList, predicateName, beginLine,
+		checkTermListWithEx(termList, sortNames, predicateName, beginLine,
 				beginColumn);
 	}
-
+	// mapping between sort names and boolean values
+	// isNumeric[s] is true iff s contains at least one number
+     HashMap<String, Boolean> isNumeric=null;
 	/**
 	 * Do typechecking of a predicate given by name and given in form of a term
 	 * list
@@ -331,17 +355,53 @@ public class TypeChecker {
 	 *             if sort violation occurs
 	 */
 	private void checkTermListWithEx(ASTtermList termList,
-			ASTsortExpressionList exprList, String predicateName,
+			ArrayList<String> sortNames, String predicateName,
 			int beginLine, int beginColumn) throws ParseException {
 		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
 			ASTterm termToCheck = (ASTterm) termList.jjtGetChild(i);
 			String sortName = predicateArgumentSorts.get(predicateName).get(i);
+			ASTsortExpression sortExpression=sortNameToExpression.get(sortName);
+			SimpleNode child=(SimpleNode) termToCheck.jjtGetChild(0);
+			if(child.getId()==SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
+				// Check if term is evaluable arithmetic term and replace it
+				// by its value if it is true
+				TermEvaluator te=new TermEvaluator((ASTarithmeticTerm)child);
+				if(te.isEvaluable()) {
+					TermCreator tc=new TermCreator(Long.toString(te.evaluate()));
+				    termToCheck=tc.createSimpleArithmeticTerm();	
+				}
+				
+				// check if corresponding sort contains at least one number!
+				boolean hasNumber=false;
+				if(isNumeric==null) {
+					isNumeric=new HashMap<String,Boolean>();
+				}
+				if(isNumeric.containsKey(sortName)) {
+					hasNumber=isNumeric.get(sortName);
+				}
+				else {
+					HashSet<String> instances=gen.generateInstances(sortExpression, false);
+					hasNumber=containsNumber(instances);
+					isNumeric.put(sortName, hasNumber);
+				}
+				if(!hasNumber)
+				{
+				  throw new ParseException(inputFileName + ": "
+							+ "argument number " + (i + 1) + " of predicate "
+							+ predicateName + "/"
+							+ termList.jjtGetNumChildren() + ", \""
+							+ ((ASTterm) termList.jjtGetChild(i)).toString()
+							+ "\"," + " at line " + +beginLine + ", column "
+							+ beginColumn + " is an arithmetic term and not a variable, but "
+							+ "\"" + sortName + "\""+" does not contain a number");
+				}
+				
+			}
 			boolean isGround = termToCheck.isGround();
 			if (!isGround
 					&& !checkNonGroundTerm(termToCheck)
 					|| isGround
-					&& !checkTerm(termToCheck,
-							(ASTsortExpression) (exprList.jjtGetChild(i)))) {
+					&& !checkTerm(termToCheck,sortExpression)) {
 				if (isGround)
 					throw new ParseException(inputFileName + ": "
 							+ "argument number " + (i + 1) + " of predicate "

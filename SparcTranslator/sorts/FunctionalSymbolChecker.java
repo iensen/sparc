@@ -26,6 +26,8 @@ public class FunctionalSymbolChecker {
 		HashSet<Integer> basicSortIndexes,HashMap<String, ASTsortExpression> sortNameToExpression) {
 	   
 	   for(int i=0;i<sortList.jjtGetNumChildren();i++) {
+		   if(!basicSortIndexes.contains(i)) 
+			   continue;
 		   ASTsortName sortName=(ASTsortName)sortList.jjtGetChild(i);
 		   ASTsortExpression sortExpr=(ASTsortExpression)sortNameToExpression.get(sortName.image);
 		   if(!BasicSortChecker.isBasic(sortExpr,sortNameToExpression)) {
@@ -52,7 +54,7 @@ private static HashSet<Integer> fetchAllBasicSortIndexes(SimpleNode n) {
 				result.add(arg2);
 			}
 	   }
-	   
+	
 	   for(int i=0;i<n.jjtGetNumChildren();i++) {
 		   result.addAll(fetchAllBasicSortIndexes((SimpleNode)n.jjtGetChild(i)));	   
 	   }

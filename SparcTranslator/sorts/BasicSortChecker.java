@@ -7,7 +7,7 @@ import parser.ASTsortExpression;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
 
-//TODO
+//TODO add comments
 public class BasicSortChecker {
 	public static boolean isBasic(ASTsortExpression se,
 			HashMap<String, ASTsortExpression> sortNameToExpression) {

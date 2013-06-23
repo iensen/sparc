@@ -45,7 +45,7 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
     if(options.contains("--warnings"))
     {
       generateWarnings=true;    }
-        int argc = args.length;    System.err.println("SPARC to DLV translator V2.22");    ArrayList < String > inputFiles = new ArrayList < String > ();    Reader sr = null;    Writer out = null;    // check for inappropriate arguments
+        int argc = args.length;    System.err.println("SPARC to DLV translator V2.23");    ArrayList < String > inputFiles = new ArrayList < String > ();    Reader sr = null;    Writer out = null;    // check for inappropriate arguments
     if (argc == 1 && (args [0].equals("-h") || args [0].equals("-help")     || args [0].equals("-H") || args [0].equals("-Help")))    {      show_usage();      return;    }    /* if first argument is provided and
        it is not -h -help -H -Help - it is the first input file*/    /* We read input files until we get -o or the end of args array*/    int currentArgIndex = 0;    // add input files
     while (currentArgIndex < args.length && !args [currentArgIndex].startsWith("-"))    {      inputFiles.add(args [currentArgIndex]);      ++currentArgIndex;    }    if (currentArgIndex < args.length && args [currentArgIndex].startsWith("-"))    {      /// name of output file should follow -o option

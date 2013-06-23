@@ -72,7 +72,7 @@ public class SparcTranslator/*@bgen(jjtree)*/implements SparcTranslatorTreeConst
     }
 
     int argc = args.length;
-    System.err.println("SPARC to DLV translator V2.22");
+    System.err.println("SPARC to DLV translator V2.23");
     ArrayList < String > inputFiles = new ArrayList < String > ();
     Reader sr = null;
     Writer out = null;

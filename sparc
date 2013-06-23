@@ -39,9 +39,6 @@ last_sparc_arg=1;
 if [ "$2" = "--warnings" ];
   then
   last_sparc_arg=$last_sparc_arg+1;
-  #echo 'boo';
 fi
-echo "OOLO";
-echo "${@:1:$last_sparc_arg}"
 
 java -jar sparc.jar "${@:1:$last_sparc_arg}" | $dlvPath -- ${*:last_sparc_arg+1} 2>&1 | grep -v '^line 0:'

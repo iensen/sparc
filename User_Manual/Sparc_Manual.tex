@@ -162,11 +162,17 @@ It is available here: \url{https://github.com/iensen/sparc/raw/master/sparc}. Be
 
 The general syntax is :
 \begin{verbatim}
- sparc input_file [dlv_options]
+ sparc input_file [--warnings] [dlv_options]
 \end{verbatim}
+\st
+\texttt{input\_file} is the path to a ${\cal SPARC}$ program to be processed. 
+\st
+\texttt{--warnings} is an optional flag which tells the system to show warnings 
+(see section \ref{type_warnings}).
+\st
 For the complete list of dlv options, see 
 \url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
-
+\st
 Here is an example of using the script:
 \begin{verbatim}
 $ sparc example.sp -filter=teacher
@@ -182,14 +188,14 @@ $ sparc example.sp -filter=teacher
 
 \st \textit{Basic sorts} are defined as named collections of identifiers, i.e, strings consisting of
 \begin{itemize}
- \item latin letters: $\{a,b,c,d,..,z,A,B,C,D,..,Z\}$
- \item digits: $\{0,1,2,..,9\}$
+ \item latin letters: $\{a,b,c,d,...,z,A,B,C,D,...,Z\}$
+ \item digits: $\{0,1,2,...,9\}$
  \item underscore: $\_$
 \end{itemize}
 and either starting from a letter or containing only digits.
 
-Non-basic sorts also contain \textit{records} of the form $id(\alpha_1,\dots \alpha_2)$, where id is an identifier and 
-$\alpha_1, \dots \alpha_n$ are either identifiers or records. 
+Non-basic sorts also contain \textit{records} of the form $id(\alpha_1,\dots, \alpha_2)$, where id is an identifier and 
+$\alpha_1, \dots, \alpha_n$ are either identifiers or records. 
 
 
 \st We define sorts by means of expressions(in what follows sometimes referred as statements) of five types:
@@ -207,12 +213,12 @@ The operations $+$ $*$ and $-$ stand for union, intersection and difference corr
 \texttt{ground\_term\_list} is set of \textit{ground terms}, defined as follows:
 \begin{itemize}
  \item numbers and constants are ground terms;
- \item If $f$ is an identifier and $\alpha_1, \dots \alpha_n$ are ground terms, then $f(\alpha_1,\dots \alpha_n)$ is a ground term.
+ \item If $f$ is an identifier and $\alpha_1, \dots, \alpha_n$ are ground terms, then $f(\alpha_1,\dots, \alpha_n)$ is a ground term.
 \end{itemize}
 \textit{Example} : 
 \begin{verbatim}
  sort1={f(a),a,b,2}.
- sort2={1,2,3}$ + {a,b,f(c)} -  {f(a),a,b,2}.
+ sort2={1,2,3} + {a,b,f(c)} -  {f(a),a,b,2}.
 \end{verbatim}
 According to the definition, \texttt{sort1} consists of ground terms $\{f(a),a,b,2\}$, and \texttt{sort2} is $\{1,2,3,f(c)\}$ 
 
@@ -222,7 +228,7 @@ According to the definition, \texttt{sort1} consists of ground terms $\{f(a),a,b
 \end{verbatim}
 
 \textit{number1} should be smaller or equal than \textit{number2}. The expression defines the set 
-of subsequent numbers $\{number1, number1+1, \dots number2\}$
+of subsequent numbers $\{number1, number1+1, \dots, number2\}$
 
 \textit{Example:}
 
@@ -254,7 +260,7 @@ The expression defines the set of all strings \\ S=$\{s: id1\leq s \leq id2 \lan
 
 \item \textbf{concatenation}
 \begin{verbatim}
-concatenation := [b_stmt_1] .. [b_stmt_n]
+concatenation := [b_stmt_1] ... [b_stmt_n]
 \end{verbatim}
 
 \texttt{b\_stmt\_1}, $\dots$, \texttt{b\_stmt\_n} must be \textit{basic statements}, defined as follows:
@@ -270,33 +276,34 @@ concatenation := [b_stmt_1] .. [b_stmt_n]
 \end{itemize}
 Note that basic statement can only define a basic sort not containing records.
 
-\textit{Example:}
+\textit{Example\footnote{We allow a shorthand `b` for singleton  set \{b\}}.:}
 
 \begin{verbatim}
- sort1=[b][1..100].\footnote{We allow a shorthand `b` for singleton  set \{b\}}.
+ sort1=[b][1..100].
 \end{verbatim}
 
-\texttt{sort1} consists of identifiers $\{b1,b2,\dots b100\}$.
+\texttt{sort1} consists of identifiers $\{b1,b2,\dots, b100\}$.
 
 
 \item \textbf{record}
 
 
 \begin{verbatim}
- functional_term := f(sort_name1(var_1),.., sort_namen(var_n)):
-                                     condition(var_1,..,var_n)
- condition(var_1,..,var_n) := var_i REL var_j 
- condition(var_1,..var_n) :=   condition and condition 
+ functional_term := f(sort_name1(var_1),..., sort_namen(var_n)):
+                                     condition(var_1,...,var_n)
+ condition(var_1,...,var_n) := var_i REL var_j 
+ condition(var_1,...,var_n) :=   condition and condition 
               | condition or condition 
               | not(condition) 
               | (condition)
 \end{verbatim}
-Variables \texttt{var\_1,..var\_n} are optional.
-Condition can only contain variables from the list \texttt{var\_1,..var\_n}.
+Variables \texttt{var\_1,...,var\_n} are optional.
+Condition can only contain variables from the list \texttt{var\_1,...,var\_n}.
 If there is a subcondion \texttt{var\_i REL var\_j}, where REL is either $\{>,\geq,<,\leq\}$ then \texttt{sortname\_i} and then \texttt{sortname\_j}
 must be defined by basic statements.
 
-The expression defines a collection of ground terms \\ $\{f(t_1,\dots,t_n): condition(t_1,\dots t_n)~is~true\}$
+The expression defines a collection of ground terms 
+\\ $\{f(t_1,\dots,t_n): condition(t_1,\dots, t_n)~is~true \land t_1 \in s_i \land \dots \land t_n \in s_n\}$
 
 \textit{Example}
 \begin{verbatim}
@@ -537,10 +544,50 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 
 In program rules we first check each atom of the form $p(t_1,\dots,t_n)$ and each term occurring in the program $\Pi$ for satisfying
 the definitions of program atom and program term correspondingly(!!add reference as soon as it is available). Moreover, we check that no sort occurs in a head of a rule of $\Pi$.
-\subsection{Type warnings}
+\subsection{Type warnings}\label{type_warnings}
 During this phase each rule in input ${\cal SPARC}$ program is checked for having at least one ground instance. This is done by applying a standard constraint
 satisfaction algorithm to a constraint formula over finite domains[9] produced by algorithms from (!!! add link as soon as it is available).
 Warnings are reported for the rules which have no ground instances.
+
+The option \texttt{--warnings} must be passed to the  system  in order to display warnings.
+For example, consider the ${\cal SPARC}$ program below.
+
+\begin{verbatim}
+sorts
+#s1={a}.
+#s2=f(#s1).
+#s3={b}.
+
+predicates
+p(#s2).
+q(#s3).
+
+rules
+p(f(X)):-q(X).
+\end{verbatim}
+
+The only rule of the program has no ground instances with respect to defined sorts.
+The execution trace is provided below
+\begin{verbatim}
+iensen@iensen-EP35-DS3L:~/sparc_pr$ ./sparc warning.sp --warnings 
+DLV [build BEN/Dec 16 2012   gcc 4.6.1]
+
+SPARC to DLV translator V2.22
+program translated
+{s3(b), s2(f(a)), warning("p(f(X)):-q(X). ( line: 11, column: 1)")}
+\end{verbatim}
+
+The atom \texttt{warning("p(f(X)):-q(X). ( line: 11, column: 1)")} is included into the answer set as an indicator of potential problem.
+When the \texttt{--warnings} is passed to ${\cal SPARC}$ system, each answer set will contain 
+\begin{verbatim}
+warning("rule description") 
+\end{verbatim}
+for each rule which has no ground instances and 
+\begin{verbatim}
+has_ground_instance("rule description")
+\end{verbatim}
+\st
+for all other rules of the input program.
 
 \section{${\cal SPARC}$ and Unsafe Rules}
 

@@ -162,11 +162,17 @@ It is available here: \url{https://github.com/iensen/sparc/raw/master/sparc}. Be
 
 The general syntax is :
 \begin{verbatim}
- sparc input_file [dlv_options]
+ sparc input_file [--warnings] [dlv_options]
 \end{verbatim}
+\st
+\texttt{input\_file} is the path to a ${\cal SPARC}$ program to be processed. 
+\st
+\texttt{--warnings} is an optional flag which tells the system to show warnings 
+(see section \ref{type_warnings}).
+\st
 For the complete list of dlv options, see 
 \url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
-
+\st
 Here is an example of using the script:
 \begin{verbatim}
 $ sparc example.sp -filter=teacher
@@ -431,8 +437,6 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 \end{verbatim}
 
 
-\item In set 
-
 \item In an identifier range id1.. id2 (statement (2) in section \ref{ss}) the first identifier(id1) is lexicographically greater than id2.
 \textit{Example}
 \begin{verbatim}
@@ -456,7 +460,8 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
  #s=n1..n2.
 \end{verbatim}
 
-\item In an identifier range $id1..id2$ (statement (3) in section \ref{ss})  the length of the first identifier(id1) is greater than length of the second. 
+\item In an identifier range $id1..id2$ (statement (3) in section \ref{ss})  the length of the first identifier(id1) is greater than length of the second. 
+
 
 \textit{Example:}
 \begin{verbatim}
@@ -486,7 +491,7 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 
 
 
-\item Definition of record (statement (5) in section \ref{ss}) contains a condition with relation >,<,>=,<= such that the
+\item Definition of record (statement (5) in section \ref{ss}) contains a condition with relation $>,<,\geq,\leq$ such that the
    corresponding sorts are not basic.
 \textit{Example:}
 \begin{verbatim}
@@ -538,7 +543,10 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 
 In program rules we first check each atom of the form $p(t_1,\dots,t_n)$ and each term occurring in the program $\Pi$ for satisfying
 the definitions of program atom and program term correspondingly(!!add reference as soon as it is available). Moreover, we check that no sort occurs in a head of a rule of $\Pi$.
-\subsection{Type warnings}
+\subsection{Type warnings}\label{type_warnings}
+During this phase each rule in input ${\cal SPARC}$ program is checked for having at least one ground instance. This is done by applying a standard constraint
+satisfaction algorithm to a constraint formula over finite domains[9] produced by algorithms from (!!! add link as soon as it is available).
+Warnings are reported for the rules which have no ground instances.
 
 \section{${\cal SPARC}$ and Unsafe Rules}
 

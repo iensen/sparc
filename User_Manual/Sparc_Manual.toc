@@ -15,5 +15,5 @@
 \contentsline {subsubsection}{\numberline {7.1.2}Predicate declarations errors}{10}{subsubsection.7.1.2}
 \contentsline {subsubsection}{\numberline {7.1.3}Program rules errors}{11}{subsubsection.7.1.3}
 \contentsline {subsection}{\numberline {7.2}Type warnings}{11}{subsection.7.2}
-\contentsline {section}{\numberline {8}${\cal SPARC}$ and Unsafe Rules}{11}{section.8}
-\contentsline {section}{\numberline {9}${\cal SPARC}$ and ASPIDE}{11}{section.9}
+\contentsline {section}{\numberline {8}${\cal SPARC}$ and Unsafe Rules}{12}{section.8}
+\contentsline {section}{\numberline {9}${\cal SPARC}$ and ASPIDE}{12}{section.9}

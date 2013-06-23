@@ -15,14 +15,14 @@ elif [ -f ./dlv.i386-linux-elf-static.bin ];
 dlvPath="./dlv.i386-linux-elf-static.bin"
 
 elif [ -f ./dlv.i386-apple-darwin.bin ];
-     then 
+     then
 dlvPath="./dlv.i386-apple-darwin.bin"
 
 elif [ -f ./dlv.x86-64-linux-elf-static.bin ];
      then
 dlvPath="./dlv.x86-64-linux-elf-static.bin"
 
-elif [ -f  ./dlv.mingw.exe ];
+elif [ -f ./dlv.mingw.exe ];
      then
 dlvPath="./dlv.mingw.exe"
 
@@ -34,5 +34,14 @@ echo "ERROR DLV was not found" ;
       exit
 fi
 
+last_sparc_arg=1;
 
-java -jar sparc.jar $1 | $dlvPath -- ${*:2} 2>&1 | grep -v '^line 0:'
+if [ "$2" = "--warnings" ];
+  then
+  last_sparc_arg=$last_sparc_arg+1;
+  #echo 'boo';
+fi
+echo "OOLO";
+echo "${@:1:$last_sparc_arg}"
+
+java -jar sparc.jar "${@:1:$last_sparc_arg}" | $dlvPath -- ${*:last_sparc_arg+1} 2>&1 | grep -v '^line 0:'

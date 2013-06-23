@@ -14,7 +14,7 @@ import parser.SparcTranslator;
  * Class for creating built-in sorts
  * 
  */
-public class BuiltInSorts {
+public class BuiltIn {
 	// maximal integer
 	static private long maxInt = 1000000;
 	// names of built-in sorts

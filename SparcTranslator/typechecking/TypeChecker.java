@@ -47,7 +47,7 @@ import parser.ASTunlabeledProgramRule;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
-import sorts.BuiltInSorts;
+import sorts.BuiltIn;
 import sorts.Condition;
 import translating.InstanceGenerator;
 
@@ -486,7 +486,7 @@ public class TypeChecker {
 		if (n.getId() == SparcTranslatorTreeConstants.JJTATOMICARITHMETICTERM) {
 			if (n.jjtGetNumChildren() == 0) {
 				int integer = Integer.parseInt(n.image);
-				return integer >= 0 && integer <= BuiltInSorts.getMaxInt();
+				return integer >= 0 && integer <= BuiltIn.getMaxInt();
 			}
 		}
 		boolean result = true;

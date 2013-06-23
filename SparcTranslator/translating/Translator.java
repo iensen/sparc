@@ -29,6 +29,7 @@ import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
 import translating.InstanceGenerator.GSort;
+import warnings.WarningRuleCreator;
 
 public class Translator {
 	// mapping from sort names to sort expressions assigned to the sorts
@@ -51,7 +52,8 @@ public class Translator {
 	private int localElemCount = 0;
 	private StringBuilder translatedOutput;
 	private LocalVariableRenamer renamer;
-
+   
+	private boolean generateWarnings;
 	/**
 	 * Constructor
 	 * 
@@ -63,7 +65,7 @@ public class Translator {
 	 */
 	public Translator(
 
-	Writer out, SparcTranslator mainTranslator, InstanceGenerator gen) {
+	Writer out, SparcTranslator mainTranslator, InstanceGenerator gen, boolean generateWarnings) {
 
 		this.mainTranslator = mainTranslator;
 		this.sortNameToExpression = mainTranslator.sortNameToExpression;
@@ -72,6 +74,7 @@ public class Translator {
 		this.out = out;
 		this.gen = gen;
 		renamer = new LocalVariableRenamer();
+		this.generateWarnings=generateWarnings;
 	}
 
 	/**
@@ -310,7 +313,6 @@ public class Translator {
 			rule.jjtAddChild(createdBody, rule.jjtGetNumChildren());
 
 		}
-
 	}
 
 	/**
@@ -409,25 +411,24 @@ public class Translator {
 	}
 
 	/**
-	 * Move expressions from predicate arguments to the body of the rule
+	 * 1.Move expressions from predicate arguments to the body of the rule
 	 * Example: p(X+1):-q(X+2). becomes p(Y):-p(Z),Y=X+1,Z=X+2, where Y and Z
 	 * are new variables in the rule
-	 * 
+	 * 2. Add all newly added atoms of the form [variable]=[expression] 
+	 *    to newBodyAtoms list
 	 * @param rule
 	 *            to be processed
+	 * @param newBodyAtoms the list where all newly added atoms are stored
 	 */
 	private void fetchGlobalExpressions(ASTprogramRule rule,
-			HashMap<String, String> replacedExpressions) {
+			ArrayList<ASTatom> newBodyAtoms) {
 
 		ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 		VariableFetcher vf = new VariableFetcher();
 		ExpressionFetcher ef = new ExpressionFetcher(vf.fetchVariables(rule));
 		newAtoms.addAll(ef.fetchGlobalExpressions(rule));
-		for (String var : ef.createdVariablesStrings.keySet()) {
-			replacedExpressions.put(var, ef.createdVariablesStrings.get(var)
-					.toString());
-		}
 		addAtomsToRulesBody(rule, newAtoms);
+		newBodyAtoms.addAll(newAtoms);
 	}
 
 	/**
@@ -438,11 +439,9 @@ public class Translator {
 	 * @param rule
 	 *            to be processed
 	 */
-	private void fetchLocalExpressions(ASTprogramRule rule,
-			HashMap<String, String> replacedExpressions) {
+	private void fetchLocalExpressions(ASTprogramRule rule) {
 		VariableFetcher vf = new VariableFetcher();
-		fetchLocalExpressions(rule, vf.fetchVariables(rule),
-				replacedExpressions);
+		fetchLocalExpressions(rule, vf.fetchVariables(rule));
 	}
 
 	/**
@@ -455,8 +454,7 @@ public class Translator {
 	 *            to be processed
 	 */
 	private void fetchLocalExpressions(SimpleNode node,
-			HashSet<String> variables,
-			HashMap<String, String> replacedExpressions) {
+			HashSet<String> variables) {
 
 		if (node.getId() == SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT
 				|| node.getId() == SparcTranslatorTreeConstants.JJTCHOICE_ELEMENT) {
@@ -470,16 +468,11 @@ public class Translator {
 				addAtomsToChoiceElement((ASTchoice_element) node,
 						ef.fetchLocalExpressions((ASTchoice_element) node));
 			}
-			for (String var : ef.createdVariablesStrings.keySet()) {
-				replacedExpressions.put(var, ef.createdVariablesStrings
-						.get(var).toString());
-			}
 			variables.addAll(ef.createdVariables.keySet());
 		}
 		// recursively search for aggregate and choice elements
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-			fetchLocalExpressions((SimpleNode) node.jjtGetChild(i), variables,
-					replacedExpressions);
+			fetchLocalExpressions((SimpleNode) node.jjtGetChild(i), variables);
 		}
 	}
 
@@ -507,8 +500,7 @@ public class Translator {
 	 *            mapping between string representation of terms and arrayList
 	 *            of all sort the term must belong to.
 	 */
-	private void fetchLocalTerms(SimpleNode node,
-			HashMap<String, ArrayList<String>> fetchedTerms)
+	private void fetchLocalTerms(SimpleNode node)
 			throws ParseException {
 		boolean isAggregateElement = node.getId() == SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT;
 		boolean isChoiceRuleElement = node.getId() == SparcTranslatorTreeConstants.JJTCHOICE_ELEMENT;
@@ -527,11 +519,6 @@ public class Translator {
 				String sortName = localFetchedTerms.get(term);
 				String sortName2=predicateArgumentSorts.get("#"+sortName).get(0);
 				newAtoms.add(createSortAtom(sortName2, term));
-				if (!fetchedTerms.containsKey(term.toString())) {
-					fetchedTerms.put(term.toString(), new ArrayList<String>());
-				}
-				fetchedTerms.get(term.toString()).add(sortName);
-
 				gen.addSort(sortName2, sortNameToExpression.get(sortName),true);
 			}
 			if (isAggregateElement) {
@@ -542,7 +529,7 @@ public class Translator {
 
 		} else {
 			for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-				fetchLocalTerms((SimpleNode) node.jjtGetChild(i), fetchedTerms);
+				fetchLocalTerms((SimpleNode) node.jjtGetChild(i));
 			}
 
 		}
@@ -558,10 +545,9 @@ public class Translator {
 	 *            mapping between string representation of terms and arrayList
 	 *            of all sort the term must belong to.
 	 */
-	private void fetchLocalTerms(ASTprogramRule rule,
-			HashMap<String, ArrayList<String>> fetchedTerms)
+	private void fetchLocalTerms(ASTprogramRule rule)
 			throws ParseException {
-		fetchLocalTerms((SimpleNode) rule, fetchedTerms);
+		fetchLocalTerms((SimpleNode) rule);
 	}
 
 	/**
@@ -574,7 +560,7 @@ public class Translator {
 	 *            of all sort the term must belong to.
 	 */
 	private void fetchGlobalTerms(ASTprogramRule rule,
-			HashMap<String, ArrayList<String>> fetchedTerms)
+			ArrayList<ASTatom> newBodyAtoms)
 			throws ParseException {
 		TermFetcher tf = new TermFetcher(predicateArgumentSorts);
 		HashMap<ASTterm, String> globalFetchedTerms = tf.fetchTermSorts(rule);
@@ -583,46 +569,13 @@ public class Translator {
 			String sortName = globalFetchedTerms.get(term);
 			String sortName2=predicateArgumentSorts.get("#"+sortName).get(0);
 			newAtoms.add(createSortAtom(sortName2, term));
-			if (!fetchedTerms.containsKey(term.toString())) {
-				fetchedTerms.put(term.toString(), new ArrayList<String>());
-			}
-			fetchedTerms.get(term.toString()).add(sortName);
 			gen.addSort(sortName2, sortNameToExpression.get(sortName),true);
 		}
 		addAtomsToRulesBody(rule, newAtoms);
+		newBodyAtoms.addAll(newAtoms);
 	}
 
-	/**
-	 * Find warnings occurred in the rule.
-	 * 
-	 * @param termSortMapping
-	 *            mapping between strings representing terms and list of sorts
-	 *            each term must satisfy
-	 */
-	private void detectWarnings(
-			HashMap<String, ArrayList<String>> termSortMapping,
-			String originalRule, int lineNumber, int columnNumber,
-			HashMap<String, String> originalNameMapping,
-			HashMap<String, String> createdVariables) {
-		
-		for (String s : termSortMapping.keySet()) {
-			if (gen.intersectGeneratedSorts(termSortMapping.get(s)).isEmpty()) {
-				if (createdVariables.containsKey(s)) {
-					s = createdVariables.get(s);
-				}
-				mainTranslator
-						.addWarning("Term "
-								+ originalNameMapping.get(s)
-								+ " occurring in the rule "
-								+ originalRule
-								+ " at line "
-								+ lineNumber
-								+ ", column "
-								+ columnNumber
-								+ " has an empty grounding with respect to sort definitions");
-			}
-		}
-	}
+
 	/**
 	 * find unrestricted variables in the rule
 	 * @param rule AST node describing the rules
@@ -693,17 +646,24 @@ public class Translator {
 		HashMap<String, String> originalNameMapping = new HashMap<String, String>();
 		appendToVariableNamesIn(rule, "_G", originalNameMapping);
 		renameLocalVariables(rule,originalNameMapping);
-
+        
+		ArrayList<ASTatom> newSortAtoms=new ArrayList<ASTatom>();
 		// fetch expressions:
-		fetchGlobalExpressions(rule, replacedExpressions);
-		fetchLocalExpressions(rule, replacedExpressions);
+		fetchGlobalExpressions(rule,newSortAtoms);
+		fetchLocalExpressions(rule);
 		// fetch terms:
-		HashMap<String, ArrayList<String>> fetchedTerms = new HashMap<String, ArrayList<String>>();
-		fetchGlobalTerms(rule, fetchedTerms);
-		fetchLocalTerms(rule, fetchedTerms);
-		// store warnings
-		detectWarnings(fetchedTerms, originalRule, lineNumber, columnNumber,
-				originalNameMapping, replacedExpressions);
+		fetchGlobalTerms(rule,newSortAtoms);
+		fetchLocalTerms(rule);
+		// add rules for warnings
+		
+		ArrayList<String> warningRules=
+				WarningRuleCreator.createWarningRules(originalRule, lineNumber, columnNumber, newSortAtoms);
+		if(generateWarnings)
+		  for(String warningRule:warningRules) {
+			appendStringToTranslation(warningRule);
+			appendNewLineToTranslation();
+	      }
+		
 		RuleAnalyzer ra = new RuleAnalyzer(rule);
 		// add new weak constraints and rules for a CR-rule
 		if (ra.isCrRule()) {

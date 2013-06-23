@@ -19,7 +19,33 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
   public HashSet<String > definedRecordNames;
 
   boolean inHead=false;
-    public static void main(String [] args)  {    int argc = args.length;    System.err.println("SPARC to DLV translator V2.22");    ArrayList < String > inputFiles = new ArrayList < String > ();    Reader sr = null;    Writer out = null;    // check for inappropriate arguments
+
+  /**
+  * Remove from args all 
+  */
+  private static HashSet<String > fetchOptions(String []args)
+  {
+    HashSet<String > options=new HashSet<String >();
+  
+    for(int i=0;i<args.length;i++)
+    {      if(args[i].startsWith("--"))
+      {
+          options.add(args[i]);          System.arraycopy(args,i+1,args,i,args.length-1-i);
+      }
+    }
+  
+    return options;  } 
+    public static void main(String [] args)  {
+    HashSet<String > options=fetchOptions(args);
+    int count=options.size();
+    String []newArgs=new String[args.length-count];
+    System.arraycopy(args,0,newArgs,0,args.length-count);
+    args=newArgs;
+    boolean generateWarnings=false;
+    if(options.contains("--warnings"))
+    {
+      generateWarnings=true;    }
+        int argc = args.length;    System.err.println("SPARC to DLV translator V2.22");    ArrayList < String > inputFiles = new ArrayList < String > ();    Reader sr = null;    Writer out = null;    // check for inappropriate arguments
     if (argc == 1 && (args [0].equals("-h") || args [0].equals("-help")     || args [0].equals("-H") || args [0].equals("-Help")))    {      show_usage();      return;    }    /* if first argument is provided and
        it is not -h -help -H -Help - it is the first input file*/    /* We read input files until we get -o or the end of args array*/    int currentArgIndex = 0;    // add input files
     while (currentArgIndex < args.length && !args [currentArgIndex].startsWith("-"))    {      inputFiles.add(args [currentArgIndex]);      ++currentArgIndex;    }    if (currentArgIndex < args.length && args [currentArgIndex].startsWith("-"))    {      /// name of output file should follow -o option
@@ -28,7 +54,7 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
         // read input from multiple files        try        {          sr = new FileReader(inputFiles.get(currentInputFileIndex));          ++currentInputFileIndex;        }        catch (FileNotFoundException fileException)        {          System.err.println("%INPUT FILE ERROR: " + fileException.getMessage());          return;        }      }      SparcTranslator p = new SparcTranslator(sr);      SimpleNode e = p.program();
       //process regular expression
       InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);      TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts,
-                 p.constantsMapping,p.curlyBracketTerms,p.definedRecordNames,gen);      Translator tr = new Translator(out, p,gen);
+                 p.constantsMapping,p.curlyBracketTerms,p.definedRecordNames,gen);      Translator tr = new Translator(out, p,gen,generateWarnings);
       // do typechecking of rules in the first file
       if (inputFiles.size() != 0)
       {
@@ -57,7 +83,7 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
   * Output help message
   */  private static void show_usage()  {    System.err.println("usage0(reads from console and outputs to console): sparc");    System.err.println("usage1(reads from file and outputs to console): sparc input_file_1,...,input_file_n");    System.err.println("usage2(reads from file and outputs to file): sparc input_file_1,...,input_file_n -o output_file");  }  /**
   * Add built-in sorts to sort expressions
-  */  public void addBuiltInSorts()  {    HashMap < String, ASTsortExpression > builtInSorts = BuiltInSorts.getBuiltInSorts();    for (String sortName : builtInSorts.keySet())    {      sortNameToExpression.put(sortName, builtInSorts.get(sortName));    }  }  /**
+  */  public void addBuiltInSorts()  {    HashMap < String, ASTsortExpression > builtInSorts = BuiltIn.getBuiltInSorts();    for (String sortName : builtInSorts.keySet())    {      sortNameToExpression.put(sortName, builtInSorts.get(sortName));    }  }  /**
   * Add warning to set of warnings
   */  public void addWarning(String warning)  {    warnings.add(warning);  }  public ArrayList < String > getWarnings()  {    return warnings;  }}PARSER_END(SparcTranslator)< DEFAULT, IN_PROGRAM_RULES>TOKEN :{  < MAXINTDIRECTIVE : "#maxint" >|   < CONSTDIRECTIVE : "#const" >|   < SORTDEFKEYWORD : "sorts" ([ "\r", "\t", " ", "\n" ])+ >|   < PREDDEFKEYWORD : "predicates" ([ "\r", "\t", " ", "\n" ])+ >|   < PROGRULDEFKEYWORD :     "rules" ([ "\r", "\t", " ", "\n" ])+ > : IN_PROGRAM_RULES|   < NOT : "not" ([ "\t", "\r", " " ])+ >|
   < NOTOP: "not" ([ "\t", "\r", " " ])* "(" >
@@ -160,7 +186,7 @@ import translating.InstanceGenerator;@ SuppressWarnings("all") public class Sp
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    if (sortNameToExpression.containsKey(t.image))    {      throw new ParseException("sort " + t.image + " at line " + t.beginLine +       " column " + t.beginColumn + " was already defined");    }    for (String builtInSortName : BuiltInSorts.sortNames)    {      if (t.image.equals(builtInSortName))      {        throw new ParseException("sort " + t.image + " at line " + t.beginLine +         " column " + t.beginColumn + " is built-in and cannot be redefined");       }    }
+/*@egen*/  {    if (sortNameToExpression.containsKey(t.image))    {      throw new ParseException("sort " + t.image + " at line " + t.beginLine +       " column " + t.beginColumn + " was already defined");    }    for (String builtInSortName : BuiltIn.sortNames)    {      if (t.image.equals(builtInSortName))      {        throw new ParseException("sort " + t.image + " at line " + t.beginLine +         " column " + t.beginColumn + " is built-in and cannot be redefined");       }    }
     if(EmptySortChecker.isEmpty((ASTsortExpression)n,sortNameToExpression))    {
        throw new ParseException("sort " + t.image + "defined at line " + t.beginLine + 
         " column " + t.beginColumn + " is empty");    }      sortNameToExpression.put(t.image, (ASTsortExpression) n);    }/*@bgen(jjtree)*/
@@ -1190,7 +1216,10 @@ SimpleNode numericRange():
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Token t;  ArrayList < String > arguments = new ArrayList < String > ();}{/*@bgen(jjtree) predicateDeclaration */
   try {
-/*@egen*/  t = < IDENTIFIER >  {    if (predicateArgumentSorts.containsKey(t.image))    {      throw new ParseException("Line " + t.beginLine + ", column "+t.beginColumn+": " + "predicate " + t.image + " was already declared");    }  }  < OP >  (    arguments = identifierList()  )?  {
+/*@egen*/  t = < IDENTIFIER >  {    if (predicateArgumentSorts.containsKey(t.image))    {      throw new ParseException("Line " + t.beginLine + ", column "+t.beginColumn+": " + "predicate " + t.image + " was already declared");    }
+    if(BuiltInPredicates.predicateNamesSet.contains(t.image))
+    {
+      throw new ParseException("Line " + t.beginLine + ", column "+t.beginColumn+": " + "predicate " + t.image + " is a built-in predicate");    }  }  < OP >  (    arguments = identifierList()  )?  {
     predicateArgumentSorts.put(t.image, arguments);  }  < CP > < DOT >/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -2384,4 +2413,4 @@ try {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void directives(ArrayList < String > directives)       :{}{  (    directive(directives)  )*  {    addBuiltInSorts();  }}void directive(ArrayList < String > directives)       :{  Token t, t1, t2, t3, t4;}{  t = < MAXINTDIRECTIVE > t1 = < EQ > t2 = number() t3 = < DOT >  {    BuiltInSorts.setMaxInt(Integer.parseInt(t2.image));    directives.add(t.image + t1.image + t2.image + t3.image);  }|   t = < CONSTDIRECTIVE > t1 = < IDENTIFIER > t2 = < EQ > t3 = number() t4 = < DOT >  {    directives.add(t.image + " " + t1.image + t2.image + t3.image + t4.image);    constantsMapping.put(t1.image, Long.parseLong(t3.image));  }}
+/*@egen*/}void directives(ArrayList < String > directives)       :{}{  (    directive(directives)  )*  {    addBuiltInSorts();  }}void directive(ArrayList < String > directives)       :{  Token t, t1, t2, t3, t4;}{  t = < MAXINTDIRECTIVE > t1 = < EQ > t2 = number() t3 = < DOT >  {    BuiltIn.setMaxInt(Integer.parseInt(t2.image));    directives.add(t.image + t1.image + t2.image + t3.image);  }|   t = < CONSTDIRECTIVE > t1 = < IDENTIFIER > t2 = < EQ > t3 = number() t4 = < DOT >  {    directives.add(t.image + " " + t1.image + t2.image + t3.image + t4.image);    constantsMapping.put(t1.image, Long.parseLong(t3.image));  }}

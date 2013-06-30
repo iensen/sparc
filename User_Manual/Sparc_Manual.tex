@@ -108,7 +108,8 @@ language ${\cal SPARC}$ which attempts to solve this problem and provide some ex
 \section{System installation}
 ${\cal SPARC}$ system  works in two phases:
 \begin{enumerate}
-\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP) code.
+\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP) with weak constraints\cite{buccafurri1997strong} code 
+\footnote{the syntax of weak constraints matches DLV input language}.
 \item Running ASP code on existing ASP solvers.
 \end{enumerate}
 
@@ -319,7 +320,7 @@ The sort \texttt{sf} consists of records $\{f(1,1,2),f(1,1,1),f(2,1,1)\}$
 
 \noindent  The second part of a  ${\cal SPARC}$ program starts with the keyword
 \st
-$predicate\ declarations$
+$predicates$
 
 \st and is followed by statements of the form
 
@@ -615,5 +616,6 @@ program translated
 \end{verbatim}
 \section{${\cal SPARC}$ and ASPIDE}
 TODO. 
-
+\bibliographystyle{plain}
+\bibliography{mybib}
 \end{document}

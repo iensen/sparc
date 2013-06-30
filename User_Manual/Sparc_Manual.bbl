@@ -1,9 +1,13 @@
 \begin{thebibliography}{1}
 
+\bibitem{gelfond1991classical}
+M.~Gelfond and V.~Lifschitz, ``Classical negation in logic programs and
+  disjunctive databases,'' {\em New generation computing}, vol.~9, no.~3-4,
+  pp.~365--385, 1991.
+
 \bibitem{buccafurri1997strong}
-Francesco Buccafurri, Nicola Leone, and Pasquale Rullo.
-\newblock Strong and weak constraints in disjunctive datalog.
-\newblock In {\em Logic Programming And Nonmonotonic Reasoning}, pages 2--17.
-  Springer, 1997.
+F.~Buccafurri, N.~Leone, and P.~Rullo, ``Strong and weak constraints in
+  disjunctive datalog,'' in {\em Logic Programming And Nonmonotonic Reasoning},
+  pp.~2--17, Springer, 1997.
 
 \end{thebibliography}

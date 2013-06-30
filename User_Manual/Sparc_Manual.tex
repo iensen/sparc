@@ -108,7 +108,9 @@ language ${\cal SPARC}$ which attempts to solve this problem and provide some ex
 \section{System installation}
 ${\cal SPARC}$ system  works in two phases:
 \begin{enumerate}
-\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP) with weak constraints\cite{buccafurri1997strong} code 
+\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP) \cite{gelfond1991classical}
+
+ with weak constraints\cite{buccafurri1997strong} code 
 \footnote{the syntax of weak constraints matches DLV input language}.
 \item Running ASP code on existing ASP solvers.
 \end{enumerate}
@@ -116,12 +118,11 @@ ${\cal SPARC}$ system  works in two phases:
 \st So, to use the system you need two things:
 \begin{enumerate}
 \item The SPARC to ASP translator. It can be downloaded here: \url{https://github.com/iensen/sparc_paper/blob/master/sparc.jar?raw=true}.
-\item An ASP solver. We recommend using DLV for best compatibility with out translator. DLV can be downloaded here:
- \url{http://www.dlvsystem.com/dlv/#1}
-You need to download \textit{static} version of the executable file.
-
+The translator requires Java to be installed (the system was tested under versions 1.7.0\_21 and 1.6.0\_45).
+\item An ASP solver. It can be either DLV (\url{http://www.dlvsystem.com/dlv/#1}, static version) or clingo (\url{http://sourceforge.net/projects/potassco/files/clingo/}) (the latter solver cannot be used for SPARC programs containing consistency restoring rules).
 \end{enumerate}
-To demonstrate usage of the system, let's start with simple example.
+
+To demonstrate usage of the system, let's start with a simple example.
 \begin{verbatim}
 sorts
 #person={bob,tim,andy}.
@@ -145,7 +146,7 @@ SPARC to DLV translator V2.21
 program translated
 \end{verbatim}
 
-\st To get the answer sets of the translated program, run DLV:
+\st To get the answer sets of the translated program, run DLV or clingo:
 
 \begin{verbatim}
 $ dlv example.asp
@@ -154,17 +155,41 @@ DLV [build BEN/Dec 21 2011   gcc 4.6.1]
 {teacher(bob)}
 \end{verbatim}
 
-\st You should see that the answer set appeared. For a detailed description of ${\cal SPARC}$ system options, see 
+\st If you use clingo solver, you should  see the following output:
+
+\begin{verbatim}
+$ clingo example.asp
+Answer: 1
+teacher(bob) 
+SATISFIABLE
+
+Models      : 1     
+Time        : 0.000
+  Prepare   : 0.000
+  Prepro.   : 0.000
+  Solving   : 0.000
+\end{verbatim}
+
+
+\st  For a detailed description of ${\cal SPARC}$ system options, see 
 \url{https://github.com/iensen/sparc_paper/wiki/System-usage}.
 
-\st For Linux, MacOS or Cygwin (Windows) users we prepared a bash script which combines translation and solver execution into one step.
-It is available here: \url{https://github.com/iensen/sparc/raw/master/sparc}. Before using the script, make it executable by running command
-\texttt{chmod +x sparc} from the command line.
+\st For Linux, MacOS or Cygwin (Windows) users we prepared Bash scripts which combine translation and solver execution into one step.
+They are available at: \url{https://github.com/iensen/sparc/raw/master/sparc_dlv} (for DLV solver) and \url{https://github.com/iensen/sparc/raw/master/sparc_clingo} (for clingo solver).
+Before using a script, make it executable by running command
+\texttt{chmod +x script\_name} from the command line.
 
-The general syntax is :
+\st The general syntax is :
 \begin{verbatim}
- sparc input_file [--warnings] [dlv_options]
+ sparc_dlv input_file [--warnings] [dlv_options]
 \end{verbatim}
+or 
+\begin{verbatim}
+ sparc_clingo input_file [--warnings] [clingo_options]
+\end{verbatim}
+depending on which solver is used.
+
+
 \st
 \texttt{input\_file} is the path to a ${\cal SPARC}$ program to be processed. 
 \st
@@ -173,10 +198,16 @@ The general syntax is :
 \st
 For the complete list of dlv options, see 
 \url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
+
+\st
+For the complete list of clingo options, see 
+\url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
+
+
 \st
 Here is an example of using the script:
 \begin{verbatim}
-$ sparc example.sp -filter=teacher
+$ sparc_dlv example.sp -filter=teacher
 ...
 {teacher(bob)}
 \end{verbatim}
@@ -616,6 +647,6 @@ program translated
 \end{verbatim}
 \section{${\cal SPARC}$ and ASPIDE}
 TODO. 
-\bibliographystyle{plain}
+\bibliographystyle{ieeetr}
 \bibliography{mybib}
 \end{document}

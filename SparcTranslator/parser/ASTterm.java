@@ -72,6 +72,21 @@ class ASTterm extends SimpleNode {
   }
   
   
+  public boolean isVariable() {
+	  SimpleNode child=(SimpleNode)this.jjtGetChild(0);
+	  return child.getId()==SparcTranslatorTreeConstants.JJTVAR;
+  }
+  
+  public boolean isRecord() {
+	  SimpleNode child=(SimpleNode)this.jjtGetChild(0);
+	  if(child.getId()==SparcTranslatorTreeConstants.JJTSYMBOLICTERM) {
+		  SimpleNode childOfChild=(SimpleNode)child.jjtGetChild(0);
+		  return childOfChild.getId()==SparcTranslatorTreeConstants.JJTSYMBOLICFUNCTION;
+	  }
+	  else {
+		  return false;
+	  }
+  }
   
   public String toString() {
 	  return toString(false);

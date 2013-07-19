@@ -1,0 +1,117 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+\textbf{INPUT:} Formula F of the form $G_1 \land \dots \land G_n$, where each $G_i$ can be of the form:
+\begin{itemize}
+ \item $t_1~\diamond~t_2$. Possible forms of $t_1, t_2$ and $ \diamond$ are presented in the table: \\
+  \begin{minipage}{20cm}
+  \begin{tabular}{ |c | c | c| }
+  \hline                        
+  $t_1$ & $t_2$ & $\diamond$ \\
+  \hline
+  arithmetic term\footnote{for definition of arithmetic term, see algorithms.pdf} & arithmetic term & $\{ <,<,\leq,\geq,=,\neq \}$ \\
+  \textit{record} & \textit{record} & $\{ =,\neq \}$ \\
+  \textit{record} & \textit{symbolic constant} & $\{\neq \}$ \\
+  \textit{record} & \textit{arithmetic term} & $\{\neq \}$ \\
+  \textit{variable} & \textit{record} & $\{ =,\neq \}$ \\
+  \textit{variable} & \textit{symbolic constant} &$\{ <,<,\leq,\geq,=,\neq \}$ \\
+  \textit{variable} & \textit{arithmetic term} &$\{ <,<,\leq,\geq,=,\neq \}$ \\
+  \hline  
+\end{tabular}
+ \end{minipage}
+
+ \item $t \in D$. Possible forms of $t$ and $D$ are presented in the table : \\
+   \begin{minipage}{20cm}
+  \begin{tabular}{ |c | c | }
+  \hline                        
+  $t$ & $D$  \\
+  \hline
+  \textit{arithmetic term} & $n_1..n_2$ , $\{n_1,\dots, n_k\}$, where $n_1,\dots, n_k$ are numbers \\
+  \textit{non-arithmetic variable}\footnote{for definition of arithmetic variable, see algorithms.pdf} & $\{t_1,\dots,t_n\}$, where all $t_i$ are arbitrary ground terms.  \\
+ % record & symbolic constant & $\{\neq \}$ \\
+ % record & arithmetic term & $\{\neq \}$ \\
+ % variable & record & $\{ =,\neq \}$ \\
+ % variable & symbolic constant &$\{ <,<,\leq,\geq,=,\neq \}$ \\
+ % variable & arithmetic term &$\{ <,<,\leq,\geq,=,\neq \}$ \\
+ % \hline  
+\end{tabular}
+ \end{minipage}
+ \item $\neg (t\in D)$
+  the possible forms of t and D are the same as in $ (t\in D)$.
+\end{itemize}
+
+\textbf{OUTPUT:} True if $F$ is satisfiable and false otherwise.
+
+\textbf{BEGIN}.
+$BODY := {\bf true}$;
+$\Pi_{prolog} := \emptyset$
+
+\textbf{For each} $G_i$ in $G_1 \land \dots \land G_n$
+\begin{enumerate}
+ \item \textbf{$G_i$   of the form $t_1 \diamond t_2$ or $\neg(t_1 \diamond t_2)$} 
+
+  $BODY := BODY \land G_i$ 
+
+
+ \item\textbf{$G_i$   of the form $(t\in D)$}
+\begin{enumerate} 
+ \item \textbf{t is an arithmetic term, and D is of the form n1..n2}
+
+   $BODY := BODY \land  t~in~n1..n2$ 
+
+ \item \textbf{t is an arbitrary term, D is  of the form $\{t1,t2,\dots,tn\}$}
+
+    $\Pi_{prolog} := \Pi_{prolog} \cup set\_d(X):-member(X,[t1,t2,\dots,tn]).$\footnote{if t is arithmetic, we preprocess D and remove all non-numbers to avoid errors}
+  
+    $BODY := BODY \land set\_d(t)$ 
+
+\end{enumerate}
+
+\item \textbf{$G_i$   of the form $\neg(t\in D)$,}
+
+
+
+\begin{enumerate}
+\item \textbf{t is an arithmetic term and $D$ is of the form $n1..n2$}
+      
+      Let $g_i$ is an unique label for $G_i$
+      
+      $\Pi_{prolog} := \Pi_{prolog} \cup g_i(t) :- n\#>n_2. \cup g_i(t) :- n\#<n_2$.
+  
+      $BODY := BODY \land  g_i(t)$ 
+
+\item \textbf{t is an arbitrary term, D is  of the form $\{t1,t2,\dots,tn\}$}
+
+ $\Pi_{prolog} := \Pi_{prolog} \cup set\_d(X):-member(X,[t1,t2,\dots,tn]).$\footnote{same as above}
+  
+    $BODY := BODY \land ~~\backslash+ set\_d(t)$ 
+    
+\end{enumerate}
+
+\end{enumerate}
+\textbf{End for} 
+
+
+\noindent
+Let $V_1,\dots V_n$ be all arithmetic variables in $G_1,\dots,G_n$
+
+$BODY:-REORDER(BODY) \cap labeling([],[V_1,\dots V_n])$.
+
+$\Pi_{prolog} := \Pi_{prolog}  \cap  p :-BODY.$
+
+If the answer to query ?-p to program  $\Pi_{prolog}$ is 'yes', 
+
+return true; else return false. 
+
+\vspace{0.3cm}
+\noindent
+\textbf{END}
+\end{document}
+
+
+

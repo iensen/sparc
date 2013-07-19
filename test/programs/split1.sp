@@ -1,7 +1,7 @@
-sort definitions
-s1=$a|b|c.
-predicate declarations
-p(s1).
-r(s1).
-program rules
+sorts
+#s1={a,b,c}.
+predicates
+p(#s1).
+r(#s1).
+rules
 p(a).

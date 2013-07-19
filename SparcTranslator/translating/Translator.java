@@ -29,6 +29,9 @@ import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
 import translating.InstanceGenerator.GSort;
+import warnings.ExpandSolve;
+import warnings.Formula;
+import warnings.RuleReducer;
 import warnings.WarningRuleCreator;
 
 public class Translator {
@@ -52,8 +55,14 @@ public class Translator {
 	private int localElemCount = 0;
 	private StringBuilder translatedOutput;
 	private LocalVariableRenamer renamer;
-   
-	private boolean generateWarnings;
+
+	// flags indicating whether or not warnings need to be generated
+	private boolean generateASPWarnings;
+	private boolean generateClingconWarnings;
+	
+	
+	private RuleReducer ruleReducer;
+
 	/**
 	 * Constructor
 	 * 
@@ -65,7 +74,8 @@ public class Translator {
 	 */
 	public Translator(
 
-	Writer out, SparcTranslator mainTranslator, InstanceGenerator gen, boolean generateWarnings) {
+	Writer out, SparcTranslator mainTranslator, InstanceGenerator gen,
+			boolean generateASPWarnings, boolean generateClingconWarnings) {
 
 		this.mainTranslator = mainTranslator;
 		this.sortNameToExpression = mainTranslator.sortNameToExpression;
@@ -74,7 +84,11 @@ public class Translator {
 		this.out = out;
 		this.gen = gen;
 		renamer = new LocalVariableRenamer();
-		this.generateWarnings=generateWarnings;
+		this.generateASPWarnings = generateASPWarnings;
+		this.generateClingconWarnings = generateClingconWarnings;
+		if(generateClingconWarnings) {
+			ruleReducer=new RuleReducer(sortNameToExpression, predicateArgumentSorts, gen);
+		}
 	}
 
 	/**
@@ -111,8 +125,8 @@ public class Translator {
 		labelId = 0;
 
 		for (String s : generatingSorts) {
-			String s2=predicateArgumentSorts.get("#"+s).get(0);
-			gen.addSort(s2, sortNameToExpression.get(s),true);
+			String s2 = predicateArgumentSorts.get("#" + s).get(0);
+			gen.addSort(s2, sortNameToExpression.get(s), true);
 		}
 
 		translateDirectives(program);
@@ -413,12 +427,13 @@ public class Translator {
 	/**
 	 * 1.Move expressions from predicate arguments to the body of the rule
 	 * Example: p(X+1):-q(X+2). becomes p(Y):-p(Z),Y=X+1,Z=X+2, where Y and Z
-	 * are new variables in the rule
-	 * 2. Add all newly added atoms of the form [variable]=[expression] 
-	 *    to newBodyAtoms list
+	 * are new variables in the rule 2. Add all newly added atoms of the form
+	 * [variable]=[expression] to newBodyAtoms list
+	 * 
 	 * @param rule
 	 *            to be processed
-	 * @param newBodyAtoms the list where all newly added atoms are stored
+	 * @param newBodyAtoms
+	 *            the list where all newly added atoms are stored
 	 */
 	private void fetchGlobalExpressions(ASTprogramRule rule,
 			ArrayList<ASTatom> newBodyAtoms) {
@@ -476,16 +491,18 @@ public class Translator {
 		}
 	}
 
-	private void renameLocalVariables(SimpleNode n,HashMap<String,String>originalNameMapping) {
+	private void renameLocalVariables(SimpleNode n,
+			HashMap<String, String> originalNameMapping) {
 		if (n.getId() == SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT) {
 			renamer.renameLocalVariables((ASTaggregateElement) n,
-					localElemCount++,originalNameMapping);
+					localElemCount++, originalNameMapping);
 		} else if (n.getId() == SparcTranslatorTreeConstants.JJTCHOICE_ELEMENT) {
 			renamer.renameLocalVariables((ASTchoice_element) n,
-					localElemCount++,originalNameMapping);
+					localElemCount++, originalNameMapping);
 		} else {
 			for (int i = 0; i < n.jjtGetNumChildren(); i++) {
-				renameLocalVariables((SimpleNode) n.jjtGetChild(i),originalNameMapping);
+				renameLocalVariables((SimpleNode) n.jjtGetChild(i),
+						originalNameMapping);
 			}
 		}
 	}
@@ -500,8 +517,7 @@ public class Translator {
 	 *            mapping between string representation of terms and arrayList
 	 *            of all sort the term must belong to.
 	 */
-	private void fetchLocalTerms(SimpleNode node)
-			throws ParseException {
+	private void fetchLocalTerms(SimpleNode node) throws ParseException {
 		boolean isAggregateElement = node.getId() == SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT;
 		boolean isChoiceRuleElement = node.getId() == SparcTranslatorTreeConstants.JJTCHOICE_ELEMENT;
 		TermFetcher tf = null;
@@ -517,9 +533,10 @@ public class Translator {
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 			for (ASTterm term : localFetchedTerms.keySet()) {
 				String sortName = localFetchedTerms.get(term);
-				String sortName2=predicateArgumentSorts.get("#"+sortName).get(0);
+				String sortName2 = predicateArgumentSorts.get("#" + sortName)
+						.get(0);
 				newAtoms.add(createSortAtom(sortName2, term));
-				gen.addSort(sortName2, sortNameToExpression.get(sortName),true);
+				gen.addSort(sortName2, sortNameToExpression.get(sortName), true);
 			}
 			if (isAggregateElement) {
 				addAtomsToAggregateElement((ASTaggregateElement) node, newAtoms);
@@ -545,8 +562,7 @@ public class Translator {
 	 *            mapping between string representation of terms and arrayList
 	 *            of all sort the term must belong to.
 	 */
-	private void fetchLocalTerms(ASTprogramRule rule)
-			throws ParseException {
+	private void fetchLocalTerms(ASTprogramRule rule) throws ParseException {
 		fetchLocalTerms((SimpleNode) rule);
 	}
 
@@ -560,63 +576,74 @@ public class Translator {
 	 *            of all sort the term must belong to.
 	 */
 	private void fetchGlobalTerms(ASTprogramRule rule,
-			ArrayList<ASTatom> newBodyAtoms)
-			throws ParseException {
+			ArrayList<ASTatom> newBodyAtoms) throws ParseException {
 		TermFetcher tf = new TermFetcher(predicateArgumentSorts);
 		HashMap<ASTterm, String> globalFetchedTerms = tf.fetchTermSorts(rule);
 		ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 		for (ASTterm term : globalFetchedTerms.keySet()) {
 			String sortName = globalFetchedTerms.get(term);
-			String sortName2=predicateArgumentSorts.get("#"+sortName).get(0);
+			String sortName2 = predicateArgumentSorts.get("#" + sortName)
+					.get(0);
 			newAtoms.add(createSortAtom(sortName2, term));
-			gen.addSort(sortName2, sortNameToExpression.get(sortName),true);
+			gen.addSort(sortName2, sortNameToExpression.get(sortName), true);
 		}
 		addAtomsToRulesBody(rule, newAtoms);
 		newBodyAtoms.addAll(newAtoms);
 	}
 
-
 	/**
 	 * find unrestricted variables in the rule
-	 * @param rule AST node describing the rules
+	 * 
+	 * @param rule
+	 *            AST node describing the rules
 	 * @return hash-set of found unrestricted variables
 	 */
-    private HashSet<String> getUnrestrictedVars(ASTprogramRule rule) {
-    	HashSet<String> unboundedVars=new HashSet<String>();
-    	HashSet<String> boundedVars=new HashSet<String>();
-    	fetchVariables(unboundedVars, boundedVars,rule,false);
-    	unboundedVars.removeAll(boundedVars);
-    	return unboundedVars;
-    }
-    /**
-     * Go over the AST node and fill sets of unbounded and bounded variables
-     * @param unboundedVariables set of found unbounded variables
-     * @param boundedVariables set of found bounded variables
-     * @param node node to explore
-     * @param scope true if node is a child of a simpleAtom(either
-     */
-	private void fetchVariables(HashSet<String> unboundedVariables,HashSet<String> boundedVariables, 
-	                                                        SimpleNode node,boolean scope) {
-		if(node.getId()==SparcTranslatorTreeConstants.JJTVAR) {
-			if(scope) boundedVariables.add(node.toString());
-			else unboundedVariables.add(node.toString());
+	private HashSet<String> getUnrestrictedVars(ASTprogramRule rule) {
+		HashSet<String> unboundedVars = new HashSet<String>();
+		HashSet<String> boundedVars = new HashSet<String>();
+		fetchVariables(unboundedVars, boundedVars, rule, false);
+		unboundedVars.removeAll(boundedVars);
+		return unboundedVars;
+	}
+
+	/**
+	 * Go over the AST node and fill sets of unbounded and bounded variables
+	 * 
+	 * @param unboundedVariables
+	 *            set of found unbounded variables
+	 * @param boundedVariables
+	 *            set of found bounded variables
+	 * @param node
+	 *            node to explore
+	 * @param scope
+	 *            true if node is a child of a simpleAtom(either
+	 */
+	private void fetchVariables(HashSet<String> unboundedVariables,
+			HashSet<String> boundedVariables, SimpleNode node, boolean scope) {
+		if (node.getId() == SparcTranslatorTreeConstants.JJTVAR) {
+			if (scope)
+				boundedVariables.add(node.toString());
+			else
+				unboundedVariables.add(node.toString());
 		}
-		if(node.getId()==SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM 
-		   || node.getId()==SparcTranslatorTreeConstants.JJTNONRELATOM) {
-			scope=true;// root of predicate;
+		if (node.getId() == SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM
+				|| node.getId() == SparcTranslatorTreeConstants.JJTNONRELATOM) {
+			scope = true;// root of predicate;
 		}
-		
-		if(node.getId()==SparcTranslatorTreeConstants.JJTATOM || 
-			node.getId()==SparcTranslatorTreeConstants.JJTSIMPLEATOM) {
-			if(node.image!=null && node.image.equals("="))
-			{
-			fetchVariables(unboundedVariables,boundedVariables,(SimpleNode)node.jjtGetChild(0),true);
-			fetchVariables(unboundedVariables,boundedVariables,(SimpleNode)node.jjtGetChild(1),false);
+
+		if (node.getId() == SparcTranslatorTreeConstants.JJTATOM
+				|| node.getId() == SparcTranslatorTreeConstants.JJTSIMPLEATOM) {
+			if (node.image != null && node.image.equals("=")) {
+				fetchVariables(unboundedVariables, boundedVariables,
+						(SimpleNode) node.jjtGetChild(0), true);
+				fetchVariables(unboundedVariables, boundedVariables,
+						(SimpleNode) node.jjtGetChild(1), false);
 			}
 		}
-		
-		for(int i=0;i<node.jjtGetNumChildren();i++) {
-			fetchVariables(unboundedVariables,boundedVariables,(SimpleNode)node.jjtGetChild(i),scope);
+
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			fetchVariables(unboundedVariables, boundedVariables,
+					(SimpleNode) node.jjtGetChild(i), scope);
 		}
 	}
 
@@ -629,10 +656,27 @@ public class Translator {
 	 *             if sort of some variable cannot be detected
 	 */
 	private void translateRule(ASTprogramRule rule) throws ParseException {
-		HashMap<String, String> replacedExpressions = new HashMap<String, String>();
+		
+		
+	
 		String originalRule = rule.toString();
 		int lineNumber = rule.getBeginLine();
 		int columnNumber = rule.getBeginColumn();
+		
+		// write warnings to STDERR if the flag was set to true
+		if (generateClingconWarnings) {
+	      Formula ruleF=ruleReducer.reduceRule(rule);
+	     // System.err.println(ruleF.toString());
+	     
+	      if(ruleF!=null && !ExpandSolve.run(ruleF)) {
+	    	 System.err.println("WARNING: Rule "+originalRule+" at line "+lineNumber+
+	    			 ", column "+columnNumber+" is an empty rule"); 
+	      }
+		}
+		
+		
+		
+
 		//check unrestricted Variables:
 		HashSet<String> unrestrictedVars=getUnrestrictedVars(rule);
 		if(!unrestrictedVars.isEmpty()) {
@@ -642,6 +686,7 @@ public class Translator {
 					+ rule.getBeginColumn()
 					+ " contains unrestricted variables: "+unrestrictedVars.toString());
 		}
+		
 		// renameLocalVariables
 		HashMap<String, String> originalNameMapping = new HashMap<String, String>();
 		appendToVariableNamesIn(rule, "_G", originalNameMapping);
@@ -654,16 +699,22 @@ public class Translator {
 		// fetch terms:
 		fetchGlobalTerms(rule,newSortAtoms);
 		fetchLocalTerms(rule);
-		// add rules for warnings
 		
-		ArrayList<String> warningRules=
-				WarningRuleCreator.createWarningRules(originalRule, lineNumber, columnNumber, newSortAtoms);
-		if(generateWarnings)
+		
+		// add rules for warnings
+		if(generateASPWarnings)
+		{
+		  ArrayList<String> warningRules=
+					WarningRuleCreator.createWarningRules(originalRule, lineNumber, columnNumber, newSortAtoms);
 		  for(String warningRule:warningRules) {
 			appendStringToTranslation(warningRule);
 			appendNewLineToTranslation();
 	      }
+		}
 		
+	
+		
+	
 		RuleAnalyzer ra = new RuleAnalyzer(rule);
 		// add new weak constraints and rules for a CR-rule
 		if (ra.isCrRule()) {
@@ -860,7 +911,7 @@ public class Translator {
 			HashMap<String, String> originalNameMapping) {
 
 		if (n.getId() == SparcTranslatorTreeConstants.JJTVAR) {
-			originalNameMapping.put(n.image+suffix,n.image);
+			originalNameMapping.put(n.image + suffix, n.image);
 			n.image += suffix;
 		} else
 

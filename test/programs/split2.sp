@@ -1,2 +1,2 @@
-program rules
+rules
 r(a).

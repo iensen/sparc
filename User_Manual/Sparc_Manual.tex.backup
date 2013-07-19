@@ -108,7 +108,7 @@ language ${\cal SPARC}$ which attempts to solve this problem and provide some ex
 \section{System installation}
 ${\cal SPARC}$ system  works in two phases:
 \begin{enumerate}
-\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP) with weak constraints\cite{buccafurri1997strong} code 
+\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP)\cite{gelfond1991classical} with weak constraints\cite{buccafurri1997strong} code 
 \footnote{the syntax of weak constraints matches DLV input language}.
 \item Running ASP code on existing ASP solvers.
 \end{enumerate}
@@ -116,12 +116,11 @@ ${\cal SPARC}$ system  works in two phases:
 \st So, to use the system you need two things:
 \begin{enumerate}
 \item The SPARC to ASP translator. It can be downloaded here: \url{https://github.com/iensen/sparc_paper/blob/master/sparc.jar?raw=true}.
-The translator requires Java to be installed (the system was tested under versions 1.7.0_21 and 1.6.0_45).
 \item An ASP solver. We recommend using DLV for best compatibility with out translator. DLV can be downloaded here:
  \url{http://www.dlvsystem.com/dlv/#1}
 You need to download \textit{static} version of the executable file.
-\end{enumerate}
 
+\end{enumerate}
 To demonstrate usage of the system, let's start with simple example.
 \begin{verbatim}
 sorts
@@ -146,7 +145,7 @@ SPARC to DLV translator V2.21
 program translated
 \end{verbatim}
 
-\st To get the answer sets of the translated program, run DLV or clingo:
+\st To get the answer sets of the translated program, run DLV:
 
 \begin{verbatim}
 $ dlv example.asp
@@ -155,27 +154,10 @@ DLV [build BEN/Dec 21 2011   gcc 4.6.1]
 {teacher(bob)}
 \end{verbatim}
 
-If you use clingo, you will a see similar result:
-
-\begin{verbatim}
-$ clingo example.asp
-Answer: 1
-teacher(bob) 
-SATISFIABLE
-
-Models      : 1     
-Time        : 0.000
-  Prepare   : 0.000
-  Prepro.   : 0.000
-  Solving   : 0.000
-
-\end{verbatim}
-
-
 \st You should see that the answer set appeared. For a detailed description of ${\cal SPARC}$ system options, see 
 \url{https://github.com/iensen/sparc_paper/wiki/System-usage}.
 
-\st For Linux, MacOS or Cygwin (Windows) users we prepared  scripts which combine translation and solver execution into one step.
+\st For Linux, MacOS or Cygwin (Windows) users we prepared a bash script which combines translation and solver execution into one step.
 It is available here: \url{https://github.com/iensen/sparc/raw/master/sparc}. Before using the script, make it executable by running command
 \texttt{chmod +x sparc} from the command line.
 
@@ -567,8 +549,8 @@ the definitions of program atom and program term correspondingly(!!add reference
 During this phase each rule in input ${\cal SPARC}$ program is checked for having at least one ground instance. This is done by applying a standard constraint
 satisfaction algorithm to a constraint formula over finite domains[9] produced by algorithms from (!!! add link as soon as it is available).
 Warnings are reported for the rules which have no ground instances.
-
-The option \texttt{--warnings} must be passed to the  system  in order to display warnings.
+\subsubsection{ASP based warning checking}
+The option \texttt{-wasp} must be passed to the  system  in order to detect and display warnings using a simple ASP based algorithm.
 For example, consider the ${\cal SPARC}$ program below.
 
 \begin{verbatim}
@@ -588,7 +570,7 @@ p(f(X)):-q(X).
 The only rule of the program has no ground instances with respect to defined sorts.
 The execution trace is provided below
 \begin{verbatim}
-iensen@iensen-EP35-DS3L:~/sparc_pr$ ./sparc warning.sp --warnings 
+iensen@iensen-EP35-DS3L:~/sparc_pr$ ./sparc warning.sp -wasp 
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 
 SPARC to DLV translator V2.22
@@ -597,16 +579,50 @@ program translated
 \end{verbatim}
 
 The atom \texttt{warning("p(f(X)):-q(X). ( line: 11, column: 1)")} is included into the answer set as an indicator of potential problem.
-When the \texttt{--warnings} is passed to ${\cal SPARC}$ system, each answer set will contain 
+When the \texttt{-wasp} is passed to ${\cal SPARC}$ system, each answer set will contain 
 \begin{verbatim}
 warning("rule description") 
 \end{verbatim}
-for each rule which has no ground instances and 
+for each rule which has no ground instances\footnote{in current version, aggregates are skipped by this algorithm} and 
 \begin{verbatim}
 has_ground_instance("rule description")
 \end{verbatim}
 \st
 for all other rules of the input program.
+\subsubsection{Constraint solver based warning checking}
+
+The option \texttt{-wcon} must be passed to the  system  in order to detect and display warnings using the algorithm described in the paper \cite{?}.
+Consider the same ${\cal SPARC}$ program below.
+
+\begin{verbatim}
+sorts
+#s1={a}.
+#s2=f(#s1).
+#s3={b}.
+
+predicates
+p(#s2).
+q(#s3).
+
+rules
+p(f(X)):-q(X).
+\end{verbatim}
+
+The only rule of the program has no ground instances with respect to defined sorts.
+The execution trace is provided below
+\begin{verbatim}
+\end{verbatim}
+
+The atom \texttt{warning("p(f(X)):-q(X). ( line: 11, column: 1)")} is included into the answer set as an indicator of potential problem.
+When the \texttt{-wasp} is passed to ${\cal SPARC}$ system, each answer set will contain 
+\begin{verbatim}
+warning("rule description") 
+\end{verbatim}
+for each rule which has no ground instances\footnote{in current version, aggregates are skipped by this algorithm} and 
+\begin{verbatim}
+has_ground_instance("rule description")
+\end{verbatim}
+\st
 
 \section{${\cal SPARC}$ and Unsafe Rules}
 

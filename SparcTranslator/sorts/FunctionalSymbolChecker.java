@@ -41,8 +41,9 @@ public class FunctionalSymbolChecker {
 private static HashSet<Integer> fetchAllBasicSortIndexes(SimpleNode n) {
 	   
 	   HashSet<Integer> result=new HashSet<Integer>();
-	   if(n.getId()==SparcTranslatorTreeConstants.JJTUNARYCONDITION && n.jjtGetNumChildren()==3)
+	   if(n.getId()==SparcTranslatorTreeConstants.JJTUNARYCONDITION  && n.jjtGetNumChildren()==2)
 	   {
+		   
 		    String[] relationArray = n.image.split(" ");
 		    int arg1 = Integer.parseInt(relationArray[0]);
 			int arg2 = Integer.parseInt(relationArray[2]);

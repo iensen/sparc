@@ -1,19 +1,20 @@
-\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
-\contentsline {section}{\numberline {2}System installation}{2}{section.2}
-\contentsline {section}{\numberline {3}Detailed System Description}{4}{section.3}
-\contentsline {subsection}{\numberline {3.1}Sort definitions}{4}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Predicate Declarations}{7}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}Program Rules}{7}{subsection.3.3}
-\contentsline {section}{\numberline {4}Directives}{7}{section.4}
-\contentsline {subsection}{\numberline {4.1}\#maxint}{8}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}\#const}{8}{subsection.4.2}
-\contentsline {section}{\numberline {5}Answer Sets}{8}{section.5}
-\contentsline {section}{\numberline {6}Syntax checking}{9}{section.6}
-\contentsline {section}{\numberline {7}Typechecking}{9}{section.7}
-\contentsline {subsection}{\numberline {7.1}Type errors}{9}{subsection.7.1}
-\contentsline {subsubsection}{\numberline {7.1.1}Sort definition errors}{10}{subsubsection.7.1.1}
-\contentsline {subsubsection}{\numberline {7.1.2}Predicate declarations errors}{11}{subsubsection.7.1.2}
-\contentsline {subsubsection}{\numberline {7.1.3}Program rules errors}{12}{subsubsection.7.1.3}
-\contentsline {subsection}{\numberline {7.2}Type warnings}{12}{subsection.7.2}
-\contentsline {section}{\numberline {8}${\cal SPARC}$ and Unsafe Rules}{13}{section.8}
-\contentsline {section}{\numberline {9}${\cal SPARC}$ and ASPIDE}{13}{section.9}
+\contentsline {section}{\numberline {1}System installation}{2}{section.1}
+\contentsline {section}{\numberline {2}Detailed System Description}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Sort definitions}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Predicate Declarations}{6}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Program Rules}{6}{subsection.2.3}
+\contentsline {section}{\numberline {3}Directives}{6}{section.3}
+\contentsline {subsection}{\numberline {3.1}\#maxint}{7}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}\#const}{7}{subsection.3.2}
+\contentsline {section}{\numberline {4}Answer Sets}{7}{section.4}
+\contentsline {section}{\numberline {5}Syntax checking}{8}{section.5}
+\contentsline {section}{\numberline {6}Typechecking}{8}{section.6}
+\contentsline {subsection}{\numberline {6.1}Type errors}{8}{subsection.6.1}
+\contentsline {subsubsection}{\numberline {6.1.1}Sort definition errors}{9}{subsubsection.6.1.1}
+\contentsline {subsubsection}{\numberline {6.1.2}Predicate declarations errors}{10}{subsubsection.6.1.2}
+\contentsline {subsubsection}{\numberline {6.1.3}Program rules errors}{11}{subsubsection.6.1.3}
+\contentsline {subsection}{\numberline {6.2}Type warnings}{11}{subsection.6.2}
+\contentsline {subsubsection}{\numberline {6.2.1}ASP based warning checking}{11}{subsubsection.6.2.1}
+\contentsline {subsubsection}{\numberline {6.2.2}Constraint solver based warning checking}{12}{subsubsection.6.2.2}
+\contentsline {section}{\numberline {7}${\cal SPARC}$ and Unsafe Rules}{12}{section.7}
+\contentsline {section}{\numberline {8}${\cal SPARC}$ and ASPIDE}{13}{section.8}

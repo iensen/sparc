@@ -1,0 +1,94 @@
+\documentclass{llncs}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{llncsdoc}
+% \usepackage{color}
+% \everymath{\color{blue}}
+%\everydisplay{\color{blue}}
+\let\displaystyle\textstyle
+
+
+\newcommand{\ie}[1] {
+  \begin{itemize}
+    #1
+  \end{itemize}
+}
+% \usepackage{aaai}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{courier}
+\usepackage{multirow}
+    \usepackage[bottom]{footmisc}
+\usepackage{microtype}
+\usepackage{tikz}
+\usepackage{comment}
+\usepackage{chngcntr}
+\usepackage{float}
+\usepackage[algo2e,ruled,linesnumbered,vlined]{algorithm2e}
+\counterwithin{figure}{section}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+% \usepackage[timestamp, dark]{draftcopy}
+% \usepackage{doc}
+\usepackage{url}
+% \usepackage[sort]{natbib}
+%\usepackage{amsmath,amssymb, amsthm}
+\usepackage{balance}
+% \usepackage[switch, pagewise, mathlines, displaymath]{lineno}
+
+% \setcounter{secnumdepth}{2}
+ \usepackage{fancyvrb}
+\usepackage{graphicx}
+
+\usepackage{listings}
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+
+
+
+\begin{definition}[Connected Atoms]
+{\rm
+ Two atoms $a_i$ and $a_j$ occuring in the list of atoms $L=[a_1,\dots a_n]$ are call \textit{connected} to each other with respect to $L$  if one of the following conditions holds:
+ \begin{enumerate}
+  \item $a_i$ and $a_j$ share a common variable.
+  \item there exist an atom $a_k$ in $L$, such that $a_i$ is connected to $a_k$ and $a_k$ is connected to $a_j$.
+ \end{enumerate}
+}
+\end{definition}
+
+\begin{algorithm2e}[H]\caption{Reorder}
+ \DontPrintSemicolon
+  \KwIn{List of atoms $[a_1,\dots a_n]$} 
+  \KwOut{List of atoms $[b_1,\dots b_n]$ such that :
+         \begin{enumerate}
+          \item  $[b_1,\dots b_n]$ is a permutation of [$a_1,\dots a_n]$.
+          \item  if atoms $b_i$ and $b_j$ are connected, then for all k in $i+1..j-1$, $b_i$ is connected to $b_k$ and  $b_j$ is connected to $b_k$. 
+         \end{enumerate}
+} 
+  
+  Let $bIndex$ be 1 \;
+  \ForEach {i in 1..n} 
+  {
+    \If{$a_i$ is not connected to any of $a_{i-1}$,\dots $a{1}$}
+    {
+       Let $a_{k1},a_{k2},\dots a_{km}$ be all variables connected to $a_i$ (including $a_i$ itself)
+       $[b_bIndex,b_{bIndex+1},b_{bIndex+m}]:=[a_{k1},a_{k2},\dots a_{km}]$ \;
+       $bIndex:=bIndex+m$ \;
+    }
+    return $[b_1,\dots, b_n]$
+  } 
+\end{algorithm2e}
+
+  
+\end{document}

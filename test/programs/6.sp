@@ -1,5 +1,5 @@
 sorts
-#int=1..5.
+#int=1..3.
 predicates
 p(#int).
 q(#int).
@@ -7,4 +7,4 @@ rules
 p(1).
 p(2).
 p(3).
-q(X+2):-p(X).
+q(X+1):-p(X).

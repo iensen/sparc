@@ -1,45 +1,47 @@
 This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: Sparc_Manual.aux
-The style file: ieeetr.bst
+The style file: plain.bst
 Database file #1: mybib.bib
+Warning--I didn't find a database entry for "?"
 You've used 2 entries,
-            1876 wiz_defined-function locations,
-            492 strings with 3831 characters,
-and the built_in function-call counts, 654 in all, are:
-= -- 66
-> -- 19
-< -- 0
-+ -- 7
-- -- 5
-* -- 47
-:= -- 95
-add.period$ -- 2
+            2118 wiz_defined-function locations,
+            513 strings with 4355 characters,
+and the built_in function-call counts, 783 in all, are:
+= -- 80
+> -- 31
+< -- 1
++ -- 12
+- -- 10
+* -- 55
+:= -- 130
+add.period$ -- 7
 call.type$ -- 2
-change.case$ -- 2
+change.case$ -- 11
 chr.to.int$ -- 0
 cite$ -- 2
-duplicate$ -- 33
-empty$ -- 65
-format.name$ -- 5
-if$ -- 159
+duplicate$ -- 31
+empty$ -- 64
+format.name$ -- 10
+if$ -- 167
 int.to.chr$ -- 0
 int.to.str$ -- 2
 missing$ -- 2
-newline$ -- 9
-num.names$ -- 2
-pop$ -- 6
+newline$ -- 13
+num.names$ -- 4
+pop$ -- 12
 preamble$ -- 1
-purify$ -- 0
+purify$ -- 9
 quote$ -- 0
-skip$ -- 24
+skip$ -- 20
 stack$ -- 0
-substring$ -- 51
-swap$ -- 14
-text.length$ -- 0
+substring$ -- 54
+swap$ -- 7
+text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 0
+type$ -- 8
 warning$ -- 0
-while$ -- 8
+while$ -- 9
 width$ -- 3
-write$ -- 23
+write$ -- 25
+(There was 1 warning)

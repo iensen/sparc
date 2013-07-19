@@ -124,11 +124,11 @@ public class Condition {
 	 * @param arguments
 	 * @return true if the condition is satisfied and false otherwise
 	 */
-	private boolean checkCondition(ASTunaryCondition unaryCond,
+	public boolean checkCondition(ASTunaryCondition unaryCond,
 			ArrayList<String> arguments) {
 		if (unaryCond.jjtGetNumChildren() == 1
 				&& ((SimpleNode) unaryCond.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTCONDITION) {
-			if(unaryCond.image != null && unaryCond.image.trim().equals("not"))
+			if(unaryCond.image != null && unaryCond.image.trim().equals("not("))
 			    return !check((ASTcondition) unaryCond.jjtGetChild(0), arguments);
 			else 
 				return check((ASTcondition) unaryCond.jjtGetChild(0), arguments);

@@ -22,7 +22,13 @@ fi
 
 last_sparc_arg=1;
 
-if [ "$2" = "--warnings" ];
+if [ "$2" = "-wasp" ] || [ "$2" = "-wcon" ];
+  then
+  last_sparc_arg=$last_sparc_arg+1;
+fi
+
+
+if [ "$3" = "-wasp" ] || [ "$3" = "-wcon" ];
   then
   last_sparc_arg=$last_sparc_arg+1;
 fi

@@ -331,7 +331,7 @@ public class InstanceGenerator {
 	 *            last string from the range
 	 * @return set of generated strings
 	 */
-	HashSet<String> generateStrings(String from, String to) {
+	public HashSet<String> generateStrings(String from, String to) {
 		HashSet<String> result = new HashSet<String>();
 		result.add(from);
 		String currentString = from;
@@ -526,7 +526,7 @@ public class InstanceGenerator {
 		}
 	}
 
-	private HashSet<String> generateInstances(ASTconstantTermList termList,boolean generateRecords) {
+	public HashSet<String> generateInstances(ASTconstantTermList termList,boolean generateRecords) {
 		HashSet<String> result = new HashSet<String>();
 		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
 			ASTconstantTerm constantTerm = (ASTconstantTerm) termList

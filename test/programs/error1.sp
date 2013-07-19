@@ -1,6 +1,6 @@
-sort definitions
-s=1..5.
-predicate declarations
-p(s).
-program rules
+sorts
+#s=1..5.
+predicates
+p(#s).
+rules
 p(1..6).

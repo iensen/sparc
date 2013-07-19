@@ -1,0 +1,10 @@
+sorts
+#s1={a,b}.
+#s2={c,d}.
+predicates
+p(#s1).
+q(#s2).
+rules
+p(X):-q(X).
+q(c).
+q(d).

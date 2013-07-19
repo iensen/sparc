@@ -3,5 +3,5 @@ sorts
 predicates
 p(#s).
 q(#s).
-program rules
+rules
 p(X) :- not q(a).

@@ -1,5 +1,5 @@
 package typechecking;
-
+//TODO:
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -204,8 +204,8 @@ public class TypeChecker {
 			int from = Integer.parseInt(range[1]);
 			int to = Integer.parseInt(range[2]);
 			for (int i = from; i <= to; i++) {
-				TermCreator tc = new TermCreator(Integer.toString(i));
-				ASTterm term = tc.createSimpleArithmeticTerm();
+				TermCreator tc = new TermCreator();
+				ASTterm term = tc.createSimpleArithmeticTerm(Integer.toString(i));
 				if (!checkTerm(
 						term,
 						sortNameToExpression.get(predicateArgumentSorts.get(
@@ -367,8 +367,8 @@ public class TypeChecker {
 				// by its value if it is true
 				TermEvaluator te=new TermEvaluator((ASTarithmeticTerm)child);
 				if(te.isEvaluable()) {
-					TermCreator tc=new TermCreator(Long.toString(te.evaluate()));
-				    termToCheck=tc.createSimpleArithmeticTerm();	
+					TermCreator tc=new TermCreator();
+				    termToCheck=tc.createSimpleArithmeticTerm(Long.toString(te.evaluate()));	
 				}
 				
 				// check if corresponding sort contains at least one number!
@@ -448,8 +448,8 @@ public class TypeChecker {
 	private boolean checkNonGroundTerm(ASTsymbolicTerm symTerm) {
 		SimpleNode child0 = (SimpleNode) symTerm.jjtGetChild(0);
 		if (child0.getId() == SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT) {
-			TermCreator tc = new TermCreator(child0.image);
-			return isDomainElement(tc.createSimpleSymbolicTerm());
+			TermCreator tc = new TermCreator();
+			return isDomainElement(tc.createSimpleSymbolicTerm(child0.image));
 		} else {// symbolic Function
 
 			String functionSymbol = child0.image.substring(0,
@@ -817,9 +817,9 @@ public class TypeChecker {
 			return calculatedDp[stringIndex][basicSortIndex] != 0;
 		
 		for (int tryLength = 1; termLength - tryLength >= concLength-basicSortIndex-1; tryLength++) {
-			TermCreator tc = new TermCreator(term.substring(stringIndex,
-					stringIndex + tryLength));
-			if (checkTerm(tc.createSimpleSymbolicTerm(),
+			TermCreator tc = new TermCreator();
+			if (checkTerm(tc.createSimpleSymbolicTerm(term.substring(stringIndex,
+					stringIndex + tryLength)),
 					(ASTbasicSort) conc.jjtGetChild(basicSortIndex))
 					&& checkConcatenation(term, conc, stringIndex + tryLength,
 							basicSortIndex + 1, calculatedDp)) {

@@ -1,0 +1,442 @@
+\documentclass{llncs}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{llncsdoc}
+% \usepackage{color}
+% \everymath{\color{blue}}
+%\everydisplay{\color{blue}}
+\let\displaystyle\textstyle
+
+
+\newcommand{\ie}[1] {
+  \begin{itemize}
+    #1
+  \end{itemize}
+}
+% \usepackage{aaai}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{courier}
+\usepackage{multirow}
+    \usepackage[bottom]{footmisc}
+\usepackage{microtype}
+\usepackage{tikz}
+\usepackage{comment}
+\usepackage{chngcntr}
+\usepackage{float}
+\usepackage[algo2e,ruled,linesnumbered,vlined]{algorithm2e}
+\counterwithin{figure}{section}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+% \usepackage[timestamp, dark]{draftcopy}
+% \usepackage{doc}
+\usepackage{url}
+% \usepackage[sort]{natbib}
+%\usepackage{amsmath,amssymb, amsthm}
+\usepackage{balance}
+% \usepackage[switch, pagewise, mathlines, displaymath]{lineno}
+
+% \setcounter{secnumdepth}{2}
+ \usepackage{fancyvrb}
+\usepackage{graphicx}
+
+\usepackage{listings}
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+
+
+\section{Definitions}
+\begin{definition}[Formula] \label{formula}
+{\rm
+\ie{
+\item $\emptyset$ is a {\em formula}
+\item \ $T \in D$, where T is a variable, a %\sparc\
+ground term or an arithmetic term,
+and $D$ is a set of %\sparc\
+ground terms, is a {\em formula},
+\item  $t_1\diamond t_2$, where $t_1$ and $t_2$ are terms and
+$\diamond \in \{ = ,\neq,  \prec, \preceq\}$, is a {\em formula}, and
+\item if $A$ and $B$ are formulas then ($A$ $\land$ $B$), ($A$ $\lor$ $B$), and  $\neg A$ are {\em formulas}.
+}
+}
+\end{definition}
+
+\begin{definition}[Empty Formula] \label{empty formula}
+\begin{itemize}
+ \item $\emptyset$ is an  {\em empty formula}
+ \item if $A$ and $B$ are empty formulas then ($A$ $\land$ $B$), ($A$ $\lor$ $B$), and  $\neg A$ are {\em empty formulas}.
+\end{itemize}
+ \end{definition}
+ In what follows  any empty formula is interpreted as \textbf{false}.
+ 
+ 
+ 
+ \begin{definition}[Primitive Formula] \label{primitive formula}
+  {\rm
+\ie{
+\item \ $T \in D$, where T is a variable, a %\sparc\
+ground term or an arithmetic term,
+and $D$ is a set of %\sparc\
+ground terms, is a {\em primitive formula},
+\item  $t_1\diamond t_2$, where $t_1$ and $t_2$ are terms and
+$\diamond \in \{ = ,\neq,  \prec, \preceq\}$, is a {\em primitive formula}, and
+\item if $A$ and $B$ are formulas then    $\neg A$  is a {\em  primitive formula}.
+}
+}
+ \end{definition}
+ 
+
+
+ \begin{definition}[Primitive Conjunction] \label{primitive conjunction}\\
+ {\rm
+  A formula $\mathcal{F}$ is  a \textit{primitive conjunction} if it is of the form $G_1 \land \dots \land G_n$, where $G_1,\dots,G_n$ are primitive formulas.
+}
+ \end{definition}
+ 
+ \begin{definition}[Arithmetic Variable] \label{arithmetic variable} \\
+  {\rm
+    A variable $X$ occuring in a primitive conjunction $\mathcal{C}=G_1 \land \dots \land G_n$ is called arithmetic with respect to $\mathcal{C}$ if one of the following conditions holds:
+    \begin{itemize}
+      \item X occurs in an arithmetic term containing at least one arithmetic operation.
+      \item one of $G_i$ is of the form  $X \in D$, where $D$ is a range of natural numbers.
+      \item one of $G_i$ is of the form  $X \diamond Y$ or $Y \diamond X$, where Y is an arithmetic variable and $\diamond \in \{ \prec,<,\preceq,=\}$. 
+   \end{itemize}
+ 
+  }
+ \end{definition}
+\begin{definition}[Arithmetic Term] \label{aterm}
+{\rm
+ A term $t$ occuring in a primitive conjunction $\mathcal{C}=G_1 \land \dots \land G_n$ is called \textit{arithmetic} 
+with respect to $\mathcal{C}$ if one of the following conditions holds:
+ \begin{enumerate}
+  \item $t$ is a number
+  \item $t$ contains an arithmetic operation ('+','-', or '*').
+  \item $t$ is not a record and all variables in $t$ are arithmetic with respect to $\mathcal{C}$
+ \end{enumerate}
+}
+\end{definition}
+
+ \begin{definition}[Primitive Arithmetic Constraint] \label{primitive arithmetic constraint}
+{\rm
+   A primitive constraint $G$ occurring in a primitive conjunction $\mathcal{C}=G_1 \land \dots \land G_n$  
+is called \textit{arithmetic} with respect to $\mathcal{C}$ if one of the following conditions holds:
+ \begin{itemize}
+  \item $G$ is of the form $T \in D$, where $T$ is an arithmetic term with respect to $\mathcal{C}$ and $D$ is of the form $n1..n2$.
+  \item $G$ is of the form $t_1\diamond t_2$, where both $t_1$ and $t_2$ are arithmetic terms with respect to $\mathcal{C}$. 
+ \end{itemize}
+}
+ \end{definition}
+
+
+\section{Algorithms}
+\begin{algorithm2e}[H]\caption{ExpandSolve}
+ \DontPrintSemicolon
+ %\SetAlgoBlockMarkers{begin}{end}
+ \KwIn{Formulas $\mathcal{F}$, ${\cal TODO}$, ${\cal C}$, 
+         such that $\mathcal{F} \land {\cal TODO} \land {\cal C}$ is non-empty}
+ \KwOut{\textbf{True} if $\mathcal{F} \land {\cal TODO} \land {\cal C}$ is satisfiable and \textbf{false} otherwise }
+\If{ $\mathcal{F}=\emptyset$}
+{
+ \If{$\mathcal{TODO}=\emptyset$}
+ {
+   \Return Solve(Simplify($\mathcal{C}$),$maxint$) \;
+ }
+ \Else 
+ {
+   Let $\mathcal{TODO}$ be $G_1 \land \dots \land  G_n$ \;
+   \Return {ExpandSolve($G_1$,$G_2 \land \dots \land G_n$,$\mathcal{C}$)}\;
+ }
+}
+\ElseIf{$\mathcal{F}=\neg(A \land B)$} {
+  ExpandSolve($\neg A \lor \neg B, \mathcal{TODO},\mathcal{C})$\;
+}
+\ElseIf{$\mathcal{F}=\neg(A \lor B)$} {
+    ExpandSolve($\neg A \land \neg B, \mathcal{TODO},\mathcal{C})$\;
+}
+\ElseIf{$\mathcal{F}=A \lor B$} {
+  \If{ExpandSolve($A,\mathcal{TODO},\mathcal{C})$=\textbf{false}}
+  {
+   \Return ExpandSolve($B,\mathcal{TODO},\mathcal{C}$) \;
+  }
+  \Else {
+   \Return \textbf{true}\;
+  }   
+}
+\ElseIf{$\mathcal{F}=A \land B$} {
+  \Return ExpandSolve($A, B\land \mathcal{TODO},\mathcal{C}$) \;
+}
+\Else 
+{
+\Return ExpandSolve($\emptyset,\mathcal{TODO},\mathcal{F} \land \mathcal{C}$)
+}
+ \Return {\em true} \;
+\end{algorithm2e}
+
+\begin{algorithm2e}[H]\caption{Simplify}
+ \DontPrintSemicolon
+  \KwIn{Primitive conjunction $G_1 \land \dots \land G_n$, the upper limit for natural numbers} 
+  \KwOut {Primitive conjunction $G_1 \land \dots \land G_m$ after simplification}
+  $\mathcal{C}$ := $G_1 \land \dots \land G_n$ \;
+  
+  
+  \ForEach {$G_i$ in $G_1 \land \dots \land G_n$}
+  {
+    \If{$G_i$ is of the form $T \in D$, and T is a ground term }
+   {
+      \If{T is in D}
+      {
+        Remove $G_i$ from $\mathcal{C}$\;
+      }
+      \Else
+      {
+      \Return \textbf{false}\;
+      }
+   }
+   
+   
+   \If{$G_i$ is of the form $X \in D$, X is an arithmetic variable in $\mathcal{C}$, and D does not contain a number}
+   {
+     \Return \textbf{false}
+   }
+   
+   \If{$G_i$ is of the form $T \in D$, T is an arithmetic term with at least one operation, and D does not contain a number}
+   {
+      \Return \textbf{false}\;
+   }
+  \If{$G_i$ is of the form  $t_1 \diamond t_2$ and both $t_1$ and $t_2$ are ground terms}
+   {
+     Let $G_i^\prime$ be obtained from $G_i$ where $<,\leq$ replaced with $\prec,\preceq$ respectively.
+     \If {$G_i^\prime$ is true}
+     {
+        Remove $G_i$ from $\mathcal{C}$\;
+     }
+     \Else {
+        \Return \textbf{false} \;
+     }
+   } 
+   
+   
+    \If{$G_i$ is of the form  $t_1 \diamond t_2$, where one of $t_1$ and $t_2$ is an arithmetic term with at least one operation, number, arithmetic variable; and another one is a symbolic term (a string constant or a term built from a functional symbol),
+    and diamond is either $=,<,\leq,\prec, or \preceq$ }
+   {
+        \Return \textbf{false} \;
+   }
+   
+   \Return $\mathcal{C}$
+  }  
+\end{algorithm2e}
+
+
+
+\begin{algorithm2e}[H]\caption{Split}
+ \DontPrintSemicolon
+  \KwIn{A clingcon rule of the form $r(X_1,\dots X_n):-BODY$} 
+  \KwOut{A collection of clingcon rules $R$} 
+  Let $BODY$ be $A_1,A_2,\dots A_m$.
+  Let $\mathcal{G}$ be undirected graph with m nodes $N_1,\dots N_m$, such that there is an edge between $N_i$ and $N_j$ iff atoms $A_i$ and $A_j$ share a common variable.
+  Let $C_1,\dots, C_k$ be connected components of $\mathcal{G}$. \;
+  $R:=\emptyset$ \;
+  \ForEach {connected component $C_i$ in   $C_1,\dots, C_k$} 
+  {
+    Let $C_i$ consists of nodes $N_{i_1},\dots N_{i_t}$.
+    Let $X_1,\dots, X_p$ be all variables in $A_{i_1},\dots A_{i_t}$. \;
+    $R:=R \cup r_i:-A_{i_1},\dots A_{i_t}$ \;
+  } 
+  $R:=R \cup r:-r_1,\dots,r_k.$ \;
+  $R:=R \cup  :-not~r.$ \;
+\end{algorithm2e}
+
+  
+
+\begin{algorithm2e}[H]\caption{Solve}
+ \DontPrintSemicolon
+  \KwIn{Primitive conjunction $G_1 \land \dots \land G_n$, the upper limit for natural numbers $maxint$.}
+  \KwOut{\textbf{true} if $G_1 \land \dots \land G_n$ is satisfiable and \textbf{false} otherwise.}
+   \tcc*[l]{Build rules for arithmetic constraints}
+   $\Pi_{prolog}:= :-use\_module(library(clpfd)).$ \;
+   $BODY:= {\bf true}$ \;
+
+
+   \ForEach{primitive arithmetic $G_i$   of the form $t_1 \diamond t_2$}
+   { 
+     Replace $\prec, = , !=,<=$ with $\#<,\#=,\#\=,\#=<$ respectively \;
+     $BODY := BODY \land G_i$ \;
+   }
+   
+
+   \ForEach{primitive arithmetic  $G_i$   of the form $(t\in D)$,where $D$ is of the form $[n1..n2]$}{
+      $BODY := BODY \land  t\#>=n_1 \land t\#<=n_2$ \;
+   }
+
+
+   \ForEach{primitive arithmetic  $G_i$   of the form $\neg(t\in D)$,where $D$ is of the form $[n1..n2]$, and $g_i$ is an unique label for $G_i$}{
+      $\Pi_{prolog} := \Pi_{prolog} \cup g_i(t) :- n\#>n_2. \cup g_i(t) :- n\#<n_2$.  
+      $BODY := BODY \land  g_i(t)$ \;
+   }
+
+
+   \ForEach{primitive arithmetic $G_i$ of the form $(t \in D)$ and $\neg(t \in D)$ , where $D$ is not of the form $[n1..n2]$}
+   {
+      Remove all symbolic terms from D\; 
+      Add the following rule to $\Pi_{prolog}$: (d is an unique label for D) \;
+     \texttt{ set\_d(X):-member(X,[t1,\dots tn]).}\;  
+     
+   }
+ 
+   \ForEach{primitive non-arithmetic $G_i$ of the form $\neg (t \in D)$:}
+   {
+    $BODY:=BODY \land not~set_d(t)$ \;
+   }
+   
+  \ForEach{primitive non-arithmetic $G_i$ of the form $t \in D$:}
+   {
+    $BODY:=BODY \land set_d(t)$ \;
+   }
+   
+   
+   \ForEach{primitive non-arithmetic $G_i$ of the form $t_1 \diamond t_2$:}
+   {
+    $BODY:=BODY \land G_i$ \;
+   }
+ 
+    \ForEach {arithmetic variable $X$ in $BODY$} {
+      $BODY:=integer(X) \land BODY$
+    }
+  
+   
+   Let $Y_1,\dots Y_n$ be the set of all variables in $BODY$ \;
+   $\mathcal{R}:= p :-Body$ \;
+   
+   $\Pi_{prolog}:=\Pi_{prolog} ~\cup~ \mathcal{R} \cup \texttt{main :-(p -> writeln(yes) ; writeln(no)).} $\;
+   \If{$\Pi_{prolog}$ writes 'yes' for query ?-main}
+   {
+     \Return \textbf{true} \;
+   }
+   \Else 
+   {
+     \Return \textbf{false}\;
+   }
+ \end{algorithm2e}
+\subsection{Description and examples}
+
+The basic idea of $Solve$ algorithm  is to separate given primitive constraints into two parts: arithmetic part and symbolic part,
+translate each part into clingcon program and run it to check the program consistency. If the program is consistent, the original formula is satisfiable, i.e, it has a solution ,
+ where assignments to its  arithmetic variables correspond to assignments of clingcon finite integer variables, and assignments to other variables are those which were used
+ for consistent grounding  of symbolic part of clingcon program.   
+
+Arithmetic part conists of constrains which can be expressed by use of clingcon finite integer variables. They can be in one of the following forms:
+
+\begin{enumerate}
+ \item $t_1 \diamond t_2$, where $t_1$ and $t_2$ are arithmetic terms.
+ \item $t \in D$, where $t$ is an arithmetic term  and D is of the form $n1..n2$
+\end{enumerate}
+
+An arithmetic constraint of the form (1) is translated to clingcon by replacing relations $==,!=,>,>=,<,<=$ with $\$==,\$!=,\$>,\$>=,\$<,<=$ respectively.
+An arithmetic constraint of the form (2) is translated into two clingcon rules: $t\$>=n1$ and $t\$<=n2$. 
+
+All remaining constraints form a symbolic part  and are translated to ASP rules (possibly containing arithmetic constraints in the bodies). A consisting grounding
+of the resulting program corresponds to an assignment satisfying all remaining constraints.   
+ 
+
+\begin{example}
+{\rm Consider the conjunction of two primitive constraints:
+ \begin{verbatim}
+    (X in 1..5) and (f(X) in {f(1)}).  
+ \end{verbatim}
+ The constraint \texttt{X in 1..5} is an arithmetic constraint, which is translated to clingcon as 
+ \begin{verbatim}
+    x$>=1.
+    x$<=5.
+ \end{verbatim}
+ The constraint \texttt{f(X) in {f(1)}} is not an arithmetic constraint, which means that the set {f(1)} will be generated and represented in clingcon as:
+\begin{verbatim}
+ sat_1(f(1)).
+\end{verbatim}
+To ensure there is a grounding of f(X) satisfying the constraint, the following rules will be added to clingcon program:
+\begin{verbatim}
+ r(X):-sat_1(f(X)),X$==x.
+ sat:-r(X).
+ :- not sat.
+\end{verbatim}
+The atom $X\$==x$ is needed in order to connect clingcon arithmetic finite domain global variable with the variable X used in the rule.  
+
+}
+\end{example}
+\pagebreak
+
+\begin{example}[Unsafe rule in clingcon]
+Consider the conjunction of two primitive constraints:
+\begin{verbatim}
+ (X_7 in 1..9) and 
+ (X_6 in 1..9) and 
+ (P2 = c(X_6,X_7)) and
+ (X_5 in 1..9) and 
+ (X_4 in 1..9) and 
+ (P1 = c(X_4,X_5)) and 
+ (X_3 in 1..9) and
+ (X_2 in 1..9) and 
+ (P2 = c(X_2,X_3)) and 
+ (N in 1..9) and 
+ (X_1 in 1..9) and 
+ (X_0 in 1..9) and 
+ (P1 = c(X_0,X_1)) and 
+ (N in 1..9))
+\end{verbatim}
+ The non arithmetic constraints are 
+\begin{verbatim}
+(P1 = c(X_0,X_1))
+(P2 = c(X_6,X_7))
+(P2 = c(X_2,X_3))
+(P1 = c(X_0,X_1))
+\end{verbatim}
+The following clingcon program will be produced:
+\begin{verbatim}
+ $domain(0..10).
+n$>=1.
+n$<=9.
+x_0$>=1.
+x_0$<=9.
+x_1$>=1.
+x_1$<=9.
+n$>=1.
+n$<=9.
+x_2$>=1.
+x_2$<=9.
+x_3$>=1.
+x_3$<=9.
+x_4$>=1.
+x_4$<=9.
+x_5$>=1.
+x_5$<=9.
+x_6$>=1.
+x_6$<=9.
+x_7$>=1.
+x_7$<=9.
+
+r(X_0,X_1,X_2,X_3,X_4,X_5,X_6,X_7,P1,P2):-P1=c(X_0,X_1),
+                                          P2=c(X_2,X_3),
+                                          P1=c(X_4,X_5),
+                                          P2=c(X_6,X_7),
+                                          X_1$==x_1,X_2$==x_2,
+                                          X_3$==x_3,X_4$==x_4,
+                                          X_5$==x_5,X_6$==x_6,
+                                          X_7$==x_7.
+sat:-r(X_0,X_1,X_2,X_3,X_4,X_5,X_6,X_7,P1,P2).
+:-not sat.
+\end{verbatim}
+Unfortunately the rule containing all non-arithmetic constraints in unsafe in clingcon. It means we cannot use \textbf{the values} of finite domain arithmetic variables 
+in the context of an ASP rule.  
+\end{example}
+
+\end{document}

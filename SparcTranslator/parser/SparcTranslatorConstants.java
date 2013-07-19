@@ -49,69 +49,71 @@ public interface SparcTranslatorConstants {
   /** RegularExpression Id. */
   int EQ = 19;
   /** RegularExpression Id. */
-  int NOTEQ = 20;
+  int EQR = 20;
   /** RegularExpression Id. */
-  int GT = 21;
+  int NOTEQ = 21;
   /** RegularExpression Id. */
-  int GTEQ = 22;
+  int GT = 22;
   /** RegularExpression Id. */
-  int SM = 23;
+  int GTEQ = 23;
   /** RegularExpression Id. */
-  int SMEQ = 24;
+  int SM = 24;
   /** RegularExpression Id. */
-  int OP = 25;
+  int SMEQ = 25;
   /** RegularExpression Id. */
-  int CP = 26;
+  int OP = 26;
   /** RegularExpression Id. */
-  int OB = 27;
+  int CP = 27;
   /** RegularExpression Id. */
-  int CB = 28;
+  int OB = 28;
   /** RegularExpression Id. */
-  int ORRSEP = 29;
+  int CB = 29;
   /** RegularExpression Id. */
-  int CRRSEP = 30;
+  int ORRSEP = 30;
   /** RegularExpression Id. */
-  int WEAKSEP = 31;
+  int CRRSEP = 31;
   /** RegularExpression Id. */
-  int COMMA = 32;
+  int WEAKSEP = 32;
   /** RegularExpression Id. */
-  int DOT = 33;
+  int COMMA = 33;
   /** RegularExpression Id. */
-  int COLON = 34;
+  int DOT = 34;
   /** RegularExpression Id. */
-  int SEMICOLON = 35;
+  int COLON = 35;
   /** RegularExpression Id. */
-  int DOLLAR = 36;
+  int SEMICOLON = 36;
   /** RegularExpression Id. */
-  int COMPLEMENT = 37;
+  int DOLLAR = 37;
   /** RegularExpression Id. */
-  int HEAD_OR = 38;
+  int COMPLEMENT = 38;
   /** RegularExpression Id. */
-  int AGGREGATE_COUNT = 39;
+  int HEAD_OR = 39;
   /** RegularExpression Id. */
-  int AGGREGATE_SUM = 40;
+  int AGGREGATE_COUNT = 40;
   /** RegularExpression Id. */
-  int AGGREGATE_MIN = 41;
+  int AGGREGATE_SUM = 41;
   /** RegularExpression Id. */
-  int AGGREGATE_MAX = 42;
+  int AGGREGATE_MIN = 42;
   /** RegularExpression Id. */
-  int OSB = 43;
+  int AGGREGATE_MAX = 43;
   /** RegularExpression Id. */
-  int OCB = 44;
+  int OSB = 44;
   /** RegularExpression Id. */
-  int POUND_SIGN = 45;
+  int OCB = 45;
   /** RegularExpression Id. */
-  int IDENTIFIER_WITH_OP = 46;
+  int POUND_SIGN = 46;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM_WITH_OP = 47;
+  int IDENTIFIER_WITH_OP = 47;
   /** RegularExpression Id. */
-  int NEGATIVE_SORT_ATOM_WITH_OP = 48;
+  int NEGATIVE_ATOM_WITH_OP = 48;
   /** RegularExpression Id. */
-  int SINGLE_LINE_COMMENT = 49;
+  int NEGATIVE_SORT_ATOM_WITH_OP = 49;
   /** RegularExpression Id. */
-  int SPACE = 50;
+  int SINGLE_LINE_COMMENT = 50;
   /** RegularExpression Id. */
-  int MINUS = 51;
+  int SPACE = 51;
+  /** RegularExpression Id. */
+  int MINUS = 52;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -142,6 +144,7 @@ public interface SparcTranslatorConstants {
     "\"*\"",
     "\"/\"",
     "\"=\"",
+    "\"==\"",
     "\"!=\"",
     "\">\"",
     "\">=\"",

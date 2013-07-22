@@ -28,7 +28,6 @@ import parser.ASTvar;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
 import translating.InstanceGenerator;
-import typechecking.TermCreator;
 
 /**
  * This class if for creation of a formula from an ASP rule The formula will be
@@ -181,9 +180,8 @@ public class RuleReducer {
 			}
 		}
 		else {
-			TermCreator tc=new TermCreator();
 			return new PrimitiveFormula(new Term(
-					term), new Term(tc.createGroundSymbolicTerm(groundTerm)), Relation.eqasgn );
+					term), new Term(new ASTterm(groundTerm)), Relation.eqasgn );
 		}
 	}
 

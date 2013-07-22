@@ -1,12 +1,17 @@
-package warnings;
+package externaltools;
 
 import java.io.*;
 import java.security.SecureRandom;
 
-public class PrologSolver implements ExternalSolver {
-	String program;
+
+public class PrologSolver extends ExternalSolver {
+
 	private String pathToProlog;
 
+	public PrologSolver() throws FileNotFoundException {
+		this(null);
+	}
+	
 	public PrologSolver(String program) throws FileNotFoundException {
 		this.program = program;
 		pathToProlog = searchForExe();

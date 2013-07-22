@@ -116,7 +116,7 @@ public class Translator {
 	 *             the case in aggregate or choice rules where there is no
 	 *             constraints for variable in the body).
 	 */
-	public void translateProgram(ASTprogram program,
+	public String translateProgram(ASTprogram program,
 			HashSet<String> generatingSorts, boolean writeWarningsToSTDERR)
 			throws ParseException {
 		translatedOutput = new StringBuilder();
@@ -159,6 +159,7 @@ public class Translator {
 		}
 		// write program to out.
 		writeTranslatedProgram();
+		return translatedOutput.toString();
 
 	}
 
@@ -204,18 +205,9 @@ public class Translator {
 		}
 	}
 
-	/**
-	 * Translate a collection of program rules and write them to output stream
-	 * 
-	 * @param rules
-	 * @param writeWarningsToSTDERR
-	 *            flag, warnings are written to stderr if it is true
-	 * @throws ParseException
-	 *             if sort of some unsafe variable cannot be determined (may be
-	 *             the case in aggregate or choice rules where there is no
-	 *             constraints for variable in the body).
-	 */
-	public void translateAndWriteRules(ASTprogramRules rules,
+
+	
+	public String translateAndWriteRules(ASTprogramRules rules,
 			boolean writeWarningsToSTDERR) throws ParseException {
 		translatedOutput = new StringBuilder();
 
@@ -226,6 +218,7 @@ public class Translator {
 				System.err.println("%WARNING: " + warning);
 			}
 		}
+		return translatedOutput.toString();
 	}
 
 	/**

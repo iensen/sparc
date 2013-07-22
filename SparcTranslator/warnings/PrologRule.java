@@ -58,6 +58,7 @@ public class PrologRule {
 
 		ArrayList<PrologRuleAtom> orderedBodyAtoms = new ArrayList<PrologRuleAtom>(
 				bodyAtoms.size());
+		
 		boolean connected[][] = new boolean[bodyAtoms.size()][bodyAtoms.size()];
 		for (int i = 0; i < bodyAtoms.size(); i++) {
 			for (int j = 0; j < bodyAtoms.size(); j++) {

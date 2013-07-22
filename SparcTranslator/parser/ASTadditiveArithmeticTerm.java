@@ -2,36 +2,58 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
-public
-class ASTadditiveArithmeticTerm extends SimpleNode {
-  public ASTadditiveArithmeticTerm(int id) {
-    super(id);
-  }
-
-  public ASTadditiveArithmeticTerm(SparcTranslator p, int id) {
-    super(p, id);
-  }
-
-
-  /** Accept the visitor. **/
-  public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
-  
-  public String toString(boolean useOriginalImages) {
-	  String result="";
-	  for(int i=0;i<this.jjtGetNumChildren();i++) {
-		  if(i!=0 || i==0 && this.image.charAt(0)=='-') {
-			  result+=image.charAt(i);
-		  }
-		  result+=((SimpleNode)(this.jjtGetChild(i))).toString(useOriginalImages);
-	  }
-	  return result;
-  }
-  
-	public String toString() {
-	     return toString(false);
+public class ASTadditiveArithmeticTerm extends SimpleNode {
+	public ASTadditiveArithmeticTerm(int id) {
+		super(id);
 	}
-	
+
+	public ASTadditiveArithmeticTerm(long value) {
+		super(SparcTranslatorTreeConstants.JJTADDITIVEARITHMETICTERM);
+
+		/*
+		 * subtree with the following structure is created:
+		 * additiveArithmeticTerm multiplicativeArithmeticTerm
+		 * atomicArithmeticTerm image
+		 */
+		ASTatomicArithmeticTerm aaterm = new ASTatomicArithmeticTerm(
+				SparcTranslatorTreeConstants.JJTATOMICARITHMETICTERM);
+		ASTmultiplicativeArithmeticTerm materm = new ASTmultiplicativeArithmeticTerm(
+				SparcTranslatorTreeConstants.JJTMULTIPLICATIVEARITHMETICTERM);
+		aaterm.image = this.image = "+";
+		aaterm.image = image;
+		// attach subtrees to the root
+		materm.jjtAddChild(aaterm, 0);
+		this.jjtAddChild(materm, 0);
+
+	}
+
+	public ASTadditiveArithmeticTerm(SparcTranslator p, int id) {
+		super(p, id);
+	}
+
+	/** Accept the visitor. **/
+	public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+
+	public String toString(boolean useOriginalImages) {
+		String result = "";
+		for (int i = 0; i < this.jjtGetNumChildren(); i++) {
+			if (i != 0 || i == 0 && this.image.charAt(0) == '-') {
+				result += image.charAt(i);
+			}
+			result += ((SimpleNode) (this.jjtGetChild(i)))
+					.toString(useOriginalImages);
+		}
+		return result;
+	}
+
+	public String toString() {
+		return toString(false);
+	}
+
 }
-/* JavaCC - OriginalChecksum=519865efca4f10811b4b09e3b804e923 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=519865efca4f10811b4b09e3b804e923 (do not edit this
+ * line)
+ */

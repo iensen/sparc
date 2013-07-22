@@ -10,7 +10,6 @@ import parser.ASTvar;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
-import typechecking.TermCreator;
 import typechecking.TermEvaluator;
 
 public class Term extends Operand{
@@ -30,13 +29,11 @@ public class Term extends Operand{
   }
   
   public Term(long number) {
-		 TermCreator tc=new TermCreator();
-		 tree=tc.createSimpleArithmeticTerm(Long.toString(number));
+	     tree= new ASTterm(number);
   }
   
   public  Term(String recordName, ArrayList<String> varArguments) {
-	 TermCreator tc=new TermCreator();
-	 tree=tc.createRecord(recordName, varArguments);
+	 tree=new ASTterm(recordName, varArguments);
   }
   
   
@@ -52,8 +49,7 @@ public class Term extends Operand{
 		  TermEvaluator te=new TermEvaluator((ASTarithmeticTerm)n);
 		  if(te.isEvaluable()) {
 			  try {
-				TermCreator tc=new TermCreator();
-				ASTadditiveArithmeticTerm term=tc.createSimpleAdditiveArithmeticTerm(Long.toString(te.evaluate()));
+				ASTadditiveArithmeticTerm term=new ASTadditiveArithmeticTerm(te.evaluate());
 				n.removeChildren();
 				n.jjtAddChild(term, 0);
 			} catch (ParseException e) {

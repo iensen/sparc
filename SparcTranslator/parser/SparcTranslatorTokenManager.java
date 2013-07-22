@@ -7,12 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Set;
 import translating.Translator;
 import typechecking.TypeChecker;
 import translating.InstanceGenerator;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import querying.QueryEngine;
+import querying.parsing.AnswerSets.AnswerSetParser;
+import querying.parsing.AnswerSets.ClingoAnswerSetParser;
+import querying.parsing.AnswerSets.DLVAnswerSetParser;
+import configuration.ASPSolver;
+import externaltools.ClingoSolver;
+import externaltools.DLVSolver;
+import externaltools.ExternalSolver;
+import configuration.Settings;
 
 /** Token Manager. */
 public class SparcTranslatorTokenManager implements SparcTranslatorConstants

@@ -14,7 +14,21 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
   jjtree.openNodeScope(jjtn000);
     try {
       predSymbol();
-      termList();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case IDENTIFIER:
+      case VARIABLE:
+      case NONZERODIGIT:
+      case POSITIVE_INTEGER:
+      case ZERO:
+      case OP:
+      case IDENTIFIER_WITH_OP:
+        termList();
+        jj_consume_token(CP);
+        break;
+      default:
+        jj_la1[0] = jj_gen;
+        ;
+      }
      jjtree.closeNodeScope(jjtn000, true);
      jjtc000 = false;
      {if (true) return jjtn000;}
@@ -46,10 +60,24 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);Token t;
     try {
-      t = jj_consume_token(IDENTIFIER);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case IDENTIFIER:
+        t = jj_consume_token(IDENTIFIER);
    jjtree.closeNodeScope(jjtn000, true);
    jjtc000 = false;
    jjtn000.image=t.image;
+        break;
+      case IDENTIFIER_WITH_OP:
+        t = jj_consume_token(IDENTIFIER_WITH_OP);
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+    jjtn000.image=t.image.substring(0,t.image.length()-1);
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
     } finally {
    if (jjtc000) {
      jjtree.closeNodeScope(jjtn000, true);
@@ -71,7 +99,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
           ;
           break;
         default:
-          jj_la1[0] = jj_gen;
+          jj_la1[2] = jj_gen;
           break label_1;
         }
         jj_consume_token(COMMA);
@@ -110,14 +138,14 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     {if (true) return t;}
       break;
     default:
-      jj_la1[1] = jj_gen;
+      jj_la1[3] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
     throw new Error("Missing return statement in function");
   }
 
-  final public SimpleNode arithmeticTerm() throws ParseException {
+  final public void arithmeticTerm() throws ParseException {
  /*@bgen(jjtree) arithmeticTerm */
   QASTarithmeticTerm jjtn000 = new QASTarithmeticTerm(JJTARITHMETICTERM);
   boolean jjtc000 = true;
@@ -143,10 +171,9 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
        jjtree.closeNodeScope(jjtn000, true);
      }
     }
-    throw new Error("Missing return statement in function");
   }
 
-  final public SimpleNode atomicArithmeticTerm() throws ParseException {
+  final public void atomicArithmeticTerm() throws ParseException {
  /*@bgen(jjtree) atomicArithmeticTerm */
  QASTatomicArithmeticTerm jjtn000 = new QASTatomicArithmeticTerm(JJTATOMICARITHMETICTERM);
  boolean jjtc000 = true;
@@ -170,7 +197,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
         jj_consume_token(CP);
         break;
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[4] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -193,7 +220,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
        jjtree.closeNodeScope(jjtn000, true);
      }
     }
-    throw new Error("Missing return statement in function");
   }
 
   final public void additiveArithmeticTerm() throws ParseException {
@@ -212,7 +238,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
           ;
           break;
         default:
-          jj_la1[3] = jj_gen;
+          jj_la1[5] = jj_gen;
           break label_2;
         }
         t = addOp();
@@ -240,7 +266,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     }
   }
 
-  final public SimpleNode multiplicativeArithmeticTerm() throws ParseException {
+  final public void multiplicativeArithmeticTerm() throws ParseException {
  /*@bgen(jjtree) multiplicativeArithmeticTerm */
   QASTmultiplicativeArithmeticTerm jjtn000 = new QASTmultiplicativeArithmeticTerm(JJTMULTIPLICATIVEARITHMETICTERM);
   boolean jjtc000 = true;
@@ -254,7 +280,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
           ;
           break;
         default:
-          jj_la1[4] = jj_gen;
+          jj_la1[6] = jj_gen;
           break label_3;
         }
         jj_consume_token(MULT);
@@ -279,7 +305,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
       jjtree.closeNodeScope(jjtn000, true);
     }
     }
-    throw new Error("Missing return statement in function");
   }
 
   final public void symbolicFunction() throws ParseException {
@@ -316,7 +341,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     }
   }
 
-  final public SimpleNode symbolicTerm() throws ParseException {
+  final public void symbolicTerm() throws ParseException {
  /*@bgen(jjtree) symbolicTerm */
   QASTsymbolicTerm jjtn000 = new QASTsymbolicTerm(JJTSYMBOLICTERM);
   boolean jjtc000 = true;
@@ -332,7 +357,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
         jj_consume_token(CP);
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[7] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -355,7 +380,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
       jjtree.closeNodeScope(jjtn000, true);
     }
     }
-    throw new Error("Missing return statement in function");
   }
 
   final public void term() throws ParseException {
@@ -370,7 +394,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
         symbolicTerm();
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[8] = jj_gen;
         if (jj_2_1(2)) {
           arithmeticTerm();
         } else {
@@ -379,7 +403,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
             var();
             break;
           default:
-            jj_la1[7] = jj_gen;
+            jj_la1[9] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -439,7 +463,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     {if (true) return t;}
       break;
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[10] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -451,36 +475,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(0, xla); }
-  }
-
-  private boolean jj_3R_10() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_14()) {
-    jj_scanpos = xsp;
-    if (jj_3R_15()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    if (jj_scan_token(PLUS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    if (jj_3R_8()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_9()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_17() {
-    if (jj_scan_token(VARIABLE)) return true;
-    return false;
   }
 
   private boolean jj_3R_7() {
@@ -575,6 +569,36 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     return false;
   }
 
+  private boolean jj_3R_10() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_14()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    if (jj_scan_token(PLUS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_9()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(VARIABLE)) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public QueryParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -586,13 +610,13 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[9];
+  final private int[] jj_la1 = new int[11];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1000,0xc0,0x43c,0xc0,0x100,0x2002,0x2002,0x4,0x38,};
+      jj_la1_0 = new int[] {0x243e,0x2002,0x1000,0xc0,0x43c,0xc0,0x100,0x2002,0x2002,0x4,0x38,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
@@ -609,7 +633,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -625,7 +649,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -636,7 +660,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -648,7 +672,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -658,7 +682,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -669,7 +693,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -786,7 +810,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 11; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

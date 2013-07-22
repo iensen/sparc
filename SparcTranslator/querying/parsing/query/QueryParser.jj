@@ -8,7 +8,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) atom */
    try {
-/*@egen*/   predSymbol()   termList()/*@bgen(jjtree)*/
+/*@egen*/   predSymbol()   [ termList() < CP >]/*@bgen(jjtree)*/
    {
      jjtree.closeNodeScope(jjtn000, true);
      jjtc000 = false;
@@ -44,7 +44,12 @@
    jjtree.closeNodeScope(jjtn000, true);
    jjtc000 = false;
  }
-/*@egen*/ {   jjtn000.image=t.image; }/*@bgen(jjtree)*/
+/*@egen*/ {   jjtn000.image=t.image; } |  t= < IDENTIFIER_WITH_OP >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {    jjtn000.image=t.image.substring(0,t.image.length()-1);  }/*@bgen(jjtree)*/
  } finally {
    if (jjtc000) {
      jjtree.closeNodeScope(jjtn000, true);
@@ -76,7 +81,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}Token addOp()       :{  Token t;}{  t = < PLUS >  {    return t;  }| t = < MINUS >  {    return t;  }}SimpleNode arithmeticTerm() :{/*@bgen(jjtree) arithmeticTerm */
+/*@egen*/}Token addOp()       :{  Token t;}{  t = < PLUS >  {    return t;  }| t = < MINUS >  {    return t;  }}void arithmeticTerm() :{/*@bgen(jjtree) arithmeticTerm */
   QASTarithmeticTerm jjtn000 = new QASTarithmeticTerm(JJTARITHMETICTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -102,7 +107,7 @@
        jjtree.closeNodeScope(jjtn000, true);
      }
    }
-/*@egen*/}SimpleNode atomicArithmeticTerm() :{/*@bgen(jjtree) atomicArithmeticTerm */
+/*@egen*/}void  atomicArithmeticTerm() :{/*@bgen(jjtree) atomicArithmeticTerm */
  QASTatomicArithmeticTerm jjtn000 = new QASTatomicArithmeticTerm(JJTATOMICARITHMETICTERM);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
@@ -159,7 +164,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}SimpleNode multiplicativeArithmeticTerm() :{/*@bgen(jjtree) multiplicativeArithmeticTerm */
+/*@egen*/}void multiplicativeArithmeticTerm() :{/*@bgen(jjtree) multiplicativeArithmeticTerm */
   QASTmultiplicativeArithmeticTerm jjtn000 = new QASTmultiplicativeArithmeticTerm(JJTMULTIPLICATIVEARITHMETICTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -219,7 +224,7 @@
        jjtree.closeNodeScope(jjtn000, true);
      }
    }
-/*@egen*/ }SimpleNode symbolicTerm() :{/*@bgen(jjtree) symbolicTerm */
+/*@egen*/ }void symbolicTerm() :{/*@bgen(jjtree) symbolicTerm */
   QASTsymbolicTerm jjtn000 = new QASTsymbolicTerm(JJTSYMBOLICTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

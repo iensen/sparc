@@ -23,11 +23,11 @@ public class PrologSolver extends ExternalSolver {
 	}
 
 	public boolean isSatisfiable() {
-		String output = run();
+		String output = run(true);
 		return output.equals("yes");
 	}
-
-	public String run() {
+    //TODO: Implement ignore warnings properly
+	public String run(boolean ignoreWarnings) {
 		StringBuilder programOutput = new StringBuilder();
 
 		// Create a temporary file: FileWriter fw = new

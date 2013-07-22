@@ -25,7 +25,8 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   catch (
     FileNotFoundException ex)  {
     System.err.println(ex.getMessage());
-  }     if (jArguments.outputAnswerSets)    {      System.out.println(solver.run());    }    else    {      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(translatedProgram.toString()));      qe.run();    }  }  private boolean isInteger(String s)  {    if (s.length() == 1 && s.charAt(0) == '0') return true;    if (s.charAt(0) == '0') return false;    for (int i = 0; i < s.length(); i++)    {      if (!Character.isDigit(s.charAt(i))) return false;    }    return true;  }  /**
+  }     if (jArguments.outputAnswerSets)    {      System.out.println(solver.run(false));    }    else    {
+            QueryEngine qe = new QueryEngine(aParser.getAnswerSets(solver.run(false)));      qe.run();    }  }  private boolean isInteger(String s)  {    if (s.length() == 1 && s.charAt(0) == '0') return true;    if (s.charAt(0) == '0') return false;    for (int i = 0; i < s.length(); i++)    {      if (!Character.isDigit(s.charAt(i))) return false;    }    return true;  }  /**
   * @return absolute path.
   */  private static String getShortFileName(String fullPath)  {    File file = new File(fullPath);    return file.getName();  }  /**
   * Output help message

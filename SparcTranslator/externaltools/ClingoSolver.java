@@ -27,6 +27,7 @@ public class ClingoSolver extends ExternalSolver {
 	       return !output.contains("UNSATISFIABLE");
 	    }
 
+	    @Override
 	    public String run(boolean ignoreWarnings) {
 	        StringBuilder programOutput = new StringBuilder();
 	        Process process = null;
@@ -93,8 +94,5 @@ public class ClingoSolver extends ExternalSolver {
 	        }
 	        return null;
 	    }
-		@Override
-		public String run() {
-			return run(false);
-		}
+
 }

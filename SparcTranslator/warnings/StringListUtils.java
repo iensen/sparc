@@ -30,15 +30,17 @@ public class StringListUtils {
 			return null;
 		String recordName=term.substring(0,term.indexOf('('));
 		ArrayList<String> arguments=new ArrayList<String>();
-		String argumentString=term.substring(term.indexOf('('),term.length()-1);
+		String argumentString=term.substring(term.indexOf('('),term.length());
 		int parCount=0;
 		int lastBeginIndex=0;
-		for(int i=0;i<argumentString.length();i++) {
+		lastBeginIndex++;
+		parCount++;
+		for(int i=1;i<argumentString.length();i++) {
 			if(argumentString.charAt(i)=='(')
 				parCount++;
 			if(argumentString.charAt(i)==')')
 				parCount--;
-			if(argumentString.charAt(i)==',' && parCount==0) {
+			if(argumentString.charAt(i)==',' && parCount==1 || argumentString.charAt(i)==')' && parCount==0) {
 				arguments.add(argumentString.substring(lastBeginIndex, i));
 				lastBeginIndex=i+1;
 			}

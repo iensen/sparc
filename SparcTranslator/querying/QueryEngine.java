@@ -31,7 +31,6 @@ public class QueryEngine {
 	public QueryEngine(ArrayList<AnswerSet> answerSets) {
 		sc = new Scanner(System.in);
 		this.answerSets = answerSets;
-
 		try {
 			if (Settings.getSolver() == ASPSolver.DLV) {
 				solver = new DLVSolver();
@@ -63,7 +62,7 @@ public class QueryEngine {
 	}
 
 	private QASTatom readQuery() throws ParseException {
-		System.out.println("? ");
+		System.out.print("?- ");
 		String query = sc.nextLine();
 		StringReader sr = new StringReader(query);
 		parser = new QueryParser(sr);
@@ -90,8 +89,9 @@ public class QueryEngine {
 			if (atom.startsWith("true_in_all_models")) {
 				answerFound=true;
 				Pair<String,ArrayList<String>> recordContent=StringListUtils.splitTerm(atom);
-				System.out.println(buildAnswer(recordContent.second));
-				String response=sc.next();
+				System.out.print(buildAnswer(recordContent.second));
+			    
+				String response=sc.nextLine();
 				while(!response.equals("") && !response.toLowerCase().equals("q")) {
 					System.err.println("Press Enter to continue or input \'q\' to interrupt the query");
 					response=sc.next();
@@ -141,7 +141,7 @@ public class QueryEngine {
 	private AnswerSet getAnswerSetOfCorrespondingASPProgram(QASTatom query) {
 		String program = constructASPProgram(query);
 		solver.setProgram(program);
-		String solverOutPut = solver.run();
+		String solverOutPut = solver.run(true);
 		ArrayList<AnswerSet> answerSets = answerSetParser
 				.getAnswerSets(solverOutPut);
 		// should be exactly oonstructASPProgramPrefix(query);ne answer set:
@@ -152,6 +152,7 @@ public class QueryEngine {
 	
 	private String constructASPProgram(QASTatom query) {
 		int answerSetIndex = 1;
+	
 		StringBuilder prefix = new StringBuilder();
 		for (AnswerSet aSet : answerSets) {
 			for (String atom : aSet.atoms) {
@@ -198,7 +199,7 @@ public class QueryEngine {
 				+ ((queryVars.size() > 0) ? "("
 						+ StringListUtils.getSeparatedList(queryVars, ",")
 						+ ")" : "") + ":-" + bodyForFalseInAllModels + ".");
-
+       
 		return prefix.toString();
 
 	}

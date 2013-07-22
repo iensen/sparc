@@ -40,7 +40,7 @@ public class DLVAnswerSetParser extends AnswerSetParser{
                     sb.append(next);
                 }
                 AnswerSet answerSet=new AnswerSet();
-                Collections.addAll(answerSet.atoms,sb.toString().split("\\s+"));
+                Collections.addAll(answerSet.atoms,sb.toString().split(","));
                 result.add(answerSet);
             }
         }

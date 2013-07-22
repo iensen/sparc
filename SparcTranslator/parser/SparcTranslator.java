@@ -236,11 +236,12 @@ class Arguments
 
     if (jArguments.outputAnswerSets)
     {
-      System.out.println(solver.run());
+      System.out.println(solver.run(false));
     }
     else
     {
-      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(translatedProgram.toString()));
+
+      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(solver.run(false)));
       qe.run();
     }
   }
@@ -3988,26 +3989,6 @@ class Arguments
     finally { jj_save(23, xla); }
   }
 
-  private boolean jj_3R_34() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_59()) {
-    jj_scanpos = xsp;
-    if (jj_3R_60()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_59() {
-    if (jj_scan_token(EQ)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_63() {
-    if (jj_scan_token(AGGREGATE_MIN)) return true;
-    return false;
-  }
-
   private boolean jj_3R_62() {
     if (jj_scan_token(AGGREGATE_MAX)) return true;
     return false;
@@ -4616,6 +4597,26 @@ class Arguments
     if (jj_scan_token(OP)) return true;
     if (jj_3R_33()) return true;
     if (jj_scan_token(CP)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_34() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_59()) {
+    jj_scanpos = xsp;
+    if (jj_3R_60()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_59() {
+    if (jj_scan_token(EQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_63() {
+    if (jj_scan_token(AGGREGATE_MIN)) return true;
     return false;
   }
 

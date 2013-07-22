@@ -80,12 +80,12 @@ public class QASTatom extends SimpleNode {
 
 	private boolean isGround(SimpleNode n) {
 		if (n.id == QueryParserTreeConstants.JJTVAR) {
-			return true;
+			return false;
 		}
 
 		boolean ground = true;
 		for (int i = 0; i < n.jjtGetNumChildren(); i++) {
-			if (isGround((SimpleNode) n.jjtGetChild(i))) {
+			if (!isGround((SimpleNode) n.jjtGetChild(i))) {
 				ground = false;
 				break;
 			}

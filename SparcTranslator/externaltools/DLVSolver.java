@@ -9,70 +9,77 @@ import java.io.OutputStream;
 
 public class DLVSolver extends ExternalSolver{
 	
-	    private String pathToClingo;
-
+	    private String pathToDlv;
+        
 	    public DLVSolver() throws FileNotFoundException {
 	    	this(null);
 	    }
 	    
 	    public DLVSolver(String program) throws FileNotFoundException {
 	        this.program = program;
-	        pathToClingo = searchForExe();
-	        if (pathToClingo == null) {
-	            throw new FileNotFoundException("Clingo not found. "
-	                    + "You should have clingo or clingo.exe available "
-	                    + "from your path or current folder.");
+	        //System.out.println(program);
+	        pathToDlv = searchForExe();
+	        if (pathToDlv == null) {
+	            throw new FileNotFoundException("dlv not found. "
+	                    + "You should have dlv or dlv.exe available "
+	                    + "from your path, current folder, or the path specifiend by program argument.");
 	        }
 	    }
 	    public boolean isSatisfiable() {
-	       String output=run();
+	       String output=run(true);
 	       return !output.contains("UNSATISFIABLE");
 	    }
-
-	    public String run() {
-	        StringBuilder programOutput = new StringBuilder();
-	        Process process = null;
-	        try {
-	            process = Runtime.getRuntime().exec(pathToClingo);
-	        } catch (IOException e) {
-	            System.err.println(e.getMessage());
-	        }
+        
+	    public String run(boolean ignoreWarnings) {
 	        
-	        OutputStream stdin = process.getOutputStream();
-	        InputStream stderr = process.getErrorStream();
-	        InputStream stdout = process.getInputStream();
-	        try {
-	            // write program to sparc translator:
-	            stdin.write(program.getBytes(), 0, program.length());
+	    	   StringBuilder programOutput = new StringBuilder();
+		        Process process = null;
+		        try {
+		            process = Runtime.getRuntime().exec(pathToDlv+" -- ");
+		        } catch (IOException e) {
+		            System.err.println(e.getMessage());
+		        }
+		        
+		        OutputStream stdin = process.getOutputStream();
+		        InputStream stderr = process.getErrorStream();
+		        InputStream stdout = process.getInputStream();
+		        try {
+		            // write program to sparc translator:
+		            stdin.write(program.getBytes(), 0, program.length());
 
-	            stdin.flush();
-	            stdin.close();
+		            stdin.flush();
+		            stdin.close();
 
-	            // read Std_error:
-	            BufferedReader brCleanUp = new BufferedReader(
-	                    new InputStreamReader(stderr));
+		            // read Std_error:
+		            BufferedReader brCleanUp = new BufferedReader(
+		                    new InputStreamReader(stderr));
 
-	            String line;
-	            StringBuilder errors = new StringBuilder();
-	            while ((line = brCleanUp.readLine()) != null) {
-	                errors.append(line);
-	            }
-	            if (errors.length() > 0) {
-	                throw new IllegalArgumentException(
-	                        "clingcon program constructed from a rule for warnings " +
-	                                "checking contains errors: "
-	                                + errors.toString());
-	            }
-	            brCleanUp = new BufferedReader(new InputStreamReader(stdout));
-	            while ((line = brCleanUp.readLine()) != null) {
-	                programOutput.append(line);
+		            String line;
+		            StringBuilder errors = new StringBuilder();
+		            while ((line = brCleanUp.readLine()) != null) {
 
-	            }
-	            brCleanUp.close();
-	        } catch (IOException ex) {
-	            ex.printStackTrace();
-	        }
-	        return programOutput.toString();
+	                    
+		                   errors.append(line);
+
+
+		            }
+
+		            if (errors.length() > 0) {
+		                throw new IllegalArgumentException(
+		                        "clingcon program constructed from a rule for warnings " +
+		                                "checking contains errors: "
+		                                + errors.toString());
+		            }
+		            brCleanUp = new BufferedReader(new InputStreamReader(stdout));
+		            while ((line = brCleanUp.readLine()) != null) {
+		                programOutput.append(line+System.getProperty("line.separator"));
+		            }
+		            brCleanUp.close();
+		        } catch (IOException ex) {
+		            ex.printStackTrace();
+		        }
+		        return programOutput.toString();
+			
 	    }
 
 	    private static String searchForExe() {

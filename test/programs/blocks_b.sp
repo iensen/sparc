@@ -13,5 +13,5 @@ occurs(#action,#step).
 
 rules
 
-holds(on(B,L),I+1) :- occurs(put(B,L),I).
+-holds(on(B,L),I+1) :- occurs(put(B,L),I).
 

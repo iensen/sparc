@@ -11,6 +11,16 @@ class QASTtermList extends SimpleNode {
   public QASTtermList(QueryParser p, int id) {
     super(p, id);
   }
+  
+  public String toString() {
+	  StringBuilder result=new StringBuilder();
+	  for(int i=0;i<this.jjtGetNumChildren();i++) {
+		  if(i!=0)
+			  result.append(",");
+		  result.append(((SimpleNode)this.jjtGetChild(i)).toString());
+	  }
+	  return result.toString();
+  }
 
 }
 /* JavaCC - OriginalChecksum=c5b100d59bc8e9ffca8432d1f1f76673 (do not edit this line) */

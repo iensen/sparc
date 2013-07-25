@@ -18,7 +18,7 @@ class QASTmultiplicativeArithmeticTerm extends SimpleNode {
 	  String result="";
 	  for(int i=0;i<this.jjtGetNumChildren();i++) {
 		if(i!=0) {
-			result +="*";
+			result +=this.image.charAt(i-1);
 		}
 		result+=((SimpleNode)(this.jjtGetChild(i))).toString();
 	  }

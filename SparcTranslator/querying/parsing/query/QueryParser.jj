@@ -2,13 +2,13 @@
 /*@egen*/options{  BUILD_PARSER = true;  STATIC = false;                                     }PARSER_BEGIN(QueryParser)package querying.parsing.query;@ SuppressWarnings("all")public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected JJTQueryParserState jjtree = new JJTQueryParserState();
 
-/*@egen*/   public QASTatom parseQuery() throws ParseException   {     return (QASTatom)this.atom();   } }PARSER_END(QueryParser)TOKEN :{  < IDENTIFIER : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >| < VARIABLE :    (      [ "A"-"Z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])*    ) >| < NONZERODIGIT : [ "1"-"9" ] >| < POSITIVE_INTEGER :    < NONZERODIGIT >    (      < ZERO >    | < NONZERODIGIT >    )* >| < ZERO : "0" >| < PLUS : "+" >| < MINUS:"-" >| < MULT : "*" >| < DIV : "/" >| < OP : "(" >| < CP : ")" >| < COMMA : "," >| < IDENTIFIER_WITH_OP : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >|  < NEGATIVE_ATOM_WITH_OP : "-" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >}SKIP :{ < SPACE : ([ "\n", "\r", "\t", " " ])+ >}SimpleNode atom():{/*@bgen(jjtree) atom */
+/*@egen*/   public QASTatom parseQuery() throws ParseException   {     return (QASTatom)this.atom();   } }PARSER_END(QueryParser)TOKEN :{  < IDENTIFIER : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >| < VARIABLE :    (      [ "A"-"Z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])*    ) >| < NONZERODIGIT : [ "1"-"9" ] >| < POSITIVE_INTEGER :    < NONZERODIGIT >    (      < ZERO >    | < NONZERODIGIT >    )* >| < ZERO : "0" >| < PLUS : "+" >| < MINUS:"-" >| < MULT : "*" >| < DIV : "/" >| < OP : "(" >| < CP : ")" >| < COMMA : "," >| <  DOT:  "." >| < IDENTIFIER_WITH_OP : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >|  < NEGATIVE_ATOM_WITH_OP : "-" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >} SKIP :{ < SPACE : ([ "\n", "\r", "\t", " " ])+ >}< * > TOKEN :{    < UNEXPECTED_CHAR : ~[] >}SimpleNode atom():{/*@bgen(jjtree) atom */
   QASTatom jjtn000 = new QASTatom(JJTATOM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) atom */
    try {
-/*@egen*/   predSymbol()   [ termList() < CP >]/*@bgen(jjtree)*/
+/*@egen*/   predSymbol()   [ termList() < CP >][<DOT >]/*@bgen(jjtree)*/
    {
      jjtree.closeNodeScope(jjtn000, true);
      jjtc000 = false;
@@ -165,12 +165,12 @@
     }
   }
 /*@egen*/}void multiplicativeArithmeticTerm() :{/*@bgen(jjtree) multiplicativeArithmeticTerm */
-  QASTmultiplicativeArithmeticTerm jjtn000 = new QASTmultiplicativeArithmeticTerm(JJTMULTIPLICATIVEARITHMETICTERM);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) multiplicativeArithmeticTerm */
+ QASTmultiplicativeArithmeticTerm jjtn000 = new QASTmultiplicativeArithmeticTerm(JJTMULTIPLICATIVEARITHMETICTERM);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}{/*@bgen(jjtree) multiplicativeArithmeticTerm */
   try {
-/*@egen*/  atomicArithmeticTerm()  (    < MULT >    atomicArithmeticTerm()  )*/*@bgen(jjtree)*/
+/*@egen*/  atomicArithmeticTerm()  (    t=multOp()    {     jjtn000.image+=t.image;     }    atomicArithmeticTerm()  )*/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -287,10 +287,10 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.image = t.image;      }/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.image = t.image;        }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}Token number()       :{  Token t;}{  t = < POSITIVE_INTEGER >  {    return t;  }| t = < ZERO >  {    return t;  }| t = < NONZERODIGIT >  {    return t;  }}
+/*@egen*/}Token number()       :{  Token t;}{  t = < POSITIVE_INTEGER >  {    return t;  }| t = < ZERO >  {    return t;  }| t = < NONZERODIGIT >  {    return t;  }}Token multOp()       :{Token t;}{  t = < MULT >  {    return t;  }| t = < DIV >  {    return t;  }}

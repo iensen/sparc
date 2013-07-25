@@ -5,6 +5,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import parser.ASTatom;
+import parser.ASTterm;
+import parser.TokenMgrError;
 import configuration.ASPSolver;
 import configuration.Settings;
 import externaltools.ClingoSolver;
@@ -17,6 +22,7 @@ import querying.parsing.AnswerSets.DLVAnswerSetParser;
 import querying.parsing.query.ParseException;
 import querying.parsing.query.QASTatom;
 import querying.parsing.query.QueryParser;
+import typechecking.TypeChecker;
 import warnings.Pair;
 import warnings.StringListUtils;
 
@@ -27,9 +33,10 @@ public class QueryEngine {
 	private ExternalSolver solver;
 	private AnswerSetParser answerSetParser;
 	private HashSet<String> queryVars;
-
-	public QueryEngine(ArrayList<AnswerSet> answerSets) {
+    TypeChecker tc;
+	public QueryEngine(ArrayList<AnswerSet> answerSets,TypeChecker tc) {
 		sc = new Scanner(System.in);
+		this.tc=tc;
 		this.answerSets = answerSets;
 		try {
 			if (Settings.getSolver() == ASPSolver.DLV) {
@@ -57,6 +64,9 @@ public class QueryEngine {
 			} catch (ParseException ex) {
 				System.err.println(ex.getMessage());
 			}
+			 catch(TokenMgrError ex) {
+				 System.err.println("your query must have syntax p(t1,t2...,tn) (where the list of terms may be omitted)");
+			 }
 
 		}
 	}
@@ -67,14 +77,26 @@ public class QueryEngine {
 		StringReader sr = new StringReader(query);
 		parser = new QueryParser(sr);
 		QASTatom atom = parser.parseQuery();
+	    
 		return atom;
 	}
 
 	private void answerQuery(QASTatom query) {
 		queryVars = query.fetchVariables();
 		query.evaluateAllArithmetics();
-
+		 //check the query:	
+		 try {
+			    tc.ignoreLineNumbers=true;
+				tc.checkAtom(new ASTatom(query));
+			} catch (parser.ParseException e) {
+				// TODO Auto-generated catch block
+				System.err.println(e.getMessage());
+				return ;
+			}
+		
 		if (query.isGround()) {
+
+			
 			 answerGroundQuery(query);
 		} else {
 			answerNonGroundQuery(query);
@@ -93,8 +115,8 @@ public class QueryEngine {
 			    
 				String response=sc.nextLine();
 				while(!response.equals("") && !response.toLowerCase().equals("q")) {
-					System.err.println("Press Enter to continue or input \'q\' to interrupt the query");
-					response=sc.next();
+					System.err.print("Press Enter to continue or input \'q\' to interrupt the query");
+					response=sc.nextLine();
 				}
 				if(response.toLowerCase().equals("q")) {
 					break;
@@ -203,4 +225,10 @@ public class QueryEngine {
 		return prefix.toString();
 
 	}
+	boolean isNumber(String s) {
+		Pattern isInteger = Pattern.compile("[1-9]\\d*");
+		return isInteger.matcher(s).matches();
+	
+	}
+	
 }

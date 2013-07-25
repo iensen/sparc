@@ -6,6 +6,8 @@ import java.util.HashSet;
 public class StringListUtils {
 
 	public static String getSeparatedList(ArrayList<String> list,String separator) {
+		if(list==null)
+			return null;
 		StringBuilder commaSepList = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
 			if (i != 0)
@@ -29,22 +31,27 @@ public class StringListUtils {
 		if(term.indexOf('(')==-1)
 			return null;
 		String recordName=term.substring(0,term.indexOf('('));
+		String argumentString=term.substring(term.indexOf('(')+1,term.length()-1);
+		return new Pair<String,ArrayList<String>>(recordName,splitCommaSequence(argumentString));
+	}
+	
+	public static ArrayList<String> splitCommaSequence(String argumentString) {
 		ArrayList<String> arguments=new ArrayList<String>();
-		String argumentString=term.substring(term.indexOf('('),term.length());
 		int parCount=0;
 		int lastBeginIndex=0;
-		lastBeginIndex++;
-		parCount++;
+
 		for(int i=1;i<argumentString.length();i++) {
 			if(argumentString.charAt(i)=='(')
 				parCount++;
 			if(argumentString.charAt(i)==')')
 				parCount--;
-			if(argumentString.charAt(i)==',' && parCount==1 || argumentString.charAt(i)==')' && parCount==0) {
+			if(argumentString.charAt(i)==',' && parCount==0) {
 				arguments.add(argumentString.substring(lastBeginIndex, i));
 				lastBeginIndex=i+1;
 			}
 		}
-		return new Pair<String,ArrayList<String>>(recordName,arguments);
+		arguments.add(argumentString.substring(lastBeginIndex,argumentString.length()));
+		return arguments;
+		
 	}
 }

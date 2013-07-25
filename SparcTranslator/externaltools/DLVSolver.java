@@ -17,6 +17,7 @@ public class DLVSolver extends ExternalSolver{
 	    
 	    public DLVSolver(String program) throws FileNotFoundException {
 	        this.program = program;
+	     
 	        //System.out.println(program);
 	        pathToDlv = searchForExe();
 	        if (pathToDlv == null) {
@@ -65,9 +66,9 @@ public class DLVSolver extends ExternalSolver{
 		            }
 
 		            if (errors.length() > 0) {
+		            	System.out.println(program);
 		                throw new IllegalArgumentException(
-		                        "clingcon program constructed from a rule for warnings " +
-		                                "checking contains errors: "
+		                        "constructed dlv program constructed contains errors: "
 		                                + errors.toString());
 		            }
 		            brCleanUp = new BufferedReader(new InputStreamReader(stdout));

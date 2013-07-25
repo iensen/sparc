@@ -2,8 +2,9 @@ package querying.parsing.AnswerSets;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
+
+import warnings.StringListUtils;
 
 
 
@@ -40,7 +41,8 @@ public class DLVAnswerSetParser extends AnswerSetParser{
                     sb.append(next);
                 }
                 AnswerSet answerSet=new AnswerSet();
-                Collections.addAll(answerSet.atoms,sb.toString().split(","));
+               
+                answerSet.atoms.addAll(StringListUtils.splitCommaSequence(sb.toString()));
                 result.add(answerSet);
             }
         }

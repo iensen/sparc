@@ -63,8 +63,7 @@ public class ClingoSolver extends ExternalSolver {
 
 	            if (errors.length() > 0) {
 	                throw new IllegalArgumentException(
-	                        "clingcon program constructed from a rule for warnings " +
-	                                "checking contains errors: "
+	                        "constructed clingo program has errors: "
 	                                + errors.toString());
 	            }
 	            brCleanUp = new BufferedReader(new InputStreamReader(stdout));

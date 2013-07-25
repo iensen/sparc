@@ -2,12 +2,36 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import querying.parsing.query.QASTatom;
+import querying.parsing.query.QASTpredSymbol;
+import querying.parsing.query.QASTterm;
+import querying.parsing.query.QASTtermList;
+
 public
 class ASTatom extends SimpleNode {
   public ASTatom(int id) {
     super(id);
   }
+  public ASTatom(QASTatom atom) {
+	  super(SparcTranslatorTreeConstants.JJTATOM);
 
+	  QASTpredSymbol QpredSymbol=(QASTpredSymbol)atom.jjtGetChild(0);
+	  ASTpredSymbol predSymbol=new ASTpredSymbol(SparcTranslatorTreeConstants.JJTPREDSYMBOL);
+	  predSymbol.image=QpredSymbol.getImage();
+	  ASTextendedNonRelAtom nonRelAtom=new ASTextendedNonRelAtom(SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM);
+	  nonRelAtom.jjtAddChild(predSymbol, 0);
+	  if(atom.jjtGetNumChildren()>1) {
+		  QASTtermList QtermList=(QASTtermList)atom.jjtGetChild(1);
+		  ASTtermList termList=new ASTtermList(SparcTranslatorTreeConstants.JJTTERMLIST);
+		  for(int i=0;i<QtermList.jjtGetNumChildren();i++) {
+			  QASTterm term =(QASTterm) QtermList.jjtGetChild(i);
+			  termList.jjtAddChild(new ASTterm(term.toString()), i);
+		  }
+		  nonRelAtom.jjtAddChild(termList, 1);
+	  }
+	  this.jjtAddChild(nonRelAtom, 0);
+	  
+  }
   public ASTatom(SparcTranslator p, int id) {
     super(p, id);
   }

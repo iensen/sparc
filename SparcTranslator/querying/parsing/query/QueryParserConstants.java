@@ -35,11 +35,15 @@ public interface QueryParserConstants {
   /** RegularExpression Id. */
   int COMMA = 12;
   /** RegularExpression Id. */
-  int IDENTIFIER_WITH_OP = 13;
+  int DOT = 13;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM_WITH_OP = 14;
+  int IDENTIFIER_WITH_OP = 14;
   /** RegularExpression Id. */
-  int SPACE = 15;
+  int NEGATIVE_ATOM_WITH_OP = 15;
+  /** RegularExpression Id. */
+  int SPACE = 16;
+  /** RegularExpression Id. */
+  int UNEXPECTED_CHAR = 17;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -59,9 +63,11 @@ public interface QueryParserConstants {
     "\"(\"",
     "\")\"",
     "\",\"",
+    "\".\"",
     "<IDENTIFIER_WITH_OP>",
     "<NEGATIVE_ATOM_WITH_OP>",
     "<SPACE>",
+    "<UNEXPECTED_CHAR>",
   };
 
 }

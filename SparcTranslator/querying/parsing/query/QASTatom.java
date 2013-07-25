@@ -55,6 +55,9 @@ public class QASTatom extends SimpleNode {
 
 	public ArrayList<String> getArguments() {
 		ArrayList<String> arguments = new ArrayList<String>();
+		if(this.jjtGetNumChildren()<2) {
+			return null;
+		}
 		QASTtermList termList = (QASTtermList) this.jjtGetChild(1);
 		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
 			QASTterm term = (QASTterm) termList.jjtGetChild(i);
@@ -65,7 +68,10 @@ public class QASTatom extends SimpleNode {
 
 	public String toString() {
 		if (type == AtomType.nonRelational)
-			return getName() + "("
+			if(this.jjtGetNumChildren()==1)
+				return getName();
+			else 
+				return getName() + "("
 					+ StringListUtils.getSeparatedList(getArguments(), ",")
 					+ ")";
 		else
@@ -108,9 +114,10 @@ public class QASTatom extends SimpleNode {
 	public Pair<QASTatom, ArrayList<QASTatom>> moveOutArithmetics() {
 		HashSet<String> usedVariables = this.fetchVariables();
 		ArrayList<QASTatom> movedOutAtoms = new ArrayList<QASTatom>();
-		QASTtermList termList = (QASTtermList) this.jjtGetChild(1);
-
-		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
+		
+        if(this.jjtGetNumChildren()==1) return new Pair<QASTatom,ArrayList<QASTatom>>(this,movedOutAtoms);
+        QASTtermList termList = (QASTtermList) this.jjtGetChild(1);
+        for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
 			QASTterm term = (QASTterm) termList.jjtGetChild(i);
 			String termStr = term.toString();
 			if (termStr.indexOf('/') != -1 || termStr.indexOf('+') != -1

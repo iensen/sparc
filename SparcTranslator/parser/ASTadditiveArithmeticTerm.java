@@ -19,8 +19,8 @@ public class ASTadditiveArithmeticTerm extends SimpleNode {
 				SparcTranslatorTreeConstants.JJTATOMICARITHMETICTERM);
 		ASTmultiplicativeArithmeticTerm materm = new ASTmultiplicativeArithmeticTerm(
 				SparcTranslatorTreeConstants.JJTMULTIPLICATIVEARITHMETICTERM);
-		aaterm.image = this.image = "+";
-		aaterm.image = image;
+		this.image = "+";
+		aaterm.image=Long.toString(value);
 		// attach subtrees to the root
 		materm.jjtAddChild(aaterm, 0);
 		this.jjtAddChild(materm, 0);

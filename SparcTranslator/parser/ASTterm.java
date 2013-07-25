@@ -3,6 +3,9 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+
 
 import warnings.Pair;
 import warnings.StringListUtils;
@@ -24,16 +27,15 @@ public class ASTterm extends SimpleNode {
 				SparcTranslatorTreeConstants.JJTMULTIPLICATIVEARITHMETICTERM);
 		ASTadditiveArithmeticTerm adaterm = new ASTadditiveArithmeticTerm(
 				SparcTranslatorTreeConstants.JJTADDITIVEARITHMETICTERM);
-		ASTarithmeticTerm aterm = new ASTarithmeticTerm(
-				SparcTranslatorTreeConstants.JJTARITHMETICTERM);
+
 
 		aaterm.image = Long.toString(value);
 		adaterm.image="+";
 		// attach subtrees to the root
 		materm.jjtAddChild(aaterm, 0);
 		adaterm.jjtAddChild(materm, 0);
-		aterm.jjtAddChild(adaterm, 0);
-		this.jjtAddChild(aterm, 0);
+		this.jjtAddChild(adaterm, 0);
+	
 	}
 
 	public ASTterm(String image) {
@@ -54,6 +56,12 @@ public class ASTterm extends SimpleNode {
 			this.jjtAddChild(termList, 1);
 
 		} else {
+			if(!Character.isLowerCase(image.charAt(0))) {
+				ASTvar var=new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
+				var.image=image;
+				this.jjtAddChild(var, 0);
+			}
+			else {
 			ASTsymbolicConstant sconstant = new ASTsymbolicConstant(
 					SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT);
 			sconstant.image = image;
@@ -61,6 +69,7 @@ public class ASTterm extends SimpleNode {
 					SparcTranslatorTreeConstants.JJTSYMBOLICTERM);
 			sterm.jjtAddChild(sconstant, 0);
 			this.jjtAddChild(sterm, 0);
+			}
 		}
 	}
 	
@@ -173,6 +182,7 @@ public class ASTterm extends SimpleNode {
 			return ((SimpleNode) (this.jjtGetChild(0)))
 					.toString(useOriginalImages);
 	}
+
 }
 /*
  * JavaCC - OriginalChecksum=c1ac1ba327197118b424963735d16a51 (do not edit this

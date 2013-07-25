@@ -11,6 +11,8 @@ class QASTpredSymbol extends SimpleNode {
   public QASTpredSymbol(QueryParser p, int id) {
     super(p, id);
   }
-
+  public String getImage() {
+	  return this.image;
+  }
 }
 /* JavaCC - OriginalChecksum=95938664fd2d17d068874a541b3b08a0 (do not edit this line) */

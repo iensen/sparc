@@ -25,6 +25,7 @@ class QASTsymbolicTerm extends SimpleNode {
 				 result += ((SimpleNode)(this.jjtGetChild(i))).toString();
 			 }
 			 result+=")";
+			
 			 return result;
 		 }
   }

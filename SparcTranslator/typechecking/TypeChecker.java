@@ -71,6 +71,8 @@ public class TypeChecker {
 	private HashSet<String> definedRecordNames;
     // used for checking if sort contains a number
 	private InstanceGenerator gen;
+	
+	public boolean ignoreLineNumbers;
 	/**
 	 * Constructor
 	 * 
@@ -91,6 +93,7 @@ public class TypeChecker {
 		this.curlyBracketTerms = curlyBracketTerms;
 		this.definedRecordNames = definedRecordNames;
 		this.gen=gen;
+		this.ignoreLineNumbers=false;
 	}
 
 	/**
@@ -178,8 +181,8 @@ public class TypeChecker {
 				if (!varsInBody.contains(s)) {
 					throw new ParseException(inputFileName + ": "
 							+ "variable in weak constraint paramethers"
-							+ " at line " + rule.getBeginLine() + ", column "
-							+ rule.getBeginColumn()
+							+(ignoreLineNumbers ?"": " at line " + rule.getBeginLine() + ", column "
+							+ rule.getBeginColumn())
 							+ " does not occur in the body");
 				}
 
@@ -197,9 +200,9 @@ public class TypeChecker {
 			if (!predicateArgumentSorts.containsKey(predicateName)
 					|| predicateArgumentSorts.get(predicateName).size() > 1) {
 				throw new ParseException(inputFileName + ": " + "predicate "
-						+ predicateName + " of arity 1 at line "
+						+ predicateName + " of arity 1 at "+(ignoreLineNumbers?"": "line "
 						+ pred.getBeginLine() + ", column "
-						+ pred.getBeginColumn() + " was not declared");
+						+ pred.getBeginColumn()) + " was not declared");
 			}
 			int from = Integer.parseInt(range[1]);
 			int to = Integer.parseInt(range[2]);
@@ -212,8 +215,8 @@ public class TypeChecker {
 					throw new ParseException(inputFileName + ": "
 							+ "Argument number " + 1 + " of predicate "
 							+ predicateName + "/1" + ", \"" + from + ".." + to
-							+ "\"," + " at line " + pred.getBeginLine()
-							+ ", column " + pred.getBeginColumn()
+							+ "\"," + (ignoreLineNumbers?"":" at line " + pred.getBeginLine()
+							+ ", column " + pred.getBeginColumn())
 							+ " violates definition of sort " + "\""
 							+ predicateArgumentSorts.get(predicateName).get(0)
 							+ "\"");
@@ -251,7 +254,7 @@ public class TypeChecker {
 	 * @throws ParseException
 	 *             if type violation occurs
 	 */
-	private void checkAtom(ASTatom atom) throws ParseException {
+	public void checkAtom(ASTatom atom) throws ParseException {
 		if (((SimpleNode) atom.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTAGGREGATE) {
 			checkAggregate((ASTaggregate) atom.jjtGetChild(0));
 		} else if (((SimpleNode) atom.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM) {
@@ -321,8 +324,8 @@ public class TypeChecker {
 						.jjtGetNumChildren()) {
 			throw new ParseException(inputFileName + ": " + "predicate "
 					+ predicateName + " of arity "
-					+ termList.jjtGetNumChildren() + " at line " + beginLine
-					+ ", column " + beginColumn + " was not declared");
+					+ termList.jjtGetNumChildren() + (ignoreLineNumbers?"":" at line " + beginLine
+					+ ", column " + beginColumn) + " was not declared");
 		}
 		ArrayList<String> sortNames=new ArrayList<String>();
 		for (String sortName : predicateArgumentSorts.get(predicateName)) {
@@ -389,8 +392,8 @@ public class TypeChecker {
 							+ predicateName + "/"
 							+ termList.jjtGetNumChildren() + ", \""
 							+ ((ASTterm) termList.jjtGetChild(i)).toString()
-							+ "\"," + " at line " + +beginLine + ", column "
-							+ beginColumn + " is an arithmetic term and not a variable, but "
+							+ "\"," + (ignoreLineNumbers?"":" at line " + +beginLine + ", column "
+							+ beginColumn) + " is an arithmetic term and not a variable, but "
 							+ "\"" + sortName + "\""+" does not contain a number");
 				}
 				
@@ -406,8 +409,8 @@ public class TypeChecker {
 							+ predicateName + "/"
 							+ termList.jjtGetNumChildren() + ", \""
 							+ ((ASTterm) termList.jjtGetChild(i)).toString()
-							+ "\"," + " at line " + +beginLine + ", column "
-							+ beginColumn + " violates definition of sort "
+							+ "\"," + (ignoreLineNumbers?"": " at line " + +beginLine + ", column "
+							+ beginColumn) + " violates definition of sort "
 							+ "\"" + sortName + "\"");
 				else {
 					throw new ParseException(inputFileName + ": "
@@ -415,8 +418,8 @@ public class TypeChecker {
 							+ "\" occuring  in program as " + +(i + 1)
 							+ " argument of predicate " + predicateName + "/"
 							+ termList.jjtGetNumChildren()
-						    + " at line " + +beginLine + ", column "
-							+ beginColumn + " is not a program term");
+						    + (ignoreLineNumbers?"": " at line " + +beginLine + ", column "
+									+ beginColumn)+ " is not a program term");
 				}
 			}
 		}

@@ -1,11 +1,9 @@
-
-
 \documentclass[12pt, letterpaper]{article}
 
 \setlength{\topmargin}{-1.75cm} \setlength{\textheight}{22.5cm}
 \setlength{\oddsidemargin}{0.25cm}
 \setlength{\evensidemargin}{0.25cm} \setlength{\textwidth}{16.2cm}
-\renewcommand{\figurename}{Table}
+\renewcommand{\figurename}{Figure}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -81,23 +79,44 @@
 
 
 \section{System installation}
-${\cal SPARC}$ system  works in two phases:
+
+\st For using the system, you need to have the following installed:
 \begin{enumerate}
-\item Translation of ${\cal SPARC}$ code to Answer Set Prolog (ASP)\cite{gelfond1991classical} with weak constraints\cite{buccafurri1997strong} code 
-\footnote{the syntax of weak constraints matches DLV input language}.
-\item Running ASP code on existing ASP solvers.
+\item Java Runtime Environment (JRE) can be found here \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
+The system was tested on Java versions 1.6.0\_37 and 1.7.0\_25.
+\item The SPARC to ASP translator. It can be downloaded here: \url{https://github.com/iensen/sparc/blob/master/sparc.jar?raw=true}.
+\item An ASP solver. It can be one of the following:
+\begin{enumerate} 
+\item DLV (recommended).
+ \url{http://www.dlvsystem.com/dlv/#1}You need to download \textit{static} version of the executable file.
+\item Clingo \url{http://sourceforge.net/projects/potassco/files/clingo/3.0.5/}.
 \end{enumerate}
 
-\st So, to use the system you need to install:
-\begin{enumerate}
-\item The SPARC to ASP translator. It can be downloaded here: \url{https://github.com/iensen/sparc_paper/blob/master/sparc.jar?raw=true}.
-\item An ASP solver. We recommend using DLV for best compatibility with out translator. DLV can be downloaded here:
- \url{http://www.dlvsystem.com/dlv/#1} You need to download \textit{static} version of the executable file.
 \item (\textit{optional}) Swi-prolog available form \url{http://www.swi-prolog.org/}. This item is only required if option \textit{-wcon} is used for type warning detection.
-
+(See sections \ref{option} and \ref{clp_type_warnings}).
 
 \end{enumerate}
-To demonstrate the usage of the system, let's start with a simple example.
+If you are using dlv solver, rename the solver executable file to dlv (dlv.exe for windows).
+Make sure the solver you are using is accessible from your path (see figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo).
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.9\textwidth]{dlv_version.jpg}
+\caption{Checking the version of DLV solver}
+\label{fig:dlv_solver_check}
+\end{figure}
+
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.9\textwidth]{clingo_version.jpg}
+\caption{Checking the version of Clingo solver}
+\label{fig:clingo_solver_check}
+\end{figure}
+
+\section{System usage}
+
+To demonstrate the usage of the system we will use the program $\Pi$ below.
 \begin{verbatim}
 sorts
 #person={bob,tim,andy}.
@@ -107,61 +126,144 @@ rules
 teacher(bob).
 \end{verbatim}
 
-\st This is a SPARC program. It consists of three sections:
+\st
+The system can work in one of the  two modes: \textit{querying mode} and \textit{answer set} mode.
+
+\subsection{Querying mode}
+
+In this mode we can ask queries about a ${\cal SPARC}$ program loaded into the system.
+The general command line syntax for this mode is \textit{java -jar sparc.jar program\_file}.
+For the program $\Pi$ above, we run the queries shown below. 
+
+\begin{verbatim}
+username@machine:~$ java -jar sparc.jar program.sp
+SPARC to DLV translator V2.24
+program translated
+?- teacher(bob).
+yes
+?- teacher(tim).
+unknown
+?- teacher(X).
+X = bob
+?- teacher(john).
+program.sp: argument number 1 of predicate teacher/1, "john", 
+            violates definition of sort "person"
+
+\end{verbatim}
+
+The answer to the first query \texttt{?- teacher(bob)} is \textit{yes}, because the atom \textit{teacher(bob)} belongs to the only answer set of $\Pi$.
+
+The answer to the second query \texttt{?- teacher(tim)} is \textit{unknown}, because neither the atom \textit{teacher(bob)} nor its negation belongs to the answer set of $\Pi$.
+
+The answer to the query \texttt{?- teacher(X)} is \textit{X = bob}, because there is only one replacement (bob) for X, such that \textit{teacher(X)} belongs to the answer set of $\Pi$.
+
+For the fourth query, we see an error, because teacher(john) is not an atom of $\Pi$.
+
+
+
+\subsection{Answer Set Mode}
+
+In this mode we can see the computed answer sets of the loaded program.
+The general command line syntax for this mode is \textit{java -jar sparc.jar program\_file -A}.
+
+For the program $\Pi$, the answer set may be computed as it is shown below:
+\begin{verbatim}
+username@machine:~$ java -jar sparc.jar program.sp -A
+SPARC to DLV translator V2.24
+program translated
+DLV [build BEN/Dec 16 2012   gcc 4.6.1]
+{teacher(bob)}
+
+\end{verbatim}
+
+
+\section{Command Line Options}\label{option}
+
+In this section, we  describe the meanings of command line options supported by
+${\cal SPARC}$. Some options(flags) do not take an argument and have the form \textit{-option},
+while others require arguments and can be written in the form \textit{-option arg}.
+For each command line option, we indicate whether it requires
+an argument, and if so, we  describe its meaning.
+
 \begin{itemize}
- \item Sort definitions. The section starts with the keyword \textit{sorts} followed by definitions of the sorts in the program.
- \item Predicate declarations. The section starts with the keyword \textit{predicates} followed by declarations of predicates of the program.
- \item Program rules. The sections starts with the keyword \textit{rules}  and consists of a collection of rules satisfying ASP syntax.
+ \item \textbf{-A}
+    
+  Compute answer sets of the loaded program.
+
+\item \textbf{-wcon}
+    
+  Show warnings determined by CLP-based algorithm. See section \ref{clp_type_warnings}
+
+\item \textbf{-wasp}
+    
+  Show warnings determined by ASP-based algorithm. See section \ref{asp_type_warnings}
+
+\item \textbf{-solver arg}
+
+  Specify the solver which will be used for computing answer sets. \textit{arg} can have two possible values: \textit{dlv} and \textit{clingo}. 
+\item \textbf{-solveropts arg}
+
+  Pass command line arguments to the ASP solver (DLV or Clingo).
+  
+  Example: \texttt{-solveropts "-pfilter=p"}.
+
+
+  For the complete list of dlv options, see 
+  \url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
+
+
+  For the complete list of clingo options, see 
+  \url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
+
+
+\item \textbf{-Help, -H, -help, --Help, --help, -h}
+
+  Show help message.
+
+\item \textbf{-o arg}
+
+  Specify the output file where the translated ASP program will be written. \textit{arg} is the path to the output file. 
+  Note that if the option is not specified, the translated ASP program will not be stored anywhere.
+
+\item \textbf{input\_file1 input\_file\_2 \dots input\_file\_n}
+  
+Specify files where the sparc program is located. Note that the first file must contain sort definitions and predicate declarations and may contain program rules, 
+while all other files must start with a keyword \textit{rules} and contain only program rules.
+
+
+
 \end{itemize}
 
-\st To translate the program, run sparc.jar with arguments specifying the SPARC program and the file where the translation will put its result:
+
+\section{Syntax Description}
+
+\subsection{Directives}
+Directives should be written before sort definitions, at the very beginning of a program.
+${\cal SPARC}$ allows two types of directives:
+\subsection*{\#maxint}
+Directive \#maxint specifies maximal nonnegative number which could be used in arithmetic calculations. For example,
 \begin{verbatim}
-$ java -jar sparc.jar example.sp -o example.asp
-SPARC to DLV translator V2.21
-program translated
+ #maxint=15.
 \end{verbatim}
-
-\st To get the answer sets of the translated program, run DLV:
-
+\st limits integers to [0,15].
+\subsection*{\#const}
+Directive \#const allows one to define constant values. The syntax is:
 \begin{verbatim}
-$ dlv example.asp
-DLV [build BEN/Dec 21 2011   gcc 4.6.1]
+   #const constantName = constantValue.
+\end{verbatim}      
+\st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
+ and $constantValue$ is either a nonnegative number or the name of another constant defined above.  
 
-{teacher(bob)}
-\end{verbatim}
-
-\st You should see that the answer set appeared. For a detailed description of ${\cal SPARC}$ system options, see 
-\url{https://github.com/iensen/sparc_paper/wiki/System-usage}.
-
-\st For Linux, MacOS or Cygwin (Windows) users we prepared a bash script which combines translation and solver execution into one step.
-It is available here: \url{https://github.com/iensen/sparc/raw/master/sparc}. Before using the script, make it executable by running command
-\texttt{chmod +x sparc} from the command line.
-
-The general syntax is :
-\begin{verbatim}
- sparc input_file [-wasp,-wcon] [dlv_options]
-\end{verbatim}
-\st
-\texttt{input\_file} is the path to a ${\cal SPARC}$ program to be processed. 
-\st
-\texttt{--warnings} is an optional flag which tells the system to show warnings 
-(see section \ref{type_warnings}).
-\st
-For the complete list of dlv options, see 
-\url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
-\st
-Here is an example of using the script:
-\begin{verbatim}
-$ sparc example.sp -filter=teacher
-...
-{teacher(bob)}
-\end{verbatim}
-\st To see more examples of ${\cal SPARC}$ programs, visit \url{https://github.com/iensen/sparc_paper/wiki/Program-Examples}.
-\section{Detailed System Description}
 
 \subsection{Sort definitions}\label{ss}
 
+This section starts with a keyword $sorts$ followed by a collection of sort definitions of the form:
 
+\begin{verbatim}
+  sort_name=sort_expression.
+\end{verbatim}
+
+The sort expression on the right hand side denotes collection of strings called $sorts$. We divide all the sorts into \textit{basic} and \textit{non-basic}. 
 
 \st \textit{Basic sorts} are defined as named collections of identifiers, i.e, strings consisting of
 \begin{itemize}
@@ -305,13 +407,14 @@ $pred\_symbol(sortName,\dots,sortName)$
 
 \st
 
-Multiple declarations for one predicate symbol are not allowed.
+Multiple declarations containing the same predicate symbol are not allowed.
+0-arity predicates must be declared as $pred_symbol()$.
 \st For any sort name $SN$, the system includes declaration  $SN(SN)$ automatically.
 
 \subsection{Program Rules}
 
 
-\st The third part of a ${\cal SPARC}$ program consists of standard ASP rules and/or consistency restoring (cr)-rules.
+\st The third part of a ${\cal SPARC}$ program starts with the keyword \textit{rules} followed by standard ASP rules and/or consistency restoring (cr)-rules.
 \st
 CR-rules are of the following form:
 
@@ -321,22 +424,6 @@ CR-rules are of the following form:
 where $l$'s are literals.
 Literals occurring in the heads of the rules must not be formed by predicate symbols
 occurring as sort names in sort definitions.
-\section{Directives}
-Directives should be written before sort definitions, at the very beginning of a program.
-${\cal SPARC}$ allows two types of directives:
-\subsection{\#maxint}
-Directive \#maxint specifies maximal nonnegative number which could be used in arithmetic calculations. For example,
-\begin{verbatim}
- #maxint=15.
-\end{verbatim}
-\st limits integers to [0,15].
-\subsection{\#const}
-Directive \#const allows one to define constant values. The syntax is:
-\begin{verbatim}
-   #const constantName = constantValue.
-\end{verbatim}      
-\st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
- and $constantValue$ is either a nonnegative number or the name of another constant defined above.  
 \section{Answer Sets}
 \noindent A set of ground literals $S$ is an {\em answer set} of a ${\cal SPARC}$ 
 program $\Pi$ with regular rules only if $S$ is an answer set of an ASP program consisting of the same rules.
@@ -375,21 +462,18 @@ q(a):+.  % this is a CR-RULE.
 \end{verbatim}
 \st Result:
 \begin{verbatim}
-  ./sparc example2.sp
-DLV [build BEN/Dec 21 2011   gcc 4.6.1]
-
-SPARC to DLV translator V2.02
+username@machine:~$ java -jar sparc.jar program -A
+SPARC to DLV translator V2.24
 program translated
+DLV [build BEN/Dec 16 2012   gcc 4.6.1]
+
 Best model: {-p(a), appl(r_0), q(a)}
 Cost ([Weight:Level]): <[1:1]>
-
 \end{verbatim}
 
 \st Additional literal $appl(r_0)$ was added to the answer set, which means that the 
 first cr-rule from the program was applied.
-\section{Syntax checking}
-During this phase the program is checking for satisfying  \href{https://github.com/iensen/sparc_paper/blob/master/SparcTranslator/parser/Sparc_grammar.txt}{${\cal SPARC}$ lexical and syntactical specifications}.
-All found syntax errors are reported.
+
 \section{Typechecking}
 If no syntax errors, are found,  a static check program is performed all found type-related problems, classified into type errors and type errors.
 \subsection{Type errors}
@@ -525,7 +609,7 @@ the definitions of program atom and program term correspondingly(!!add reference
 During this phase each rule in input ${\cal SPARC}$ program is checked for having at least one ground instance. This is done by applying a standard constraint
 satisfaction algorithm to a constraint formula over finite domains[9] produced by algorithms from (!!! add link as soon as it is available).
 Warnings are reported for the rules which have no ground instances.
-\subsubsection{ASP based warning checking}
+\subsubsection{ASP based warning checking} \label{asp_type_warnings}
 The option \texttt{-wasp} must be passed to the  system  in order to detect and display warnings using a simple ASP based algorithm.
 For example, consider the ${\cal SPARC}$ program below.
 
@@ -546,11 +630,11 @@ p(f(X)):-q(X).
 The only rule of the program has no ground instances with respect to defined sorts.
 The execution trace is provided below
 \begin{verbatim}
-iensen@iensen-EP35-DS3L:~/sparc_pr$ ./sparc warning.sp -wasp 
-DLV [build BEN/Dec 16 2012   gcc 4.6.1]
-
+username@machine:~$ java -jar sparc.jar program.sp -A -wasp
 SPARC to DLV translator V2.24
 program translated
+DLV [build BEN/Dec 16 2012   gcc 4.6.1]
+
 {s3(b), s2(f(a)), warning("p(f(X)):-q(X). ( line: 11, column: 1)")}
 \end{verbatim}
 
@@ -565,7 +649,7 @@ has_ground_instance("rule description")
 \end{verbatim}
 \st
 for all other rules of the input program.
-\subsubsection{Constraint solver based warning checking}
+\subsubsection{Constraint solver based warning checking}\label{clp_type_warnings}
 
 The option \texttt{-wcon} must be passed to the  system  in order to detect and display warnings using the algorithm described in the paper \cite{?} (!add citation as soon as it is available).
 Consider the same ${\cal SPARC}$ program as above.
@@ -587,43 +671,18 @@ p(f(X)):-q(X).
 The only rule of the program has no ground instances with respect to defined sorts.
 The execution trace is provided below
 \begin{verbatim}
-iensen@iensen-Aspire-5735:~/tests$ ./sparc  warning.sp -wcon
-DLV [build BEN/Dec 21 2011   gcc 4.6.1]
+username@machine:~$ java -jar sparc.jar program.sp -A -wcon
 SPARC to DLV translator V2.24
-WARNING: Rule p(f(X)):-q(X). at line 9, column 1 is an empty rule
+WARNING: Rule p(f(X)):-q(X). at line 11, column 1 is an empty rule
 program translated
+DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 {s3(b), s2(f(a))}
 \end{verbatim}
 
 The message \texttt{WARNING: Rule p(f(X)):-q(X). at line 9, column 1 is an empty rule} is an indicator of a potential problem.
 
-\section{${\cal SPARC}$ and Unsafe Rules}
-
-${\cal SPARC}$ helps to avoid \textit{unsafe rule} errors in most  cases.
-
-\st \textbf{Example.}
-\begin{verbatim}
-sort definitions
-s1=1..5.
-predicate declarations
-p(s1).
-program rules
-p(X). 
-\end{verbatim}
-The only rule in the program is unsafe (variable X does not occur in the body).
-However, by translating the program and running ASP solver, we will be able to avoid this unsafety 
-(with addition of auxiliary predicates).
-Here is the execution trace:
-\begin{verbatim}
-$ ./sparc example3.sp -pfilter=p 
-DLV [build BEN/Dec 21 2011   gcc 4.6.1]
-
-SPARC to DLV translator V2.02
-program translated
-{p(1), p(2), p(3), p(4), p(5)}
-\end{verbatim}
 \section{${\cal SPARC}$ and ASPIDE}
-TODO. 
-\bibliographystyle{plain}
-\bibliography{mybib}
+In progress... 
+
+
 \end{document}

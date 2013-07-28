@@ -88,15 +88,15 @@ The system was tested on Java versions 1.6.0\_37 and 1.7.0\_25.
 \item An ASP solver. It can be one of the following:
 \begin{enumerate} 
 \item DLV (recommended).
- \url{http://www.dlvsystem.com/dlv/#1}You need to download \textit{static} version of the executable file.
+ \url{http://www.dlvsystem.com/dlv/#1}You need to download the \textit{static} version of the executable file.
 \item Clingo \url{http://sourceforge.net/projects/potassco/files/clingo/3.0.5/}.
 \end{enumerate}
 
-\item (\textit{optional}) Swi-prolog available form \url{http://www.swi-prolog.org/}. This item is only required if option \textit{-wcon} is used for type warning detection.
+\item (\textit{optional}) Swi-Prolog. \url{http://www.swi-prolog.org/}. This item is only required if option \textit{-wcon} is used for type warning detection.
 (See sections \ref{option} and \ref{clp_type_warnings}).
 
 \end{enumerate}
-If you are using dlv solver, rename the solver executable file to dlv (dlv.exe for windows).
+If you are using dlv solver, rename the solver executable file to \textit{dlv} (\textit{dlv.exe} for windows).
 Make sure the solver you are using is accessible from your path (see figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo).
 
 \begin{figure}[p]
@@ -127,12 +127,17 @@ teacher(bob).
 \end{verbatim}
 
 \st
-The system can work in one of the  two modes: \textit{querying mode} and \textit{answer set} mode.
+The system can work in one of the  two modes: \textit{querying mode} and \textit{answer set mode}.
 
 \subsection{Querying mode}
 
 In this mode we can ask queries about a ${\cal SPARC}$ program loaded into the system.
 The general command line syntax for this mode is \textit{java -jar sparc.jar program\_file}.
+The syntax of the queries is 
+\begin{verbatim}
+ ?- p(t1,t2,...,tn)
+\end{verbatim}
+ where  $p(t1,t2,\dots,tn)$ is an atom of loaded program $\Pi$ ( note that \textit{n} can be equal to zero, in this case the query will be of the form \textit{p} ).
 For the program $\Pi$ above, we run the queries shown below. 
 
 \begin{verbatim}
@@ -176,7 +181,7 @@ DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 
 \end{verbatim}
 
-
+\pagebreak
 \section{Command Line Options}\label{option}
 
 In this section, we  describe the meanings of command line options supported by

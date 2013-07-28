@@ -18,5 +18,41 @@ class ASTchoice_rule extends SimpleNode {
     return visitor.visit(this, data);
   }
   
+  public String toString() {
+	  String []relations=null;
+	  int relationidx=0;
+	  if(this.image!=null && this.image!="") {
+		  this.image=this.image.trim();
+		  relations=this.image.split("\\s");
+	  }
+	  StringBuilder result=new StringBuilder();
+	  int childIdx=0;
+	  if(((SimpleNode)this.jjtGetChild(childIdx)).getId()==SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
+		  result.append(((SimpleNode)this.jjtGetChild(childIdx)).toString());
+		  ++childIdx;
+	  }
+	  if(relations!=null && relations[relationidx].startsWith("L")) {
+		  result.append(relations[relationidx].substring(1));
+		  ++relationidx;
+	  }
+	  result.append("{");
+	  result.append(((ASTchoice_elements)this.jjtGetChild(childIdx)).toString());
+	  result.append("}");
+	  ++childIdx;
+	  if(relations!=null && relationidx<relations.length) {
+		  result.append(relations[relationidx].substring(1));
+		  ++relationidx;
+	  }
+	  
+	  if(childIdx<this.jjtGetNumChildren()) {
+		  result.append(((SimpleNode)this.jjtGetChild(childIdx)).toString());
+		  ++childIdx;
+	  }
+	  return result.toString();
+	  
+	  
+	  
+  }
+  
 }
 /* JavaCC - OriginalChecksum=96e827c9aa11c383a197dc09d1b4873e (do not edit this line) */

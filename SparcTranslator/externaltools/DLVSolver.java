@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import configuration.Settings;
+
 public class DLVSolver extends ExternalSolver{
 	
 	    private String pathToDlv;
@@ -35,8 +37,11 @@ public class DLVSolver extends ExternalSolver{
 	        
 	    	   StringBuilder programOutput = new StringBuilder();
 		        Process process = null;
+		        String options=" -- ";
+	        	if(Settings.getSingletonInstance().getOptions()!=null)
+	        		options+=Settings.getSingletonInstance().getOptions();
 		        try {
-		            process = Runtime.getRuntime().exec(pathToDlv+" -- ");
+		            process = Runtime.getRuntime().exec(pathToDlv+options);
 		        } catch (IOException e) {
 		            System.err.println(e.getMessage());
 		        }

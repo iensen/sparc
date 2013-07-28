@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import configuration.Settings;
+
 public class ClingoSolver extends ExternalSolver {
 	
 	    private String pathToClingo;
@@ -15,6 +17,7 @@ public class ClingoSolver extends ExternalSolver {
         }
 	    public ClingoSolver(String program) throws FileNotFoundException {
 	        this.program = program;
+	        System.out.println(program);
 	        pathToClingo = searchForExe();
 	        if (pathToClingo == null) {
 	            throw new FileNotFoundException("Clingo not found. "
@@ -32,7 +35,10 @@ public class ClingoSolver extends ExternalSolver {
 	        StringBuilder programOutput = new StringBuilder();
 	        Process process = null;
 	        try {
-	            process = Runtime.getRuntime().exec(pathToClingo+" 0 ");
+	        	String options=" 0 ";
+	        	if(Settings.getSingletonInstance().getOptions()!=null)
+	        		options+=Settings.getSingletonInstance().getOptions();
+	            process = Runtime.getRuntime().exec(pathToClingo+options);
 	        } catch (IOException e) {
 	            System.err.println(e.getMessage());
 	        }

@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import parser.ASTatom;
-import parser.ASTterm;
+
 import parser.TokenMgrError;
 import configuration.ASPSolver;
 import configuration.Settings;
@@ -72,7 +72,7 @@ public class QueryEngine {
 	}
 
 	private QASTatom readQuery() throws ParseException {
-		System.out.print("?- ");
+		System.out.print("?-");
 		String query = sc.nextLine();
 		StringReader sr = new StringReader(query);
 		parser = new QueryParser(sr);

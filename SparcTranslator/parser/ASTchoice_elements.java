@@ -17,5 +17,15 @@ class ASTchoice_elements extends SimpleNode {
   public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String toString() {
+	  StringBuilder result=new StringBuilder();
+	  for(int i=0;i<this.jjtGetNumChildren();i++) {
+		  if(i!=0)
+			  result.append(";");
+		  result.append((ASTchoice_element)this.jjtGetChild(i)) ;
+	  }
+	  return result.toString();
+  }
 }
 /* JavaCC - OriginalChecksum=fdc1fa5444a9da4c953de12903438524 (do not edit this line) */

@@ -271,7 +271,7 @@ public class TypeChecker {
 	 * @throws ParseException
 	 *             if type violation occurs
 	 */
-	private void checkExtendedNonRelAtom(ASTextendedNonRelAtom atom)
+	private void checkExtendedNonRelAtom(ASTextendedNonRelAtom atom) //HERE
 			throws ParseException {
 		ASTpredSymbol pred = (ASTpredSymbol) atom.jjtGetChild(0);
 		ASTtermList list = null;
@@ -686,6 +686,12 @@ public class TypeChecker {
 			if (((SimpleNode) (choice_element.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOM) {
 				checkNonRelAtom((ASTnonRelAtom) choice_element.jjtGetChild(i));
 			}
+			
+			if (((SimpleNode) (choice_element.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
+				checkExtendedSimpleAtomList((ASTextendedSimpleAtomList) choice_element.jjtGetChild(i));
+			}
+			
+		
 		}
 
 	}

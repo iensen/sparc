@@ -1,14 +1,3 @@
-\begin{thebibliography}{1}
-
-\bibitem{buccafurri1997strong}
-Francesco Buccafurri, Nicola Leone, and Pasquale Rullo.
-\newblock Strong and weak constraints in disjunctive datalog.
-\newblock In {\em Logic Programming And Nonmonotonic Reasoning}, pages 2--17.
-  Springer, 1997.
-
-\bibitem{gelfond1991classical}
-Michael Gelfond and Vladimir Lifschitz.
-\newblock Classical negation in logic programs and disjunctive databases.
-\newblock {\em New generation computing}, 9(3-4):365--385, 1991.
+\begin{thebibliography}{}
 
 \end{thebibliography}

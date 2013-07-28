@@ -107,7 +107,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC to DLV translator V2.24");
+    System.err.println("SPARC  V2.25");
     Arguments jArguments = new Arguments();
     try
     {

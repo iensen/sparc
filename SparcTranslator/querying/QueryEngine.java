@@ -124,7 +124,7 @@ public class QueryEngine {
 			}
 		}
 		if(!answerFound) {
-			System.out.println("no");
+			System.out.println("unknown");
 		}
 
 	}

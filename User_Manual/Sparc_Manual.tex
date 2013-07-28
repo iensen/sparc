@@ -142,7 +142,7 @@ For the program $\Pi$ above, we run the queries shown below.
 
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program.sp
-SPARC to DLV translator V2.24
+SPARC  V2.25
 program translated
 ?- teacher(bob).
 yes
@@ -174,7 +174,7 @@ The general command line syntax for this mode is \textit{java -jar sparc.jar pro
 For the program $\Pi$, the answer set may be computed as it is shown below:
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program.sp -A
-SPARC to DLV translator V2.24
+SPARC  V2.25
 program translated
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 {teacher(bob)}
@@ -468,7 +468,7 @@ q(a):+.  % this is a CR-RULE.
 \st Result:
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program -A
-SPARC to DLV translator V2.24
+SPARC  V2.25
 program translated
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 
@@ -636,7 +636,7 @@ The only rule of the program has no ground instances with respect to defined sor
 The execution trace is provided below
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program.sp -A -wasp
-SPARC to DLV translator V2.24
+SPARC  V2.25
 program translated
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 
@@ -677,7 +677,7 @@ The only rule of the program has no ground instances with respect to defined sor
 The execution trace is provided below
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program.sp -A -wcon
-SPARC to DLV translator V2.24
+SPARC  V2.25
 WARNING: Rule p(f(X)):-q(X). at line 11, column 1 is an empty rule
 program translated
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]

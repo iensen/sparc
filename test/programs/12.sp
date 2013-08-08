@@ -4,4 +4,4 @@ predicates
 p(#s1).  %predicate  "p" accepts terms of the sort s1 
 q(#s1).  %predicate  "q" accepts terms of the sort s1 
 rules
-p(a)|p(b).
+p(a).

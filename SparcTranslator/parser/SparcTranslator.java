@@ -40,8 +40,7 @@ class Arguments
   boolean outputAnswerSets = false;
   @ Parameter(names = "-solver", description = "selected solver")
   String solver = null;
-
- @ Parameter(names = "-solverOpts", description = "options passed to internal solver")
+ @ Parameter(names = "-solveropts", description = "options passed to internal solver")
   String solverOpts = null;
 }
 
@@ -107,7 +106,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.25");
+    System.err.println("SPARC  V2.26");
     Arguments jArguments = new Arguments();
     try
     {
@@ -178,13 +177,17 @@ class Pair
     StringBuilder translatedProgram = new StringBuilder();
     try
     {
-      int currentInputFileIndex = 0;
+
       if (jArguments.inputFiles != null && jArguments.inputFiles.size() != 0)
       {
-        // read input from multiple files        try
+        if(jArguments.inputFiles.size() >1)
         {
-          sr = new FileReader(jArguments.inputFiles.get(currentInputFileIndex));
-          ++currentInputFileIndex;
+           System.err.println("ERROR: multiple input files");
+           return;
+        }
+        try
+        {
+          sr = new FileReader(jArguments.inputFiles.get(0));
         }
         catch (FileNotFoundException fileException)
         {
@@ -206,29 +209,7 @@ class Pair
         tc.setInputFileName(getShortFileName(jArguments.inputFiles.get(0)));
       }
       tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
-      // translate program in the first file
-
-      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, (jArguments.inputFiles.size() > 1) ? false : true));
-      //process other files      for (int fileIndex = 1; fileIndex < jArguments.inputFiles.size(); fileIndex++)
-      {
-        try
-        {
-          sr = new FileReader(jArguments.inputFiles.get(fileIndex));
-        }
-        catch (FileNotFoundException fileException)
-        {
-          System.err.println("%INPUT FILE ERROR: " + fileException.getMessage());
-          ;
-          return;
-        }
-        p.ReInit(sr);
-        tr.setInputFileName(getShortFileName(jArguments.inputFiles.get(fileIndex)));
-        tc.setInputFileName(getShortFileName(jArguments.inputFiles.get(fileIndex)));
-        SimpleNode rules = p.programRules();
-        //do typechecking of rules from other files        tc.checkRules((ASTprogramRules) rules);
-        /* we only write warnings after we translated the last file:*/
-        translatedProgram.append(tr.translateAndWriteRules((ASTprogramRules) rules, fileIndex == jArguments.inputFiles.size() - 1));
-      }
+      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, true));
     }
     catch (ParseException pe)
     {
@@ -2394,7 +2375,7 @@ class Pair
       jjtn000.beginColumn = t.beginColumn;
     }
     if(Settings.getSingletonInstance().getSolver()!= ASPSolver.Clingo)
-      {if (true) throw new ParseException("line " + jjtn000.beginLine + ", column " + jjtn000.beginColumn + ": choice rules are not supported");}
+      {if (true) throw new ParseException("line " + jjtn000.beginLine + ", column " + jjtn000.beginColumn + ": choice rules are not supported in DLV");}
     {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -4044,6 +4025,87 @@ class Pair
     finally { jj_save(23, xla); }
   }
 
+  private boolean jj_3R_33() {
+    if (jj_3R_59()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_49() {
+    if (jj_3R_70()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_52()) {
+    jj_scanpos = xsp;
+    if (jj_3R_53()) {
+    jj_scanpos = xsp;
+    if (jj_3R_54()) {
+    jj_scanpos = xsp;
+    if (jj_3R_55()) {
+    jj_scanpos = xsp;
+    if (jj_3R_56()) {
+    jj_scanpos = xsp;
+    if (jj_3R_57()) {
+    jj_scanpos = xsp;
+    if (jj_3R_58()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_52() {
+    if (jj_scan_token(EQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_69() {
+    if (jj_3R_31()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_77() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_76()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_90() {
+    if (jj_scan_token(DIV)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_89() {
+    if (jj_scan_token(MULT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_86() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_89()) {
+    jj_scanpos = xsp;
+    if (jj_3R_90()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_73() {
+    if (jj_3R_76()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_77()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   private boolean jj_3_22() {
     if (jj_3R_33()) return true;
     if (jj_3R_31()) return true;
@@ -4591,87 +4653,6 @@ class Pair
 
   private boolean jj_3R_53() {
     if (jj_scan_token(NOTEQ)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_33() {
-    if (jj_3R_59()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_49() {
-    if (jj_3R_70()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_52()) {
-    jj_scanpos = xsp;
-    if (jj_3R_53()) {
-    jj_scanpos = xsp;
-    if (jj_3R_54()) {
-    jj_scanpos = xsp;
-    if (jj_3R_55()) {
-    jj_scanpos = xsp;
-    if (jj_3R_56()) {
-    jj_scanpos = xsp;
-    if (jj_3R_57()) {
-    jj_scanpos = xsp;
-    if (jj_3R_58()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_52() {
-    if (jj_scan_token(EQ)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_69() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_77() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_76()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_90() {
-    if (jj_scan_token(DIV)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_89() {
-    if (jj_scan_token(MULT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_86() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_89()) {
-    jj_scanpos = xsp;
-    if (jj_3R_90()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_73() {
-    if (jj_3R_76()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_77()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 

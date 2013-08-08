@@ -153,7 +153,7 @@ X = bob
 ?- teacher(john).
 program.sp: argument number 1 of predicate teacher/1, "john", 
             violates definition of sort "person"
-
+?-exit.
 \end{verbatim}
 
 The answer to the first query \texttt{?- teacher(bob)} is \textit{yes}, because the atom \textit{teacher(bob)} belongs to the only answer set of $\Pi$.
@@ -164,7 +164,7 @@ The answer to the query \texttt{?- teacher(X)} is \textit{X = bob}, because ther
 
 For the fourth query, we see an error, because teacher(john) is not an atom of $\Pi$.
 
-
+To quit the querying engine, use \textbf{exit} command.
 
 \subsection{Answer Set Mode}
 
@@ -220,6 +220,7 @@ an argument, and if so, we  describe its meaning.
   For the complete list of clingo options, see 
   \url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
 
+  Note that options "0" and "--shift" are passed to clingo solver by default.
 
 \item \textbf{-Help, -H, -help, --Help, --help, -h}
 
@@ -230,10 +231,9 @@ an argument, and if so, we  describe its meaning.
   Specify the output file where the translated ASP program will be written. \textit{arg} is the path to the output file. 
   Note that if the option is not specified, the translated ASP program will not be stored anywhere.
 
-\item \textbf{input\_file1 input\_file\_2 \dots input\_file\_n}
+\item \textbf{input\_file}
   
-Specify files where the sparc program is located. Note that the first file must contain sort definitions and predicate declarations and may contain program rules, 
-while all other files must start with a keyword \textit{rules} and contain only program rules.
+Specify the file where the sparc program is located.
 
 
 

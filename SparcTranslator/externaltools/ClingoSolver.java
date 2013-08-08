@@ -17,7 +17,6 @@ public class ClingoSolver extends ExternalSolver {
         }
 	    public ClingoSolver(String program) throws FileNotFoundException {
 	        this.program = program;
-	        System.out.println(program);
 	        pathToClingo = searchForExe();
 	        if (pathToClingo == null) {
 	            throw new FileNotFoundException("Clingo not found. "
@@ -35,7 +34,7 @@ public class ClingoSolver extends ExternalSolver {
 	        StringBuilder programOutput = new StringBuilder();
 	        Process process = null;
 	        try {
-	        	String options=" 0 ";
+	        	String options=" 0 --shift ";
 	        	if(Settings.getSingletonInstance().getOptions()!=null)
 	        		options+=Settings.getSingletonInstance().getOptions();
 	            process = Runtime.getRuntime().exec(pathToClingo+options);

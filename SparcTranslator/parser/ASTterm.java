@@ -52,9 +52,11 @@ public class ASTterm extends SimpleNode {
 				ASTterm newTerm = new ASTterm(recordContents.second.get(i));
 				termList.jjtAddChild(newTerm, i);
 			}
-			this.jjtAddChild(func, 0);
-			this.jjtAddChild(termList, 1);
-
+			ASTsymbolicTerm sterm = new ASTsymbolicTerm(
+					SparcTranslatorTreeConstants.JJTSYMBOLICTERM);
+			sterm.jjtAddChild(func, 0);
+			sterm.jjtAddChild(termList, 1);
+			this.jjtAddChild(sterm, 0);
 		} else {
 			if(!Character.isLowerCase(image.charAt(0))) {
 				ASTvar var=new ASTvar(SparcTranslatorTreeConstants.JJTVAR);

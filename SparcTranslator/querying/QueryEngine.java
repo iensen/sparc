@@ -21,6 +21,7 @@ import querying.parsing.AnswerSets.ClingoAnswerSetParser;
 import querying.parsing.AnswerSets.DLVAnswerSetParser;
 import querying.parsing.query.ParseException;
 import querying.parsing.query.QASTatom;
+import querying.parsing.query.QASTliteral;
 import querying.parsing.query.QueryParser;
 import typechecking.TypeChecker;
 import warnings.Pair;
@@ -54,7 +55,7 @@ public class QueryEngine {
 	}
 
 	public void run() {
-		QASTatom query;
+		QASTliteral query;
 		while (true) {
 			try {
 				query = readQuery();
@@ -73,23 +74,22 @@ public class QueryEngine {
 		}
 	}
 
-	private QASTatom readQuery() throws ParseException {
-		System.out.print("?-");
+	private QASTliteral readQuery() throws ParseException {
+		System.out.print("?- ");
 		String query = sc.nextLine();
 		StringReader sr = new StringReader(query);
 		parser = new QueryParser(sr);
-		QASTatom atom = parser.parseQuery();
-
-		return atom;
+		QASTliteral literal = parser.parseQuery();
+		return literal;
 	}
 
-	private void answerQuery(QASTatom query) {
+	private void answerQuery(QASTliteral query) {
 		queryVars = query.fetchVariables();
 		query.evaluateAllArithmetics();
 		// check the query:
 		try {
 			tc.ignoreLineNumbers = true;
-			tc.checkAtom(new ASTatom(query));
+			tc.checkAtom(new ASTatom((QASTatom)query.jjtGetChild(0)));
 		} catch (parser.ParseException e) {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
@@ -104,12 +104,13 @@ public class QueryEngine {
 		}
 	}
 
-	private void answerNonGroundQuery(QASTatom query) {
+	private void answerNonGroundQuery(QASTliteral query) {
 
-		AnswerSet theOnlyAnswerSet = getAnswerSetOfCorrespondingASPProgram(query);
+		AnswerSet theOnlyAnswerSet = getAnswerSetOfCorrespondingASPProgram((QASTatom)query.jjtGetChild(0));
 		boolean answerFound = false;
 		for (String atom : theOnlyAnswerSet.atoms) {
-			if (atom.startsWith("true_in_all_models")) {
+			if (atom.startsWith("true_in_all_models") && !query.negated || 
+					atom.startsWith("false_in_all_models") && query.negated) {
 				answerFound = true;
 				Pair<String, ArrayList<String>> recordContent = StringListUtils
 						.splitTerm(atom);
@@ -145,17 +146,20 @@ public class QueryEngine {
 		return answer.toString();
 	}
 
-	private void answerGroundQuery(QASTatom query) {
+	private void answerGroundQuery(QASTliteral query) {
 
-		AnswerSet theOnlyAnswerSet = getAnswerSetOfCorrespondingASPProgram(query);
+		AnswerSet theOnlyAnswerSet = getAnswerSetOfCorrespondingASPProgram((QASTatom)(query.jjtGetChild(0)));
 		// if there is an atom "true_in_all_models, it is yes"
 		// if there is an atom "false_in_all_models, it is no"
 		for (String atom : theOnlyAnswerSet.atoms) {
-			if (atom.startsWith("true_in_all_models")) {
+			if (atom.startsWith("true_in_all_models") && !query.negated || 
+					atom.startsWith("false_in_all_models") && query.negated) {
 				System.out.println("yes");
 				return;
 			}
-			if (atom.startsWith("false_in_all_models")) {
+			if (atom.startsWith("false_in_all_models") && !query.negated || 
+					atom.startsWith("true_in_all_models") && query.negated)
+			{
 				System.out.println("no");
 				return;
 			}

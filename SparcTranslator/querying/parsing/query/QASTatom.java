@@ -33,25 +33,7 @@ public class QASTatom extends SimpleNode {
 		return predS.image;
 	}
 
-	public void evaluateAllArithmetics() {
-		evaluateAllArithmetics(this);
-	}
 
-	private void evaluateAllArithmetics(SimpleNode n) {
-		if (n.id == QueryParserTreeConstants.JJTTERM) {
-			SimpleNode child = (SimpleNode) n.jjtGetChild(0);
-			if (child.id == QueryParserTreeConstants.JJTARITHMETICTERM) {
-				TermEvaluator tv = new TermEvaluator((QASTarithmeticTerm) n);
-				if (tv.isEvaluable()) {
-					long value = tv.evaluate();
-					QASTarithmeticTerm aterm = new QASTarithmeticTerm(
-							QueryParserTreeConstants.JJTARITHMETICTERM, value);
-					n.children[0] = aterm;
-				}
-			}
-
-		}
-	}
 
 	public ArrayList<String> getArguments() {
 		ArrayList<String> arguments = new ArrayList<String>();
@@ -79,26 +61,6 @@ public class QASTatom extends SimpleNode {
 					+ ((SimpleNode) this.jjtGetChild(1)).toString();
 	}
 
-	public boolean isGround() {
-		evaluateAllArithmetics();
-		return isGround(this);
-	}
-
-	private boolean isGround(SimpleNode n) {
-		if (n.id == QueryParserTreeConstants.JJTVAR) {
-			return false;
-		}
-
-		boolean ground = true;
-		for (int i = 0; i < n.jjtGetNumChildren(); i++) {
-			if (!isGround((SimpleNode) n.jjtGetChild(i))) {
-				ground = false;
-				break;
-			}
-		}
-		return ground;
-
-	}
 
 	final private static String newVarPrefix = "VAR_";
 	private static int newVarId = 0;

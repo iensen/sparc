@@ -2,18 +2,44 @@
 /*@egen*/options{  BUILD_PARSER = true;  STATIC = false;                                     }PARSER_BEGIN(QueryParser)package querying.parsing.query;@ SuppressWarnings("all")public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected JJTQueryParserState jjtree = new JJTQueryParserState();
 
-/*@egen*/   public QASTatom parseQuery() throws ParseException   {     return (QASTatom)this.atom();   } }PARSER_END(QueryParser)TOKEN :{  < IDENTIFIER : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >| < VARIABLE :    (      [ "A"-"Z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])*    ) >| < NONZERODIGIT : [ "1"-"9" ] >| < POSITIVE_INTEGER :    < NONZERODIGIT >    (      < ZERO >    | < NONZERODIGIT >    )* >| < ZERO : "0" >| < PLUS : "+" >| < MINUS:"-" >| < MULT : "*" >| < DIV : "/" >| < OP : "(" >| < CP : ")" >| < COMMA : "," >| <  DOT:  "." >| < IDENTIFIER_WITH_OP : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >|  < NEGATIVE_ATOM_WITH_OP : "-" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >} SKIP :{ < SPACE : ([ "\n", "\r", "\t", " " ])+ >}< * > TOKEN :{    < UNEXPECTED_CHAR : ~[] >}SimpleNode atom():{/*@bgen(jjtree) atom */
+/*@egen*/   public QASTliteral parseQuery() throws ParseException   {     return (QASTliteral)this.literal();   } }PARSER_END(QueryParser)TOKEN :{  < IDENTIFIER : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >| < VARIABLE :    (      [ "A"-"Z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])*    ) >| < NONZERODIGIT : [ "1"-"9" ] >| < POSITIVE_INTEGER :    < NONZERODIGIT >    (      < ZERO >    | < NONZERODIGIT >    )* >| < ZERO : "0" >| < PLUS : "+" >| < MINUS:"-" >| < MULT : "*" >| < DIV : "/" >| < OP : "(" >| < CP : ")" >| < COMMA : "," >| <  DOT:  "." >| < IDENTIFIER_WITH_OP : [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* ([ "\t", "\r", "\n" ])* "(" >} SKIP :{ < SPACE : ([ "\n", "\r", "\t", " " ])+ >}< * > TOKEN :{    < UNEXPECTED_CHAR : ~[] >}SimpleNode literal():{/*@bgen(jjtree) literal */
+ QASTliteral jjtn000 = new QASTliteral(JJTLITERAL);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t=null;}{/*@bgen(jjtree) literal */
+ try {
+/*@egen*/ [t=<MINUS >]atom()/*@bgen(jjtree)*/
+ {
+   jjtree.closeNodeScope(jjtn000, true);
+   jjtc000 = false;
+ }
+/*@egen*/ {    if(t!=null)    {       jjtn000.negated=true;    }    return jjtn000; }/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
+/*@egen*/}   void atom():{/*@bgen(jjtree) atom */
   QASTatom jjtn000 = new QASTatom(JJTATOM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) atom */
    try {
 /*@egen*/   predSymbol()   [ termList() < CP >][<DOT >]/*@bgen(jjtree)*/
-   {
-     jjtree.closeNodeScope(jjtn000, true);
-     jjtc000 = false;
-   }
-/*@egen*/   {     return jjtn000;   }/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

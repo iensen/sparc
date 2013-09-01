@@ -3,22 +3,24 @@ package querying.parsing.query;
 
 public interface QueryParserTreeConstants
 {
-  public int JJTATOM = 0;
-  public int JJTPREDSYMBOL = 1;
-  public int JJTTERMLIST = 2;
-  public int JJTVOID = 3;
-  public int JJTARITHMETICTERM = 4;
-  public int JJTATOMICARITHMETICTERM = 5;
-  public int JJTADDITIVEARITHMETICTERM = 6;
-  public int JJTMULTIPLICATIVEARITHMETICTERM = 7;
-  public int JJTSYMBOLICFUNCTION = 8;
-  public int JJTSYMBOLICCONSTANT = 9;
-  public int JJTSYMBOLICTERM = 10;
-  public int JJTTERM = 11;
-  public int JJTVAR = 12;
+  public int JJTLITERAL = 0;
+  public int JJTATOM = 1;
+  public int JJTPREDSYMBOL = 2;
+  public int JJTTERMLIST = 3;
+  public int JJTVOID = 4;
+  public int JJTARITHMETICTERM = 5;
+  public int JJTATOMICARITHMETICTERM = 6;
+  public int JJTADDITIVEARITHMETICTERM = 7;
+  public int JJTMULTIPLICATIVEARITHMETICTERM = 8;
+  public int JJTSYMBOLICFUNCTION = 9;
+  public int JJTSYMBOLICCONSTANT = 10;
+  public int JJTSYMBOLICTERM = 11;
+  public int JJTTERM = 12;
+  public int JJTVAR = 13;
 
 
   public String[] jjtNodeName = {
+    "literal",
     "atom",
     "predSymbol",
     "termList",
@@ -34,4 +36,4 @@ public interface QueryParserTreeConstants
     "var",
   };
 }
-/* JavaCC - OriginalChecksum=22b12544a6b2a234ae818df78b5f1c72 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3832268f5e8c41d3f11b82a27703fc13 (do not edit this line) */

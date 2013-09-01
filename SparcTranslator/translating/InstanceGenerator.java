@@ -336,7 +336,7 @@ public class InstanceGenerator {
 		result.add(from);
 		String currentString = from;
 		int maxLength = to.length();
-		while ((currentString = generateNextString(currentString, maxLength)) != null) {
+		while ((currentString = generateNextString(currentString, maxLength)) != null && currentString.compareTo(to)<=0) {
 			result.add(currentString);
 		}
 		return result;

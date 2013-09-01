@@ -1481,6 +1481,7 @@ class Pair
       {if (true) throw new ParseException("ERROR: the first identifier in identifier range should be lexicographically smaller or equal to  the second one " + "at line " + errorLine + ", column " + errorColumn);}
     }
     jjtn000.image = t1.image + " " + t2.image;
+    {if (true) return jjtn000;}
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -4156,6 +4157,11 @@ class Pair
     return false;
   }
 
+  private boolean jj_3_7() {
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
   private boolean jj_3R_38() {
     Token xsp;
     xsp = jj_scanpos;
@@ -4171,11 +4177,6 @@ class Pair
 
   private boolean jj_3R_67() {
     if (jj_3R_28()) return true;
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_3R_29()) return true;
     return false;
   }
 
@@ -4218,14 +4219,14 @@ class Pair
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(OP)) return true;
+  private boolean jj_3R_42() {
+    if (jj_scan_token(NEGATIVE_ATOM)) return true;
     return false;
   }
 
-  private boolean jj_3R_42() {
-    if (jj_scan_token(NEGATIVE_ATOM)) return true;
+  private boolean jj_3_2() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(OP)) return true;
     return false;
   }
 
@@ -4359,13 +4360,13 @@ class Pair
     return false;
   }
 
-  private boolean jj_3R_63() {
-    if (jj_scan_token(AGGREGATE_MAX)) return true;
+  private boolean jj_3R_61() {
+    if (jj_scan_token(NOTEQ)) return true;
     return false;
   }
 
-  private boolean jj_3R_61() {
-    if (jj_scan_token(NOTEQ)) return true;
+  private boolean jj_3R_63() {
+    if (jj_scan_token(AGGREGATE_MAX)) return true;
     return false;
   }
 

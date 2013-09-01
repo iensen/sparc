@@ -748,7 +748,8 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    int errorLine = t1.beginLine;    int errorColumn = t1.beginColumn;    if (t1.image.length() > t2.image.length())    {      throw new ParseException("ERROR: the length of the first identifier in identifier range should be smaller or equal to the length of the second one " + "at line " + errorLine + ", column " + errorColumn);    }    if (t1.image.compareTo(t2.image) > 0)    {      throw new ParseException("ERROR: the first identifier in identifier range should be lexicographically smaller or equal to  the second one " + "at line " + errorLine + ", column " + errorColumn);    }    jjtn000.image = t1.image + " " + t2.image;  }/*@bgen(jjtree)*/
+/*@egen*/  {    int errorLine = t1.beginLine;    int errorColumn = t1.beginColumn;    if (t1.image.length() > t2.image.length())    {      throw new ParseException("ERROR: the length of the first identifier in identifier range should be smaller or equal to the length of the second one " + "at line " + errorLine + ", column " + errorColumn);    }    if (t1.image.compareTo(t2.image) > 0)    {      throw new ParseException("ERROR: the first identifier in identifier range should be lexicographically smaller or equal to  the second one " + "at line " + errorLine + ", column " + errorColumn);    }    jjtn000.image = t1.image + " " + t2.image;
+    return jjtn000;  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);

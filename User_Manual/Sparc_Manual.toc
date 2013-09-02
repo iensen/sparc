@@ -14,7 +14,7 @@
 \contentsline {subsubsection}{\numberline {6.1.1}Sort definition errors}{11}{subsubsection.6.1.1}
 \contentsline {subsubsection}{\numberline {6.1.2}Predicate declarations errors}{13}{subsubsection.6.1.2}
 \contentsline {subsubsection}{\numberline {6.1.3}Program rules errors}{13}{subsubsection.6.1.3}
-\contentsline {subsection}{\numberline {6.2}Type warnings}{13}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.2}Type warnings}{14}{subsection.6.2}
 \contentsline {subsubsection}{\numberline {6.2.1}ASP based warning checking}{14}{subsubsection.6.2.1}
 \contentsline {subsubsection}{\numberline {6.2.2}Constraint solver based warning checking}{15}{subsubsection.6.2.2}
 \contentsline {section}{\numberline {7}${\cal SPARC}$ and ASPIDE}{15}{section.7}

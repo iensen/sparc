@@ -5,8 +5,6 @@ package parser;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-
-
 import warnings.Pair;
 import warnings.StringListUtils;
 
@@ -21,21 +19,8 @@ public class ASTterm extends SimpleNode {
 
 	public ASTterm(long value) {
 		super(SparcTranslatorTreeConstants.JJTTERM);
-		ASTatomicArithmeticTerm aaterm = new ASTatomicArithmeticTerm(
-				SparcTranslatorTreeConstants.JJTATOMICARITHMETICTERM);
-		ASTmultiplicativeArithmeticTerm materm = new ASTmultiplicativeArithmeticTerm(
-				SparcTranslatorTreeConstants.JJTMULTIPLICATIVEARITHMETICTERM);
-		ASTadditiveArithmeticTerm adaterm = new ASTadditiveArithmeticTerm(
-				SparcTranslatorTreeConstants.JJTADDITIVEARITHMETICTERM);
+		this.jjtAddChild(new ASTarithmeticTerm(value), 0);
 
-
-		aaterm.image = Long.toString(value);
-		adaterm.image="+";
-		// attach subtrees to the root
-		materm.jjtAddChild(aaterm, 0);
-		adaterm.jjtAddChild(materm, 0);
-		this.jjtAddChild(adaterm, 0);
-	
 	}
 
 	public ASTterm(String image) {
@@ -58,39 +43,42 @@ public class ASTterm extends SimpleNode {
 			sterm.jjtAddChild(termList, 1);
 			this.jjtAddChild(sterm, 0);
 		} else {
-			if(!Character.isLowerCase(image.charAt(0))) {
-				ASTvar var=new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
-				var.image=image;
+            if(isNumericConstant(image)) {
+            	this.jjtAddChild(new ASTarithmeticTerm(Long.parseLong(image)), 0);
+            }
+            else if (!Character.isLowerCase(image.charAt(0))) {
+				ASTvar var = new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
+				var.image = image;
 				this.jjtAddChild(var, 0);
-			}
-			else {
-			ASTsymbolicConstant sconstant = new ASTsymbolicConstant(
-					SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT);
-			sconstant.image = image;
-			ASTsymbolicTerm sterm = new ASTsymbolicTerm(
-					SparcTranslatorTreeConstants.JJTSYMBOLICTERM);
-			sterm.jjtAddChild(sconstant, 0);
-			this.jjtAddChild(sterm, 0);
+			} else {
+				ASTsymbolicConstant sconstant = new ASTsymbolicConstant(
+						SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT);
+				sconstant.image = image;
+				ASTsymbolicTerm sterm = new ASTsymbolicTerm(
+						SparcTranslatorTreeConstants.JJTSYMBOLICTERM);
+				sterm.jjtAddChild(sconstant, 0);
+				this.jjtAddChild(sterm, 0);
 			}
 		}
 	}
-	
-	public ASTterm(String recordName,ArrayList<String> varArgs) {
+
+	public ASTterm(String recordName, ArrayList<String> varArgs) {
 		super(SparcTranslatorTreeConstants.JJTTERM);
 		ASTsymbolicFunction symFunction = new ASTsymbolicFunction(
 				SparcTranslatorTreeConstants.JJTSYMBOLICFUNCTION);
-    	symFunction.image=recordName+"(";
-    	
-    	ASTtermList termList=new ASTtermList(SparcTranslatorTreeConstants.JJTTERMLIST);
-    	
-    	for(int i=0;i<varArgs.size();i++) {
-    		ASTterm term=new ASTterm(SparcTranslatorTreeConstants.JJTTERM);
-    		ASTvar var=new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
-    		var.image=varArgs.get(i);
-    		term.jjtAddChild(var, 0);
-    		termList.jjtAddChild(term, i);
-    	}
-    	
+		symFunction.image = recordName + "(";
+
+		ASTtermList termList = new ASTtermList(
+				SparcTranslatorTreeConstants.JJTTERMLIST);
+
+		for (int i = 0; i < varArgs.size(); i++) {
+			ASTterm term = new ASTterm(SparcTranslatorTreeConstants.JJTTERM);
+			ASTvar var = new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
+			var.image = varArgs.get(i);
+			term.jjtAddChild(var, 0);
+			termList.jjtAddChild(term, i);
+		}
+
 		ASTsymbolicTerm sterm = new ASTsymbolicTerm(
 				SparcTranslatorTreeConstants.JJTSYMBOLICTERM);
 		sterm.jjtAddChild(symFunction, 0);
@@ -156,6 +144,18 @@ public class ASTterm extends SimpleNode {
 	 */
 	public boolean isGround() {
 		return !hasArithmeticOperations() && !hasVariables();
+	}
+
+	private static boolean isNumericConstant(String image) {
+		for (int i = 0; i < image.length(); i++) {
+			if (i == 0 && image.charAt(i) < '1' || image.charAt(i) > '9') {
+				return false;
+			} else {
+				if (image.charAt(i) < '0' || image.charAt(i) > '9')
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean isVariable() {

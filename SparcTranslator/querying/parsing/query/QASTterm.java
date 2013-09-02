@@ -24,8 +24,22 @@ class QASTterm extends SimpleNode {
   public static QASTterm createTermFromVariable(String variableName) {
 	  QASTterm term=new QASTterm();
 	  QASTvar var= new QASTvar();
+	  var.image=variableName;
 	  term.jjtAddChild(var, 0);
 	  return term;
+  }
+  
+  public boolean isNumericConstant() {
+	  String image=this.toString();
+	  for (int i=0;i<image.length();i++) {
+		  if(i==0 && image.charAt(i)<'1' || image.charAt(i)>'9') {
+			  return false;
+		  } else {
+			  if(image.charAt(i)<'0' || image.charAt(i)>'9')
+				  return false;
+		  }
+	  }
+	  return true;
   }
 
 }

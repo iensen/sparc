@@ -70,5 +70,7 @@ class ASTatom extends SimpleNode {
 	  }
 	   
   }
+ 
 }
+ 
 /* JavaCC - OriginalChecksum=68be2106f288cf287b9a442791f7190c (do not edit this line) */

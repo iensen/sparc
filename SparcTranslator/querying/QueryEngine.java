@@ -85,12 +85,17 @@ public class QueryEngine {
 
 	private void answerQuery(QASTliteral query) {
 		queryVars = query.fetchVariables();
-		query.evaluateAllArithmetics();
+		
 		// check the query:
 		try {
+			query.evaluateAllArithmetics();
 			tc.ignoreLineNumbers = true;
 			tc.checkAtom(new ASTatom((QASTatom)query.jjtGetChild(0)));
 		} catch (parser.ParseException e) {
+			// TODO Auto-generated catch block
+			System.err.println(e.getMessage());
+			return;
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 			return;

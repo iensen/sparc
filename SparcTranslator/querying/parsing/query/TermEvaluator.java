@@ -105,7 +105,7 @@ public class TermEvaluator {
 	 *             if term contains variables or division by zero occurs
 	 */
 	private long evaluate(QASTatomicArithmeticTerm atterm) {
-		if (!atterm.image.matches("([1-9][0-9]*)|0")
+		if (!atterm.image.matches("(-?[1-9][0-9]*)|0")
 				&& !atterm.image.startsWith("(")) {
 			throw new IllegalArgumentException("term "+atterm.toString()
 					+ " contains variables and not evaluable");

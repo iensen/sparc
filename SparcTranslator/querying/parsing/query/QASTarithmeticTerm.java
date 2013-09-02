@@ -20,7 +20,9 @@ class QASTarithmeticTerm extends SimpleNode {
 	  atomicTerm.image=Long.toString(value);
 	  QASTmultiplicativeArithmeticTerm multTerm=new QASTmultiplicativeArithmeticTerm(QueryParserTreeConstants.JJTMULTIPLICATIVEARITHMETICTERM);
 	  QASTadditiveArithmeticTerm addTerm=new QASTadditiveArithmeticTerm(QueryParserTreeConstants.JJTADDITIVEARITHMETICTERM);
+	  addTerm.image="+";
 	  multTerm.jjtAddChild(atomicTerm, 0);
+	  multTerm.image="*";
 	  addTerm.jjtAddChild(multTerm, 0);
 	  this.jjtAddChild(addTerm, 0);
 	}

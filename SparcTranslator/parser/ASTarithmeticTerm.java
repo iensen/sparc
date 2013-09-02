@@ -9,6 +9,10 @@ public class ASTarithmeticTerm extends SimpleNode {
 		super(id);
 	}
 
+	public ASTarithmeticTerm(long value) {
+		super(SparcTranslatorTreeConstants.JJTARITHMETICTERM);
+		this.jjtAddChild(new ASTadditiveArithmeticTerm(value), 0);
+	}
 	public ASTarithmeticTerm(SparcTranslator p, int id) {
 		super(p, id);
 	}

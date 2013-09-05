@@ -61,7 +61,6 @@ public interface SparcTranslatorTreeConstants
   public int JJTAGGREGATEELEMENT = 55;
   public int JJTAGGREGATEFUNCTION = 56;
   public int JJTATOMSEQUENCE = 57;
-  public int JJTCHARACTERREGULAREXPRESSION = 58;
 
 
   public String[] jjtNodeName = {
@@ -123,7 +122,6 @@ public interface SparcTranslatorTreeConstants
     "aggregateElement",
     "aggregateFunction",
     "atomSequence",
-    "characterRegularExpression",
   };
 }
-/* JavaCC - OriginalChecksum=7ad2fc6b9869c4f1c6d406bec82bf423 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f6776d1c7a2dde72df755cd50d181ee1 (do not edit this line) */

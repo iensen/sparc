@@ -3850,22 +3850,6 @@ class Pair
     }
   }
 
-  final public void characterRegularExpression() throws ParseException {
- /*@bgen(jjtree) characterRegularExpression */
-  ASTcharacterRegularExpression jjtn000 = new ASTcharacterRegularExpression(JJTCHARACTERREGULAREXPRESSION);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-
-    } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-    }
-  }
-
   final public void directives(ArrayList < String > directives) throws ParseException {
     label_23:
     while (true) {

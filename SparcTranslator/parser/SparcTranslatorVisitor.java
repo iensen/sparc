@@ -61,6 +61,5 @@ public interface SparcTranslatorVisitor
   public Object visit(ASTaggregateElement node, Object data);
   public Object visit(ASTaggregateFunction node, Object data);
   public Object visit(ASTatomSequence node, Object data);
-  public Object visit(ASTcharacterRegularExpression node, Object data);
 }
-/* JavaCC - OriginalChecksum=834ffba391af50cedde5a923fe1aef40 (do not edit this line) */
+/* JavaCC - OriginalChecksum=cb17578d1e36ff786abf9f16bb8c76be (do not edit this line) */

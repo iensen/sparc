@@ -399,7 +399,6 @@ public class TypeChecker {
 				
 			}
 			boolean isGround = termToCheck.isGround();
-			termToCheck.hasVariables();
 			if (!isGround
 					&& !checkNonGroundTerm(termToCheck)
 					|| isGround

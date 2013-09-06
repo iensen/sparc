@@ -27,7 +27,7 @@ public class VariableFetcher {
     * @param node 
     * @param vars Variables found so far
     */
-   private void fetchVariables(SimpleNode node, HashSet<String>vars) {
+   public void fetchVariables(SimpleNode node, HashSet<String>vars) {
 	   if(node.getId()==SparcTranslatorTreeConstants.JJTVAR) {
 		   vars.add(node.toString());
 	   }

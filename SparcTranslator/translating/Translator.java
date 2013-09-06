@@ -438,7 +438,7 @@ public class Translator {
 		VariableFetcher vf = new VariableFetcher();
 		ExpressionFetcher ef = new ExpressionFetcher(vf.fetchVariables(rule));
 		newAtoms.addAll(ef.fetchGlobalExpressions(rule));
-		addAtomsToRulesBody(rule, newAtoms);
+		//addAtomsToRulesBody(rule, newAtoms);
 		newBodyAtoms.addAll(newAtoms);
 	}
 
@@ -583,7 +583,7 @@ public class Translator {
 			newAtoms.add(createSortAtom(sortName2, term));
 			gen.addSort(sortName2, sortNameToExpression.get(sortName), true);
 		}
-		addAtomsToRulesBody(rule, newAtoms);
+		//addAtomsToRulesBody(rule, newAtoms);
 		newBodyAtoms.addAll(newAtoms);
 	}
 
@@ -637,8 +637,6 @@ public class Translator {
 	 */
 	private void translateRule(ASTprogramRule rule) throws ParseException {
 		
-		
-	
 		String originalRule = rule.toString();
 		int lineNumber = rule.getBeginLine();
 		int columnNumber = rule.getBeginColumn();
@@ -663,10 +661,9 @@ public class Translator {
 		
 		ensureVariableSafety(rule, originalRule, originalNameMapping,
 				newSortAtoms);
-		
-	
-		
-		
+		//after this we need to add extra sort for nat:
+		String natSortName=predicateArgumentSorts.get("#nat").get(0);
+		predicateArgumentSorts.put(natSortName,new ArrayList<String>(Arrays.asList(natSortName)));
 	
 		// fetch expressions:
 		fetchGlobalExpressions(rule,newSortAtoms);
@@ -675,7 +672,7 @@ public class Translator {
 		fetchGlobalTerms(rule,newSortAtoms);
 		fetchLocalTerms(rule);
 		
-		
+		addAtomsToRulesBody(rule,newSortAtoms);
 		// add rules for warnings
 		if(generateASPWarnings)
 		{
@@ -747,16 +744,19 @@ public class Translator {
 					  "global variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.first, ","):"") +
 					(unrestrictedVariablesLists.second.size()>0 ?
 							((unrestrictedVariablesLists.first.size()>0)? " and ":"")+
-					"local variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.first, ","):""));
+					"unrestricted local variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.second, ","):""));
 					
 		}
 		arithmeticVariables.removeAll(simpleOccurVariables);
 		if(!arithmeticVariables.isEmpty()) {
-			
+			String s2 = predicateArgumentSorts.get("#nat").get(0);
+			gen.addSort(s2, sortNameToExpression.get("nat"), true);
 			Pair<ArrayList<String>,ArrayList<String>> unrestrictedArithmVariablesLists=splitLocalGlobalVariables(arithmeticVariables);
 			//add some #nat atoms to the body:
 			for(int i=0;i<unrestrictedArithmVariablesLists.first.size();i++)
-			       newSortAtoms.add(createSortAtom("nat", new ASTterm(unrestrictedArithmVariablesLists.first.get(i))));
+			{
+			       newSortAtoms.add(createSortAtom(predicateArgumentSorts.get("#nat").get(0), new ASTterm(unrestrictedArithmVariablesLists.first.get(i))));
+			}
 		    if(!unrestrictedArithmVariablesLists.second.isEmpty()) {
 		    	//add some nat atoms to the body of local elements
 		    	 addNatAtomsForLocalVariables(rule,unrestrictedArithmVariablesLists.second);
@@ -792,7 +792,7 @@ public class Translator {
 			vf.fetchVariables(n,variablesInElement);
 			for(String varName:variablesToAdd) {
 				if(variablesInElement.contains(varName)) {
-					ASTatom atomToAdd=createSortAtom("nat",new ASTterm(varName));
+					ASTatom atomToAdd=createSortAtom(predicateArgumentSorts.get("#nat").get(0),new ASTterm(varName));
 					ArrayList<ASTatom> atomListToAdd=new ArrayList<ASTatom>( Arrays.asList(atomToAdd));
 					
 					if(n.getId()==SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT) {

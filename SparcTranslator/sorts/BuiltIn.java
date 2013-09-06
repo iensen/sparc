@@ -16,7 +16,7 @@ import parser.SparcTranslator;
  */
 public class BuiltIn {
 	// maximal integer
-	static private long maxInt = 1000000;
+	static private long maxInt = 2000;
 	// names of built-in sorts
 	public static String[] sortNames = { "nat" };
 	// sort expressions for built-in sorts

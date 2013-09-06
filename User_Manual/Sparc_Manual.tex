@@ -436,7 +436,28 @@ CR-rules are of the following form:
  \end{equation}
 where $l$'s are literals.
 Literals occurring in the heads of the rules must not be formed by predicate symbols
-occurring as sort names in sort definitions.
+occurring as sort names in sort definitions. In addition, rules must not contain \textit{unrestricted variables}.
+
+\begin{definition}(Unrestricted Variable)
+ A variable occurrung in the rule of a ${\cal SPARC}$ program is called unrestriced if all its occurrences in the rule either belong to some relational atoms of the form 
+$term1$ \textbf{rel} $term2$ (where \textbf{rel} $\in  \{>,>=,<,<=,=,!=$\})  and/or  some terms appearing in a head of a choice or aggregate element. 
+\end{definition}
+\begin{example}
+\em{
+ Consider a sparc program:
+\begin{verbatim}
+sorts
+#s={f(a),b}.
+predicates
+p(#s).
+rules
+p(f(X)):-Y<2,2=Z,F>3,#count{Q:Q<W,p(W),T<2},p(Y).
+\end{verbatim}
+Variables F,T,Z,Q are unrestricted.
+}  
+\end{example}
+
+ 
 \section{Answer Sets}
 \noindent A set of ground literals $S$ is an {\em answer set} of a ${\cal SPARC}$ 
 program $\Pi$ with regular rules only if $S$ is an answer set of an ASP program consisting of the same rules.

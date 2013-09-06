@@ -439,12 +439,12 @@ Literals occurring in the heads of the rules must not be formed by predicate sym
 occurring as sort names in sort definitions. In addition, rules must not contain \textit{unrestricted variables}.
 
 \begin{definition}(Unrestricted Variable)
- A variable occurrung in the rule of a ${\cal SPARC}$ program is called unrestriced if all its occurrences in the rule either belong to some relational atoms of the form 
+ A variable occurrung in a rule of a ${\cal SPARC}$ program is called unrestriced if all its occurrences in the rule either belong to some relational atoms of the form 
 $term1$ \textbf{rel} $term2$ (where \textbf{rel} $\in  \{>,>=,<,<=,=,!=$\})  and/or  some terms appearing in a head of a choice or aggregate element. 
 \end{definition}
 \begin{example}
 \em{
- Consider a sparc program:
+ Consider the following ${\cal SPARC}$ program:
 \begin{verbatim}
 sorts
 #s={f(a),b}.

@@ -3,7 +3,6 @@
 package parser;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import warnings.Pair;
 import warnings.StringListUtils;
@@ -84,6 +83,12 @@ public class ASTterm extends SimpleNode {
 		sterm.jjtAddChild(symFunction, 0);
 		sterm.jjtAddChild(termList, 1);
 		this.jjtAddChild(sterm, 0);
+	}
+
+	public ASTterm(ASTvar newVar) {
+		super(SparcTranslatorTreeConstants.JJTTERM);
+		this.jjtAddChild(newVar, 0);
+		// TODO Auto-generated constructor stub
 	}
 
 	/** Accept the visitor. **/

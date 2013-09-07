@@ -479,7 +479,6 @@ public class Translator {
 				addAtomsToChoiceElement((ASTchoice_element) node,
 						ef.fetchLocalExpressions((ASTchoice_element) node));
 			}
-			variables.addAll(ef.createdVariables.keySet());
 		}
 		// recursively search for aggregate and choice elements
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {

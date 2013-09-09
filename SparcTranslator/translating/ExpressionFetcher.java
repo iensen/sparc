@@ -1,15 +1,13 @@
 package translating;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
-
 import parser.ASTaggregateElement;
 import parser.ASTarithmeticTerm;
 import parser.ASTatom;
 import parser.ASTchoice_element;
 import parser.ASTprogramRule;
+import parser.ASTterm;
 import parser.ASTvar;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
@@ -25,37 +23,20 @@ import parser.SparcTranslatorTreeConstants;
 public class ExpressionFetcher {
 	HashSet<String> usedVariableNames;
 	// mapping from creating variables to arithmetic expressions found in atoms
-	HashMap<String, ASTarithmeticTerm> createdVariables;
-	// mapping from creating variables to strings representing arithmetic expressions found in atoms
-    HashMap<String, String> createdVariablesStrings;
-	//mapping from arithmetic expressions found in atoms to variables
-	HashMap<String, String> createdVariablesInverse;
-	// prefix to be added to introduced variables
-	final String prefix = "VAR_";
-	// id for found variables
-	int varid = 0;
+	
+	ExpressionSplitter exprSplitter;
 
 	/**
 	 * @param a
 	 *            set variables used in rule they will not be used for new
 	 *            variable names
 	 */
-	public ExpressionFetcher(Set<String> set) {
-		this.usedVariableNames = new HashSet<String>();
-		for (String s : set) {
-			usedVariableNames.add(s);
-		}
-		this.createdVariablesInverse=new HashMap<String,String>();
-		this.createdVariablesStrings=new HashMap<String,String>();
+	public ExpressionFetcher(HashSet<String> set) {
+		this.usedVariableNames = set;
+		exprSplitter=new ExpressionSplitter(set);
 	}
 
-	/**
-	 * @return a map of new variables assigned to fetched arithmetic expressions
-	 */
 
-	public HashMap<String, ASTarithmeticTerm> getDetectedArithmeticVariables() {
-		return createdVariables;
-	}
 
 	/**
 	 * @param program
@@ -65,7 +46,6 @@ public class ExpressionFetcher {
 	 *         from the rule
 	 */
 	public ArrayList<ASTatom> fetchGlobalExpressions(ASTprogramRule rule) {
-		createdVariables = new HashMap<String, ASTarithmeticTerm>();
 		return fetchExpressions(rule, true);
 	}
 
@@ -77,7 +57,6 @@ public class ExpressionFetcher {
 	 *         expression from the aggregate element
 	 */
 	public ArrayList<ASTatom> fetchLocalExpressions(ASTaggregateElement elem) {
-		createdVariables = new HashMap<String, ASTarithmeticTerm>();
 		return fetchExpressions(elem, false);
 	}
 
@@ -89,28 +68,10 @@ public class ExpressionFetcher {
 	 *         expression from the choice rule element
 	 */
 	public ArrayList<ASTatom> fetchLocalExpressions(ASTchoice_element elem) {
-		createdVariables = new HashMap<String, ASTarithmeticTerm>();
 		return fetchExpressions(elem, false);
 	}
 
-	/**
-	 * Create atom of the form (variable_name)=(arithmetic term)
-	 * 
-	 * @param varName
-	 *            name of a variable on left hand side of the atom
-	 * @param aterm
-	 *            term on the right hand side of atom
-	 * @return atom
-	 */
-	private ASTatom createAtom(String varName, ASTarithmeticTerm aterm) {
-		ASTatom newAtom = new ASTatom(SparcTranslatorTreeConstants.JJTATOM);
-		ASTvar var = new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
-		var.image = varName;
-		newAtom.jjtAddChild(var, 0);
-		newAtom.jjtAddChild(aterm, 1);
-		newAtom.image = "=";
-		return newAtom;
-	}
+
 
 	/**
 	 * Fetch expressions from given AST node and return a list of found
@@ -125,17 +86,6 @@ public class ExpressionFetcher {
 	private ArrayList<ASTatom> fetchExpressions(SimpleNode n,
 			boolean ignoreLocals) {
 
-		// we are only interested in expressions in atoms
-		if (n.getId() == SparcTranslatorTreeConstants.JJTATOM
-				|| n.getId() == SparcTranslatorTreeConstants.JJTSIMPLEATOM) {
-			if (n.jjtGetNumChildren() == 0)
-				return new ArrayList<ASTatom>();
-			SimpleNode child = (SimpleNode) (n.jjtGetChild(0));
-			if (child.getId() != SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM
-					&& child.getId() != SparcTranslatorTreeConstants.JJTAGGREGATE) {
-				return new ArrayList<ASTatom>();
-			}
-		}
 
 		// ignore choice rules and aggregates in case ignore locals was set to
 		// true
@@ -153,23 +103,9 @@ public class ExpressionFetcher {
 					|| n.toString().indexOf('+') != -1
 					|| n.toString().indexOf('*') != -1
 					|| n.toString().indexOf('/') != -1) {
-				String newName = createUniqueVarName();
-				if(createdVariablesInverse.containsKey(n.toString())) {
-					newName=createdVariablesInverse.get(n.toString());
-				}
-				createdVariables.put(newName, (ASTarithmeticTerm) n);
-				createdVariablesStrings.put(newName, n.toString());
-				createdVariablesInverse.put(n.toString(),newName);
-				ASTarithmeticTerm newTerm = new ASTarithmeticTerm(
-						SparcTranslatorTreeConstants.JJTTERM);
-				newTerm.image = n.image;
-				for (int i = 0; i < n.jjtGetNumChildren(); i++) {
-					newTerm.jjtAddChild(n.jjtGetChild(i), i);
-				}
-				result.add(createAtom(newName, newTerm));
-				n.removeChildren();
+				ASTterm newTerm=exprSplitter.split((ASTarithmeticTerm)n,result);
 				ASTvar newVar=new ASTvar(SparcTranslatorTreeConstants.JJTVAR);
-				newVar.image = newName;
+				newVar.image=newTerm.toString();
 				n.jjtAddChild(newVar, 0);
 
 			}
@@ -182,18 +118,5 @@ public class ExpressionFetcher {
 		return result;
 	}
 
-	/**
-	 * Create unique variable names. Considers all variable names which were
-	 * already used
-	 * 
-	 * @return name string, representing unique variable name
-	 */
-	private String createUniqueVarName() {
-		while (usedVariableNames.contains(prefix + varid)) {
-			++varid;
-		}
-		usedVariableNames.add(prefix + varid);
-		return prefix + varid;
-	}
-
+	
 }

@@ -119,8 +119,11 @@ public class Solve {
 		}
 
 		rule.reorderBodyAtoms();
+		HashSet<String> newVariables=rule.fetchArithmeticsIntoIsAtoms();
+		arithmeticVariables.addAll(newVariables);
+		rule.addVarRangeAtom(arithmeticVariables);
 		rule.addLabelingAtom(arithmeticVariables);
-
+        
 		pProlog.append(rule.toString());
 		pProlog.append(System.getProperty("line.separator"));
 		pProlog.append("main :-(p -> writeln(yes) ; writeln(no)).");

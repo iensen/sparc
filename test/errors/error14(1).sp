@@ -5,4 +5,4 @@ sorts
 predicates
 p(#s).
 rules
-p(6-3).
+p(7-3).

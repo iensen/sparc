@@ -184,7 +184,9 @@ public class TermFetcher {
 		for (int i=0;i<termList.jjtGetNumChildren();i++) {
 			ASTterm term=(ASTterm)termList.jjtGetChild(i);
 			if(term.hasVariables()) {
-				result.put((ASTterm)termList.jjtGetChild(i),argumentSortList.get(i));
+				// add a new atom sort(term) iff it is not the same as original atom predicateName(term).
+				//if(!predicateName.startsWith("#"))
+				   result.put((ASTterm)termList.jjtGetChild(i),argumentSortList.get(i));
 			}
 		}
 		return result;

@@ -9,6 +9,7 @@ public class PrologRuleRangeAtom extends PrologRuleAtom {
     
     
     public PrologRuleRangeAtom(Term term,long lowest, long highest) {
+    	this.type=PrologRuleAtomType.range;
 		this.lowest = lowest;
 		this.highest = highest;
 		this.term = term;

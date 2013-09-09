@@ -7,6 +7,7 @@ public class PrologRuleLabelingAtom extends PrologRuleAtom{
 	HashSet<String> arithmeticVariables;
 	
 	public PrologRuleLabelingAtom(HashSet<String> arithmeticVariables) {
+		this.type=PrologRuleAtomType.labeling;
 		this.arithmeticVariables = arithmeticVariables;
 	}
 

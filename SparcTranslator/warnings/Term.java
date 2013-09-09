@@ -185,4 +185,8 @@ public class Term extends Operand{
   boolean isVariable() {
 	  return tree.isVariable();
   }
+  
+  public boolean isRecord() {
+	  return tree.isRecord();
+  }
 }

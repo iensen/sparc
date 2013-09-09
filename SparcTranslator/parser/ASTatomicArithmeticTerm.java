@@ -23,7 +23,12 @@ public class ASTatomicArithmeticTerm extends SimpleNode {
 		else if(  ((SimpleNode)(this.jjtGetChild(0))).getId()==SparcTranslatorTreeConstants.JJTVAR) {
 			return ((SimpleNode)(this.jjtGetChild(0))).toString(useOriginalImages);
 		}
-		else return "("+((SimpleNode)(this.jjtGetChild(0))).toString(useOriginalImages)+")";
+		else {
+			String insideImage=((SimpleNode)(this.jjtGetChild(0))).toString(useOriginalImages);
+			if(insideImage.indexOf('*')!=-1 || insideImage.indexOf('/')!=-1 || insideImage.indexOf('+')!=-1 || insideImage.indexOf('-')!=-1) 
+			return "("+insideImage+")";
+			else return insideImage;
+		}
 	}
 	
 	public String toString() {

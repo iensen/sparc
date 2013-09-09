@@ -427,7 +427,9 @@ Multiple declarations containing the same predicate symbol are not allowed.
 \subsection{Program Rules}
 
 
-\st The third part of a ${\cal SPARC}$ program starts with the keyword \textit{rules} followed by standard ASP rules(supported by the specified ASP solver\footnote{Currently, only DLV solver is fully supported(excluding \#import directives). Clingo's choice rules and minimize statements will be added later}) and/or consistency restoring (cr)-rules.
+\st The third part of a ${\cal SPARC}$ program starts with the keyword \textit{rules} followed by standard ASP rules(supported by the specified ASP solver
+\footnote{Currently, only DLV solver is fully supported(excluding \#import directives). Clingo's choice rules and minimize statements will be added later}) 
+, possibly enchanced by arithmetic expressions of arbitrary depth (e.g, p(X*X*X*X+1).) and/or consistency restoring (cr)-rules.
 \st
 CR-rules are of the following form:
 

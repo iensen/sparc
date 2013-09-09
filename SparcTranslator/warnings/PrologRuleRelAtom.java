@@ -10,6 +10,7 @@ public class PrologRuleRelAtom extends PrologRuleAtom {
 	boolean isArithmetic;
     
 	public PrologRuleRelAtom(Term term1, Term term2, Relation rel,boolean isArithmetic) {
+		this.type=PrologRuleAtomType.rel;
 		this.term1=term1;
 		this.term2=term2;
 		this.rel=rel;

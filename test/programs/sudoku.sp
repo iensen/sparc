@@ -30,13 +30,9 @@ pos(6,c(X,Y)) | pos(7,c(X,Y)) | pos(8,c(X,Y)) | pos(9,c(X,Y)) :- #coords(c(X,Y))
                  same_region(P1,P2).
 
 % in region definition:
-in_region(c(X,Y),R) :- 
-                    Z1 = X-1,
-                    Z2 = Z1/3,
-                    Z3 = Z2*3,
-                    Z4 = Y+2,
-                    Z5 = Z4/3,
-                    R = Z3 + Z5.
+in_region(c(X,Y),((X-1)/3)*3+((Y+2)/3)).
+%translated as in_region(c(X_G,Y_G),VAR_2):-VAR_1=Y_G+2,VAR_0=VAR_1/3,VAR_5=X_G-1,VAR_4=VAR_5/3,VAR_3=VAR_4*3,VAR_2=VAR_3+VAR_0,coords(c(X_G,Y_G)),num(VAR_2).
+
 
 %same region:
 same_region(X,Y):-in_region(X,R),in_region(Y,R).

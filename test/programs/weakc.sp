@@ -1,9 +1,9 @@
-sort definitions
-node=$a|b|c|d|e.
-weight=1..5.
+sorts
+#node={a,b,c,d,e}.
+#weight=1..5.
 
-predicate declarations
-in_tree(node,node,weight).
+predicates
+in_tree(#node,#node,#weight).
 
-program rules
+rules
 :~ in_tree(X,Y,C). [1:C]

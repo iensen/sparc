@@ -8,6 +8,7 @@ public class PrologRuleNonRelAtom extends PrologRuleAtom {
     boolean negated;
     
     public PrologRuleNonRelAtom(String atomName,Term argument,boolean negated) {
+    	this.type=PrologRuleAtomType.nonrel;
     	this.atomName=atomName;
     	this.argument=argument;
     	this.negated=negated;
@@ -20,6 +21,6 @@ public class PrologRuleNonRelAtom extends PrologRuleAtom {
 
 	@Override
 	public String toString() {
-		return (negated? "not ":"")+atomName+"("+argument.toString()+")";
+		return (negated? "\\+ ":"")+atomName+"("+argument.toString()+")";
 	}
 }

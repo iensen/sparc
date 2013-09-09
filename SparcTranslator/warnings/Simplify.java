@@ -35,7 +35,7 @@ public class Simplify {
 						return null;
 					}
 				} else // term is not ground
-				if (term.toString().indexOf('(') == -1) {
+				if (!term.isRecord()) {
 					// if it is not ground (after calculation of all arithmetic
 					// terms)
 					// and it does not contain '(', it is either an arithmetic

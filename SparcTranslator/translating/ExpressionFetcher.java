@@ -86,17 +86,6 @@ public class ExpressionFetcher {
 	private ArrayList<ASTatom> fetchExpressions(SimpleNode n,
 			boolean ignoreLocals) {
 
-		// we are only interested in expressions in atoms
-		if (n.getId() == SparcTranslatorTreeConstants.JJTATOM
-				|| n.getId() == SparcTranslatorTreeConstants.JJTSIMPLEATOM) {
-			if (n.jjtGetNumChildren() == 0)
-				return new ArrayList<ASTatom>();
-			SimpleNode child = (SimpleNode) (n.jjtGetChild(0));
-			if (child.getId() != SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM
-					&& child.getId() != SparcTranslatorTreeConstants.JJTAGGREGATE) {
-				return new ArrayList<ASTatom>();
-			}
-		}
 
 		// ignore choice rules and aggregates in case ignore locals was set to
 		// true

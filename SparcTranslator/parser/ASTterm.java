@@ -90,6 +90,31 @@ public class ASTterm extends SimpleNode {
 		this.jjtAddChild(newVar, 0);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public static ASTterm createArithmeticVarTerm(ASTvar var) {
+		ASTterm term=new ASTterm(SparcTranslatorTreeConstants.JJTTERM);
+		ASTarithmeticTerm arTerm=new ASTarithmeticTerm(SparcTranslatorTreeConstants.JJTARITHMETICTERM);
+		ASTadditiveArithmeticTerm adTerm=new ASTadditiveArithmeticTerm(SparcTranslatorTreeConstants.JJTADDITIVEARITHMETICTERM);
+		adTerm.image="+";
+		ASTmultiplicativeArithmeticTerm multTerm=new ASTmultiplicativeArithmeticTerm(SparcTranslatorTreeConstants.JJTMULTIPLICATIVEARITHMETICTERM);
+		ASTatomicArithmeticTerm atTerm=new ASTatomicArithmeticTerm(SparcTranslatorTreeConstants.JJTATOMICARITHMETICTERM);
+		atTerm.image="";
+		atTerm.jjtAddChild(var, 0);
+		multTerm.jjtAddChild(atTerm, 0);
+		adTerm.jjtAddChild(multTerm, 0);
+		arTerm.jjtAddChild(adTerm, 0);
+		term.jjtAddChild(arTerm, 0);
+		return term;
+	}
+
+	
+	
+	public ASTterm(ASTadditiveArithmeticTerm arAdTerm) {
+		super(SparcTranslatorTreeConstants.JJTTERM);
+		ASTarithmeticTerm arTerm=new ASTarithmeticTerm(SparcTranslatorTreeConstants.JJTARITHMETICTERM);
+		arTerm.jjtAddChild(arAdTerm, 0);
+		this.jjtAddChild(arTerm, 0);
+	}
 
 	/** Accept the visitor. **/
 	public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
@@ -189,7 +214,18 @@ public class ASTterm extends SimpleNode {
 			return ((SimpleNode) (this.jjtGetChild(0)))
 					.toString(useOriginalImages);
 	}
-
+	
+	public ASTmultiplicativeArithmeticTerm getLeftMostMultiplicativeTerm() {
+		ASTarithmeticTerm arTerm=(ASTarithmeticTerm)this.jjtGetChild(0);
+		ASTadditiveArithmeticTerm adTerm=(ASTadditiveArithmeticTerm)arTerm.jjtGetChild(0);
+		return (ASTmultiplicativeArithmeticTerm)adTerm.jjtGetChild(0);
+		
+	}
+	
+	public ASTatomicArithmeticTerm getLeftMostAtomicTerm() {
+		ASTmultiplicativeArithmeticTerm mTerm=getLeftMostMultiplicativeTerm();
+		return (ASTatomicArithmeticTerm)mTerm.jjtGetChild(0);
+	}
 }
 /*
  * JavaCC - OriginalChecksum=c1ac1ba327197118b424963735d16a51 (do not edit this

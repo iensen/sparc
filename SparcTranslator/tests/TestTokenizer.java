@@ -1,12 +1,10 @@
 package tests;
-import static org.junit.Assert.*;
 import java.io.StringReader;
 import org.junit.Test;
 
 import parser.SimpleCharStream;
-import parser.SparcTranslatorConstants;
 import parser.SparcTranslatorTokenManager;
-import parser.Token;
+
 
 
 

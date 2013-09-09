@@ -29,6 +29,7 @@ import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
+import sorts.BuiltIn;
 import translating.InstanceGenerator.GSort;
 import warnings.ExpandSolve;
 import warnings.Formula;
@@ -123,7 +124,6 @@ public class Translator {
 			HashSet<String> generatingSorts, boolean writeWarningsToSTDERR)
 			throws ParseException {
 		translatedOutput = new StringBuilder();
-
 		localElemCount = 0;
 		labelId = 0;
 
@@ -132,8 +132,8 @@ public class Translator {
 			gen.addSort(s2, sortNameToExpression.get(s), true);
 		}
 
-		translateDirectives(program);
-		translateRules((ASTprogramRules) program.jjtGetChild(2));
+		writeDirectives(program);
+		translateRules((ASTprogramRules) program.jjtGetChild(2),writeWarningsToSTDERR);
 		// append instances of generating sorts to the resulting program store
 		for (GSort sort : gen.generatedSorts) {
 			for (String instance : sort.instances) {
@@ -154,7 +154,7 @@ public class Translator {
 			// warningsStrings.
 			warningStrings.append("%WARNINGS");
 			for (String warning : mainTranslator.getWarnings()) {
-				warningStrings.append("%WARNING: " + warning);
+				warningStrings.append(" %WARNING: " + warning);
 			}
 			if (mainTranslator.getWarnings().size() > 0) {
 				throw new ParseException(warningStrings.toString());
@@ -172,7 +172,11 @@ public class Translator {
 	 * @param root
 	 *            of program abstract syntax tree
 	 */
-	private void translateDirectives(ASTprogram program) {
+	private void writeDirectives(ASTprogram program) {
+		//add #maxint:
+		appendStringToTranslation("#maxint="+BuiltIn.getMaxInt()+".");
+		appendNewLineToTranslation();
+		//add other directives
 		for (String s : program.getdirectives()) {
 			appendStringToTranslation(s);
 			appendNewLineToTranslation();
@@ -202,9 +206,9 @@ public class Translator {
 	 *             the case in aggregate or choice rules where there is no
 	 *             constraints for variable in the body).
 	 */
-	private void translateRules(ASTprogramRules rules) throws ParseException {
+	private void translateRules(ASTprogramRules rules,boolean writeWarningsToSTDERR) throws ParseException {
 		for (int i = 0; i < rules.jjtGetNumChildren(); i++) {
-			translateRule((ASTprogramRule) rules.jjtGetChild(i));
+			translateRule((ASTprogramRule) rules.jjtGetChild(i),writeWarningsToSTDERR);
 		}
 	}
 
@@ -214,7 +218,7 @@ public class Translator {
 			boolean writeWarningsToSTDERR) throws ParseException {
 		translatedOutput = new StringBuilder();
 
-		translateRules(rules);
+		translateRules(rules,writeWarningsToSTDERR);
 		writeTranslatedProgram();
 		if (writeWarningsToSTDERR) {
 			for (String warning : mainTranslator.getWarnings()) {
@@ -254,6 +258,9 @@ public class Translator {
 	 */
 	private void addAtomsToBody(ASTbody body, ArrayList<ASTatom> atoms) {
 		HashSet<String> addedAtoms = new HashSet<String>();
+		for(int i=0;i<body.jjtGetNumChildren();i++) {
+			addedAtoms.add(((ASTatom)body.jjtGetChild(i)).toString());
+		}
 		for (int i = 0; i < atoms.size(); i++) {
 			if (!addedAtoms.contains(atoms.get(i).toString())) {
 				body.jjtAddChild(atoms.get(i), body.jjtGetNumChildren());
@@ -528,10 +535,8 @@ public class Translator {
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 			for (ASTterm term : localFetchedTerms.keySet()) {
 				String sortName = localFetchedTerms.get(term);
-				String sortName2 = predicateArgumentSorts.get("#" + sortName)
-						.get(0);
-				newAtoms.add(createSortAtom(sortName2, term));
-				gen.addSort(sortName2, sortNameToExpression.get(sortName), true);
+				newAtoms.add(createSortAtom(sortName, term));
+				gen.addSort(sortName, sortNameToExpression.get(sortName), true);
 			}
 			if (isAggregateElement) {
 				addAtomsToAggregateElement((ASTaggregateElement) node, newAtoms);
@@ -577,10 +582,8 @@ public class Translator {
 		ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 		for (ASTterm term : globalFetchedTerms.keySet()) {
 			String sortName = globalFetchedTerms.get(term);
-			String sortName2 = predicateArgumentSorts.get("#" + sortName)
-					.get(0);
-			newAtoms.add(createSortAtom(sortName2, term));
-			gen.addSort(sortName2, sortNameToExpression.get(sortName), true);
+			newAtoms.add(createSortAtom(sortName, term));
+			gen.addSort(sortName, sortNameToExpression.get(sortName), true);
 		}
 		//addAtomsToRulesBody(rule, newAtoms);
 		newBodyAtoms.addAll(newAtoms);
@@ -634,7 +637,7 @@ public class Translator {
 	 * @throws ParseException
 	 *             if sort of some variable cannot be detected
 	 */
-	private void translateRule(ASTprogramRule rule) throws ParseException {
+	private void translateRule(ASTprogramRule rule,boolean writeWarningsToSTDERR) throws ParseException {
 		
 		String originalRule = rule.toString();
 		int lineNumber = rule.getBeginLine();
@@ -646,8 +649,13 @@ public class Translator {
 	     // System.err.println(ruleF.toString());
 	     
 	      if(ruleF!=null && !ExpandSolve.run(ruleF)) {
-	    	 System.err.println("WARNING: Rule "+originalRule+" at line "+lineNumber+
-	    			 ", column "+columnNumber+" is an empty rule"); 
+	    	 if(writeWarningsToSTDERR) {
+	    	    System.err.println("%WARNING: Rule "+originalRule+" at line "+lineNumber+
+	    			 ", column "+columnNumber+" is an empty rule");
+	    	 } else {
+	    		 mainTranslator.addWarning("Rule "+originalRule+" at line "+lineNumber+
+		    			 ", column "+columnNumber+" is an empty rule");
+	    	 }
 	      }
 		}
 		

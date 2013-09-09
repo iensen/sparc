@@ -57,6 +57,14 @@ public class TestWarning {
 				"%WARNINGS %WARNING: Rule p(f(X)):-q(X). at line 11, column 1 is an empty rule",
 				getError("../test/warnings/warning.sp"));
 	}
+	
+	@Test
+	public void testTwoWarning() throws FileNotFoundException {
+		assertEquals("Error message was wrong",
+				"%WARNINGS %WARNING: Rule p(X+10):-q(X). at line 7, column 1 is an empty rule %WARNING: Rule p(X+20):-p(X). at line 8, column 1 is an empty rule",
+				getError("../test/warnings/twoWarnings.sp"));
+	}
+	
 
 	private String getError(String filePath) throws FileNotFoundException {
 		Reader sr = null;

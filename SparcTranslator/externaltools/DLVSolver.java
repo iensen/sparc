@@ -18,10 +18,7 @@ public class DLVSolver extends ExternalSolver{
 	    }
 	    
 	    public DLVSolver(String program) throws FileNotFoundException {
-	        this.program = program;
-	     
-	        System.out.println(program);
-	        
+	        this.program = program;    
 	        pathToDlv = searchForExe();
 	        if (pathToDlv == null) {
 	            throw new FileNotFoundException("dlv not found. "

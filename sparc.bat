@@ -1,5 +1,3 @@
-                                                                     
-                                             
 @ECHO OFF
 REM ------------------------------------------------------------------------------------
 REM This is a Windows batch file. It is a command-line script for running SPARC.

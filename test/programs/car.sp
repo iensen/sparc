@@ -10,7 +10,10 @@ broken(#car).
 starts(#car).
 mobile(#person).
 ab(#default).
+<<<<<<< HEAD
 turn_key(#car).
+=======
+>>>>>>> 3fbc26c10d5738c7e547f41fba18d47a02a9cfa2
 
 rules
 
@@ -25,6 +28,7 @@ mobile(P) :- owns(P, X),
 
 owns(mike,c).
 turn_key(c).
--starts(c).
+%-starts(c).
+
 
 

@@ -16,8 +16,9 @@ turn_key(#car).
 rules
 
 -broken(X) :- not ab(d(X)),
-              not broken(X).
-broken(X):+.
+              not broken(X),
+              #car(X).
+broken(X):+#car(X).
 
 starts(X) :- turn_key(X),
              -broken(X).

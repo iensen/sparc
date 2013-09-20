@@ -73,7 +73,7 @@ public class DLVSolver extends ExternalSolver{
 		        InputStream stderr = process.getErrorStream();
 		        InputStream stdout = process.getInputStream();
 		        try {
-		            // write program to sparc translator:
+		            // write program to DLV:
 		            stdin.write(program.getBytes(), 0, program.length());
 		            stdin.flush();
 		            stdin.close();

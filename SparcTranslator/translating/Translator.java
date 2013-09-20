@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import configuration.ASPSolver;
+import configuration.Settings;
 import parser.ASTaggregateElement;
 import parser.ASTatom;
 import parser.ASTbody;
@@ -173,8 +176,11 @@ public class Translator {
 	 *            of program abstract syntax tree
 	 */
 	private void writeDirectives(ASTprogram program) {
-		//add #maxint:
-		appendStringToTranslation("#maxint="+BuiltIn.getMaxInt()+".");
+		//add #maxint if the solver is DLV:
+		if(Settings.getSolver()==ASPSolver.DLV) {
+			appendStringToTranslation("#maxint="+BuiltIn.getMaxInt()+".");
+		}
+		
 		appendNewLineToTranslation();
 		//add other directives
 		for (String s : program.getdirectives()) {

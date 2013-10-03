@@ -2,11 +2,26 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+/**
+ * The class implements AST node for atomic arithmetic terms (vrriables or constants)
+ * @author Evgenii Balai
+ *
+ */
 public class ASTatomicArithmeticTerm extends SimpleNode {
+	/**
+	 * Standard JAVACC generated constructor
+	 * @param p
+	 * @param id
+	 */
 	public ASTatomicArithmeticTerm(int id) {
 		super(id);
 	}
 
+	/**
+	 * Standard JAVACC generated constructor
+	 * @param p
+	 * @param id
+	 */
 	public ASTatomicArithmeticTerm(SparcTranslator p, int id) {
 		super(p, id);
 	}
@@ -15,7 +30,12 @@ public class ASTatomicArithmeticTerm extends SimpleNode {
 	public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
-
+	/**
+     * String representation of the term
+     * @param useOriginalImage must be set to true if the original strings 
+     * (returned by SparcTranslator) should be used
+     */
+	
 	public String toString(boolean useOriginalImages) {
 		if (this.jjtGetNumChildren()==0)  {
 			return this.image;

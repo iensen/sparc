@@ -103,7 +103,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.29.2");
+    System.err.println("SPARC  V2.29.3");
     Arguments jArguments = new Arguments();
     try
     {
@@ -200,19 +200,22 @@ class Pair
       if (jArguments.inputFiles.size() != 0)
       {
         tr.setInputFileName(getShortFileName(jArguments.inputFiles.get(0)));
-        tc.setInputFileName(getShortFileName(jArguments.inputFiles.get(0)));
       }
       if(e.jjtGetNumChildren() >2)//if program is not empty      {
         tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
         translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, true));
       }
+      if(jArguments.outputFile != null)
+      {
+        tr.writeTranslatedProgram();
+      }
     }
     catch (ParseException pe)
     {
       System.err.println(pe.getMessage());
-      ;
       return;
     }
+
     System.err.println("program translated");
     ExternalSolver solver = null;
     AnswerSetParser aParser = null;

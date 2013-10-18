@@ -969,7 +969,7 @@ public class Translator {
 	/**
 	 * Write program from internal string buffer to output
 	 */
-	private void writeTranslatedProgram() {
+	public void writeTranslatedProgram() {
 		try {
 			if (out != null) {
 				out.write(this.translatedOutput.toString());

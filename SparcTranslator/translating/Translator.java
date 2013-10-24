@@ -163,8 +163,7 @@ public class Translator {
 				throw new ParseException(warningStrings.toString());
 			}
 		}
-		// write program to out.
-		writeTranslatedProgram();
+
 		return translatedOutput.toString();
 
 	}

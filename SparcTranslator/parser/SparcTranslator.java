@@ -103,7 +103,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.29.3");
+    System.err.println("SPARC  V2.29.5");
     Arguments jArguments = new Arguments();
     try
     {
@@ -199,7 +199,9 @@ class Pair
       // do typechecking of rules in the first file
       if (jArguments.inputFiles.size() != 0)
       {
-        tr.setInputFileName(getShortFileName(jArguments.inputFiles.get(0)));
+        String fileName=getShortFileName(jArguments.inputFiles.get(0));
+        tr.setInputFileName(fileName);
+        tc.setInputFileName(fileName);
       }
       if(e.jjtGetNumChildren() >2)//if program is not empty      {
         tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
@@ -4092,13 +4094,6 @@ class Pair
     finally { jj_save(23, xla); }
   }
 
-  private boolean jj_3_12() {
-    if (jj_3R_33()) return true;
-    if (jj_3R_34()) return true;
-    if (jj_3R_30()) return true;
-    return false;
-  }
-
   private boolean jj_3_7() {
     if (jj_3R_29()) return true;
     return false;
@@ -4423,13 +4418,13 @@ class Pair
     return false;
   }
 
-  private boolean jj_3R_70() {
-    if (jj_3R_37()) return true;
+  private boolean jj_3R_54() {
+    if (jj_scan_token(GT)) return true;
     return false;
   }
 
-  private boolean jj_3R_54() {
-    if (jj_scan_token(GT)) return true;
+  private boolean jj_3R_70() {
+    if (jj_3R_37()) return true;
     return false;
   }
 
@@ -4720,6 +4715,13 @@ class Pair
     if (jj_3R_30()) return true;
     if (jj_3R_34()) return true;
     if (jj_3R_33()) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_3R_33()) return true;
+    if (jj_3R_34()) return true;
+    if (jj_3R_30()) return true;
     return false;
   }
 

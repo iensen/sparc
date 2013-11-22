@@ -923,12 +923,14 @@ public class Translator {
 		}
 		VariableFetcher vf = new VariableFetcher();
 		HashSet<String> vars = vf.fetchVariables(rule);
+		HashSet<String> varsToRemove = new HashSet<String>();
 		for (String var : vars) {
 			// remove local variables
 			if (!var.endsWith("_G")) {
-				vars.remove(var);
+				varsToRemove.add(var);
 			}
 		}
+		vars.removeAll(varsToRemove);
 		String ruleName = label;
 		if (vars.size() != 0) {
 			ruleName += "(";

@@ -14,7 +14,7 @@ public class PrologSolver extends ExternalSolver {
 	
 	public PrologSolver(String program) throws FileNotFoundException {
 		this.program = program;
-		System.out.println(program);
+		
 		pathToProlog = searchForExe();
 		if (pathToProlog == null) {
 			throw new FileNotFoundException("Swi-prolog not found. "

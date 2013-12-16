@@ -137,10 +137,7 @@ public class Translator {
 	    	cExpander.ExpandCurlyBrackets((ASTsortDefinitions)program.jjtGetChild(0));
 	    }
 	    
-	    System.out.println("SORTS:");
-	    for(String s: sortNameToExpression.keySet()) {
-	    	System.out.println(s+" = "+sortNameToExpression.get(s).toString());
-	    }
+	  
 	    
 	    
 	    // generate sorts

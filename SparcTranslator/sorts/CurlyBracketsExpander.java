@@ -18,9 +18,12 @@ import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
 import warnings.Pair;
 
+// this class implements search and replacement of curly brackets in the sort definition
+// with equivalent sort definitions s.t no curly brackets will contain a functional symbol
 public class CurlyBracketsExpander {
 	// mapping from sort names to sort expressions assigned to the sorts
     private HashMap<String, ASTsortExpression> sortNameToExpression;
+    // names which should not be used for the newly created sorts
     private HashSet<String> usedSortNames;
 	public CurlyBracketsExpander(HashMap<String, ASTsortExpression> sortNameToExpression) {
 		this.sortNameToExpression = sortNameToExpression;		
@@ -29,10 +32,14 @@ public class CurlyBracketsExpander {
 			usedSortNames.add(s);
 		}
 	}
+	
+	// replace curly brackets with equivalent sort definitions
 	public  void ExpandCurlyBrackets(ASTsortDefinitions sortDefs) {
 		ExpandCurlyBracketsRec((SimpleNode) sortDefs,null);
 	}
 	
+	
+	// recursively search for curly brackets and do the replacement
 	public void ExpandCurlyBracketsRec(SimpleNode node,SimpleNode parent) {
 		if(node.getId()==SparcTranslatorTreeConstants.JJTCURLYBRACKETS) {
 			ArrayList<Pair<String,ASTsortExpression>> newSorts = expand((ASTcurlyBrackets)node);
@@ -52,6 +59,8 @@ public class CurlyBracketsExpander {
 			
 		
 	}
+	
+	// construct the necessary new sorts for the found curly brackets
     private   ArrayList<Pair<String,ASTsortExpression>> expand(ASTcurlyBrackets curlyBrackets) {
     	
     	ArrayList<SortGroupTree> groups = new ArrayList<SortGroupTree> ();

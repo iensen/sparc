@@ -53,12 +53,12 @@ public class SortGroupTreeNode {
     public String fillNewSortDefs(ArrayList<Pair<String,ASTsortExpression>> defs,
     		                ArrayList<ArrayList<String> > leafSortInstances,
     		                HashSet<String> usedSortNames,
-    		                Integer leafIndex) {
+    		                IntCounter leafIndex) {
     	String newSortName = SortUtils.generateNewSortName(usedSortNames);
     	if(this.children.size() == 0 ) {
     		// create #s definition
-    		defs.add(new Pair<String,ASTsortExpression>(newSortName,new ASTsortExpression(leafSortInstances.get(leafIndex))));
-    		++leafIndex;
+    		defs.add(new Pair<String,ASTsortExpression>(newSortName,new ASTsortExpression(leafSortInstances.get(leafIndex.value))));
+    		++leafIndex.value;
     	}
     	else {
     		String funcSymbol = this.name;

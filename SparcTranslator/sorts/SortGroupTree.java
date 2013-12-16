@@ -18,7 +18,6 @@ public class SortGroupTree {
         ArrayList<ArrayList<String> > instances;
         String sortName;
         HashSet<String> usedSortNames;
-        @SuppressWarnings("unchecked")
 		public SortGroupTree(ASTconstantTerm term, HashSet<String> usedSortNames) {
         	this.root = new SortGroupTreeNode(term);
         	this.usedSortNames = usedSortNames;
@@ -35,7 +34,7 @@ public class SortGroupTree {
          */
         public void addInstance(ASTconstantTerm term) {
         	ArrayList<String> instance = new ArrayList<String>();
-        	addInstanceRec(term,0,instance);
+        	addInstanceRec(term,instance);
         	instances.add(instance);
         }
         
@@ -44,13 +43,13 @@ public class SortGroupTree {
          * @param term current node in the tree traversal process
          * @param leafIndex the number of leaves of the tree we have already seen
          */
-        private void addInstanceRec(SimpleNode term, Integer leafIndex,ArrayList<String>instance) {
+        private void addInstanceRec(SimpleNode term, ArrayList<String>instance) {
         	if(term.jjtGetNumChildren() == 0) {
         		instance.add(term.image);
         	}
         	
         	for(int i=0;i<term.jjtGetNumChildren();i++) {
-        		addInstanceRec((SimpleNode) term.jjtGetChild(i),leafIndex,instance);
+        		addInstanceRec((SimpleNode) term.jjtGetChild(i),instance);
         	}
         }
         
@@ -62,7 +61,7 @@ public class SortGroupTree {
         public ArrayList<Pair<String,ASTsortExpression>> produceNewSorts(HashSet<String> usedSortNames) {
         	ArrayList<Pair<String,ASTsortExpression>> result = new ArrayList<Pair<String,ASTsortExpression>>();
         	ArrayList<ArrayList<String>> convertedInstances = vhConvert();
-        	this.sortName = root.fillNewSortDefs(result,convertedInstances,usedSortNames,0);
+        	this.sortName = root.fillNewSortDefs(result,convertedInstances,usedSortNames,new IntCounter());
 	        return result;
         }
         

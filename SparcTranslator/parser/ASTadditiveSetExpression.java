@@ -11,6 +11,15 @@ class ASTadditiveSetExpression extends SimpleNode {
   public ASTadditiveSetExpression(SparcTranslator p, int id) {
     super(p, id);
   }
-
+  
+  public String toString() {
+	  StringBuilder result = new StringBuilder();
+	  for(int i=0;i<this.jjtGetNumChildren();i++) {
+		  if(i!=0)
+			  result.append(this.image.charAt(i));
+		  result.append(((ASTmultiplicativeSetExpression)this.jjtGetChild(i)).toString());			  
+	  }
+	  return result.toString();
+  }
 }
 /* JavaCC - OriginalChecksum=9be4f7af77ba4bd92d6900989e1a061d (do not edit this line) */

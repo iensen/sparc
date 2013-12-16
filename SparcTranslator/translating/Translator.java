@@ -20,6 +20,7 @@ import parser.ASTprogram;
 import parser.ASTprogramRule;
 import parser.ASTprogramRules;
 import parser.ASTsimpleAtom;
+import parser.ASTsortDefinitions;
 import parser.ASTsortExpression;
 import parser.ASTsymbolicConstant;
 import parser.ASTsymbolicFunction;
@@ -33,6 +34,7 @@ import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
 import sorts.BuiltIn;
+import sorts.CurlyBracketsExpander;
 import translating.InstanceGenerator.GSort;
 import warnings.ExpandSolve;
 import warnings.Formula;
@@ -129,7 +131,19 @@ public class Translator {
 		translatedOutput = new StringBuilder();
 		localElemCount = 0;
 		labelId = 0;
-
+        // if we need warnings, we need to shift curlyBrackets:
+	    if(generateClingconWarnings) {
+	    	CurlyBracketsExpander cExpander= new CurlyBracketsExpander(sortNameToExpression); 
+	    	cExpander.ExpandCurlyBrackets((ASTsortDefinitions)program.jjtGetChild(0));
+	    }
+	    
+	    System.out.println("SORTS:");
+	    for(String s: sortNameToExpression.keySet()) {
+	    	System.out.println(s+" = "+sortNameToExpression.get(s).toString());
+	    }
+	    
+	    
+	    // generate sorts
 		for (String s : generatingSorts) {
 			String s2 = predicateArgumentSorts.get("#" + s).get(0);
 			gen.addSort(s2, sortNameToExpression.get(s), true);
@@ -163,8 +177,7 @@ public class Translator {
 				throw new ParseException(warningStrings.toString());
 			}
 		}
-		// write program to out.
-		writeTranslatedProgram();
+
 		return translatedOutput.toString();
 
 	}
@@ -924,12 +937,14 @@ public class Translator {
 		}
 		VariableFetcher vf = new VariableFetcher();
 		HashSet<String> vars = vf.fetchVariables(rule);
+		HashSet<String> varsToRemove = new HashSet<String>();
 		for (String var : vars) {
 			// remove local variables
 			if (!var.endsWith("_G")) {
-				vars.remove(var);
+				varsToRemove.add(var);
 			}
 		}
+		vars.removeAll(varsToRemove);
 		String ruleName = label;
 		if (vars.size() != 0) {
 			ruleName += "(";
@@ -969,7 +984,7 @@ public class Translator {
 	/**
 	 * Write program from internal string buffer to output
 	 */
-	private void writeTranslatedProgram() {
+	public void writeTranslatedProgram() {
 		try {
 			if (out != null) {
 				out.write(this.translatedOutput.toString());

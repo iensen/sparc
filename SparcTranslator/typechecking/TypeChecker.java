@@ -822,7 +822,7 @@ public class TypeChecker {
 		if (calculatedDp[stringIndex][basicSortIndex] != -1)
 			return calculatedDp[stringIndex][basicSortIndex] != 0;
 		
-		for (int tryLength = 1; termLength - tryLength >= concLength-basicSortIndex-1; tryLength++) {
+		for (int tryLength = 1; termLength - tryLength >= concLength-basicSortIndex-1 && stringIndex + tryLength<=termLength; tryLength++) {
 			if (checkTerm(new ASTterm(term.substring(stringIndex,
 					stringIndex + tryLength)),
 					(ASTbasicSort) conc.jjtGetChild(basicSortIndex))

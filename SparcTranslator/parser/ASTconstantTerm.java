@@ -11,7 +11,13 @@ class ASTconstantTerm extends SimpleNode {
   public ASTconstantTerm(SparcTranslator p, int id) {
     super(p, id);
   }
-
+  
+  // constructor to create a simple constant term
+  // it may only be an identifier or a number
+  public ASTconstantTerm(String content) {
+	  super(SparcTranslatorTreeConstants.JJTCONSTANTTERM);
+	  this.image = content;
+  }
 
   /** Accept the visitor. **/
   public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {

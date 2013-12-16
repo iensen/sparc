@@ -2,19 +2,70 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public
 class ASTsortExpression extends SimpleNode {
   public ASTsortExpression(int id) {
     super(id);
+  }
+  
+  //create simple sort Expression for a set of items in curly brackets
+  public ASTsortExpression(ArrayList<String> elements) {
+	  super(SparcTranslatorTreeConstants.JJTSORTEXPRESSION);
+	  ASTsetExpression setExpr = new ASTsetExpression(SparcTranslatorTreeConstants.JJTSETEXPRESSION);
+	  ASTadditiveSetExpression addSetExpr = new ASTadditiveSetExpression(SparcTranslatorTreeConstants.JJTADDITIVESETEXPRESSION);
+	  addSetExpr.image="+";
+	  ASTmultiplicativeSetExpression multSetExpr = new ASTmultiplicativeSetExpression(SparcTranslatorTreeConstants.JJTMULTIPLICATIVESETEXPRESSION);
+	  ASTunarySetExpression unSetExpr = new ASTunarySetExpression(SparcTranslatorTreeConstants.JJTUNARYSETEXPRESSION);
+	  ASTcurlyBrackets curlyBrackets = new ASTcurlyBrackets(SparcTranslatorTreeConstants.JJTCURLYBRACKETS);
+	  ASTconstantTermList termList = new ASTconstantTermList(SparcTranslatorTreeConstants.JJTCONSTANTTERMLIST);
+	  setExpr.jjtAddChild(addSetExpr, 0);
+	  addSetExpr.jjtAddChild(multSetExpr, 0);
+	  multSetExpr.jjtAddChild(unSetExpr, 0);
+	  unSetExpr.jjtAddChild(curlyBrackets, 0);
+	  curlyBrackets.jjtAddChild(termList, 0);
+	  int index = 0;
+	  for(String s : elements) {
+		  termList.jjtAddChild(new ASTconstantTerm(s), index);
+		  index++;
+	  }
+	  this.jjtAddChild(setExpr, 0);
+	  
+	  
   }
 
   public ASTsortExpression(SparcTranslator p, int id) {
     super(p, id);
   }
 
-  /** Accept the visitor. **/
+  public ASTsortExpression(String funcSymbol, ArrayList<String> argSortNames) {
+	  super(SparcTranslatorTreeConstants.JJTSORTEXPRESSION);
+	  ASTfunctionalSymbol func = new ASTfunctionalSymbol(SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL);
+	  ASTsortExpressionList sList = new ASTsortExpressionList(SparcTranslatorTreeConstants.JJTSORTEXPRESSIONLIST);
+	  for(int i = 0 ;i<argSortNames.size();i++) {
+		  ASTsortName child = new ASTsortName(SparcTranslatorTreeConstants.JJTSORTNAME);
+		  child.image  = argSortNames.get(i);
+		  sList.jjtAddChild(child, i);		  
+	  }
+	  func.image = funcSymbol+"()";
+	  func.jjtAddChild(sList, 0);
+	  this.jjtAddChild(func, 0);	  
+}
+
+/** Accept the visitor. **/
   public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  public String toString() {
+	  switch(((SimpleNode)this.jjtGetChild(0)).getId()) {
+	     case SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL: return ((ASTfunctionalSymbol)(this.jjtGetChild(0))).toString();
+	     case SparcTranslatorTreeConstants.JJTSETEXPRESSION: return ((ASTsetExpression)(this.jjtGetChild(0))).toString();
+	     default: return this.image;
+	  }
   }
 }
 /* JavaCC - OriginalChecksum=24802ad5a91ff0b6c7c46db0619c53ea (do not edit this line) */

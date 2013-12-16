@@ -9,7 +9,7 @@ import parser.SimpleNode;
 import warnings.Pair;
 /**
  * This class represents a collection of sorts having the same structure of functional symbols
- * For example, the sorts f(g(a),f(b)) and f(g(c),f(d)) would belong to the same group.
+ * For example, the sorts f(g(a)) and f(g(c)) would belong to the same group.
  * @author Evgenii Balai
  *
  */

@@ -17,5 +17,15 @@ class ASTsortExpressionList extends SimpleNode {
   public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String toString() {
+	  StringBuilder sb = new StringBuilder();
+	  for(int i=0;i<this.jjtGetNumChildren();i++) {
+		  if(i!=0)
+			  sb.append(",");
+		  sb.append("#"+((SimpleNode)this.jjtGetChild(i)).toString());
+	  }
+	  return sb.toString();
+  }
 }
 /* JavaCC - OriginalChecksum=c5af95d1f013963ea5018ae5166388a0 (do not edit this line) */

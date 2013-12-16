@@ -11,6 +11,10 @@ class ASTcurlyBrackets extends SimpleNode {
   public ASTcurlyBrackets(SparcTranslator p, int id) {
     super(p, id);
   }
+  
+  public String toString() {
+	  return "{"+((SimpleNode)this.jjtGetChild(0)).toString()+"}";	  
+  }
 
 }
 /* JavaCC - OriginalChecksum=e3cff6d2596111e9d119ee9fc9790cd5 (do not edit this line) */

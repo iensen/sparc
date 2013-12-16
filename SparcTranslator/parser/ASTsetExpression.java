@@ -11,6 +11,10 @@ class ASTsetExpression extends SimpleNode {
   public ASTsetExpression(SparcTranslator p, int id) {
     super(p, id);
   }
+  
+  public String toString() {
+	  return ((ASTadditiveSetExpression)this.jjtGetChild(0)).toString();
+  }
 
 }
 /* JavaCC - OriginalChecksum=2a1832d95a4a4ef8ae280ebdd6a11c7c (do not edit this line) */

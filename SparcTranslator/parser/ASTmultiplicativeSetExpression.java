@@ -12,5 +12,8 @@ class ASTmultiplicativeSetExpression extends SimpleNode {
     super(p, id);
   }
 
+  public String toString() {
+	 return ((ASTunarySetExpression)this.jjtGetChild(0)).toString();
+  }
 }
 /* JavaCC - OriginalChecksum=bc4548a9bfeadf2b969d87fc4b66ee8e (do not edit this line) */

@@ -20,6 +20,7 @@ import parser.ASTprogram;
 import parser.ASTprogramRule;
 import parser.ASTprogramRules;
 import parser.ASTsimpleAtom;
+import parser.ASTsortDefinitions;
 import parser.ASTsortExpression;
 import parser.ASTsymbolicConstant;
 import parser.ASTsymbolicFunction;
@@ -33,6 +34,7 @@ import parser.SimpleNode;
 import parser.SparcTranslator;
 import parser.SparcTranslatorTreeConstants;
 import sorts.BuiltIn;
+import sorts.CurlyBracketsExpander;
 import translating.InstanceGenerator.GSort;
 import warnings.ExpandSolve;
 import warnings.Formula;
@@ -129,7 +131,19 @@ public class Translator {
 		translatedOutput = new StringBuilder();
 		localElemCount = 0;
 		labelId = 0;
-
+        // if we need warnings, we need to shift curlyBrackets:
+	    if(generateClingconWarnings) {
+	    	CurlyBracketsExpander cExpander= new CurlyBracketsExpander(sortNameToExpression); 
+	    	cExpander.ExpandCurlyBrackets((ASTsortDefinitions)program.jjtGetChild(0));
+	    }
+	    
+	    System.out.println("SORTS:");
+	    for(String s: sortNameToExpression.keySet()) {
+	    	System.out.println(s+" = "+sortNameToExpression.get(s).toString());
+	    }
+	    
+	    
+	    // generate sorts
 		for (String s : generatingSorts) {
 			String s2 = predicateArgumentSorts.get("#" + s).get(0);
 			gen.addSort(s2, sortNameToExpression.get(s), true);

@@ -74,7 +74,7 @@ public class SortGroupTreeNode {
     /**
      * The method checks of internal structures of this node and other nodes
      * are same up to leaves renaming
-     * For example, f(g(a),f(b)) matches f(g(c),f(d))
+     * For example, f(g(a)) matches f(g(c))
      */
     public boolean matchesTo(SortGroupTreeNode otherNode) {
     	if(this.getChildrenCount() > 1) {

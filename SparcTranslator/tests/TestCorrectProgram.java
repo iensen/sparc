@@ -225,7 +225,7 @@ public class TestCorrectProgram {
 		  SimpleNode e=p.program();
 	      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
 	      TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
-	      Translator tr = new Translator(null, p, gen, true, true);
+	      Translator tr = new Translator(null, p, gen, true, false);
 	      tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 	      StringBuilder translatedProgram=new StringBuilder();
 	      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, true));

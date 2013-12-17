@@ -25,14 +25,7 @@ class StreamGobbler
   }
 
   @Override
-public void run () {
-	  if(type.equals("ERROR")) {
-		  OsUtils.errors=new StringBuilder();
-	  }
-	  else if(type.equals("STDOUT"))
-		  OsUtils.result = new StringBuilder();
-	  
-	    
+public void run () {	    
     try {
       InputStreamReader isr = new InputStreamReader(is);
       BufferedReader br = new BufferedReader(isr);
@@ -41,10 +34,14 @@ public void run () {
     	System.out.println(line);
         // System.out.println(type + ">" + line);
     	if(type.equals("OUTPUT")) {
-    		 OsUtils.result.append(line).append("\n");
+    		 synchronized(OsUtils.result) {
+    		    OsUtils.result.append(line).append("\n");
+    		 }
     	}
     	else if(type.equals("ERROR")) {
-    		OsUtils.errors.append(line).append("\n");
+    		 synchronized(OsUtils.errors) {
+    		    OsUtils.errors.append(line).append("\n");
+    		 }
     	}
        
       }

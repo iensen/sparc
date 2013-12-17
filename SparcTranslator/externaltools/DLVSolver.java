@@ -59,6 +59,8 @@ public class DLVSolver extends ExternalSolver{
 	    	    StringBuilder programOutput = new StringBuilder();
 		        Process process = null;
 		        String options=" -silent -- ";
+		        OsUtils.errors=new StringBuilder();
+		        OsUtils.result = new StringBuilder();
 		        //check for option passed as sparc arguments
 	        	if(Settings.getSingletonInstance().getOptions()!=null)
 	        		options+=Settings.getSingletonInstance().getOptions();
@@ -87,16 +89,21 @@ public class DLVSolver extends ExternalSolver{
 						e.printStackTrace();
 					}
 		            // read errors:
-		         
+		            synchronized (OsUtils.errors) {
 		            if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
 		            	System.out.println(program);
 		                throw new IllegalArgumentException(
 		                        "constructed dlv program constructed contains errors: "
 		                                + OsUtils.errors.toString());
 		            }
+		            }
 		            // read standard output and append it to programOutput
 		       //     System.out.println(OsUtils.result.toString());
+		            
+						
+		            synchronized (OsUtils.result) {
 		             programOutput.append(OsUtils.result.toString());
+		            }
 		            
 		      
 		        } catch (IOException ex) {

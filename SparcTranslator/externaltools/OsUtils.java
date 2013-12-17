@@ -8,6 +8,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.*;
+import java.io.*;
+
+
 
 class StreamGobbler
   extends Thread {
@@ -22,17 +26,24 @@ class StreamGobbler
 
   @Override
 public void run () {
+	  if(type.equals("ERROR")) {
+		  OsUtils.errors=new StringBuilder();
+	  }
+	  else if(type.equals("STDOUT"))
+		  OsUtils.result = new StringBuilder();
+	  
+	    
     try {
       InputStreamReader isr = new InputStreamReader(is);
       BufferedReader br = new BufferedReader(isr);
       String line;
       while ((line = br.readLine()) != null) {
-    	
+    	System.out.println(line);
         // System.out.println(type + ">" + line);
     	if(type.equals("OUTPUT")) {
     		 OsUtils.result.append(line).append("\n");
     	}
-    	else {
+    	else if(type.equals("ERROR")) {
     		OsUtils.errors.append(line).append("\n");
     	}
        

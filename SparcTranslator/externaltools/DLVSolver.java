@@ -56,9 +56,9 @@ public class DLVSolver extends ExternalSolver{
 	     */
 	    public String run(boolean ignoreWarnings) {
 	        
-	    	   StringBuilder programOutput = new StringBuilder();
+	    	    StringBuilder programOutput = new StringBuilder();
 		        Process process = null;
-		        String options=" -- ";
+		        String options=" -silent -- ";
 		        //check for option passed as sparc arguments
 	        	if(Settings.getSingletonInstance().getOptions()!=null)
 	        		options+=Settings.getSingletonInstance().getOptions();
@@ -68,38 +68,37 @@ public class DLVSolver extends ExternalSolver{
 		        } catch (IOException e) {
 		            System.err.println(e.getMessage());
 		        }
-		        
-		        OutputStream stdin = process.getOutputStream();
-		        InputStream stderr = process.getErrorStream();
+		   
+		        OutputStream stdin = process.getOutputStream();	       
+		        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),"ERROR");
+		        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(),"STDOUT");
+		        errorGobbler.start();
+		        outputGobbler.start();
 		        InputStream stdout = process.getInputStream();
 		        try {
 		            // write program to DLV:
+		        //	System.out.println(program.toString());
 		            stdin.write(program.getBytes(), 0, program.length());
 		            stdin.flush();
 		            stdin.close();
-
+		            try {
+						process.waitFor();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 		            // read errors:
-		            BufferedReader brCleanUp = new BufferedReader(
-		                    new InputStreamReader(stderr));
-
-		            String line;
-		            StringBuilder errors = new StringBuilder();
-		            while ((line = brCleanUp.readLine()) != null) {
-		                   errors.append(line);
-		            }
-
-		            if (errors.length() > 0 && !ignoreWarnings) {
+		         
+		            if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
 		            	System.out.println(program);
 		                throw new IllegalArgumentException(
 		                        "constructed dlv program constructed contains errors: "
-		                                + errors.toString());
+		                                + OsUtils.errors.toString());
 		            }
 		            // read standard output and append it to programOutput
-		            brCleanUp = new BufferedReader(new InputStreamReader(stdout));
-		            while ((line = brCleanUp.readLine()) != null) {
-		                programOutput.append(line+System.getProperty("line.separator"));
-		            }
-		            brCleanUp.close();
+		       //     System.out.println(OsUtils.result.toString());
+		             programOutput.append(OsUtils.result.toString());
+		            
+		      
 		        } catch (IOException ex) {
 		            ex.printStackTrace(); // this exception should not occur!
 		        }

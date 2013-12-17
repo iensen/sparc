@@ -56,11 +56,13 @@ public class DLVSolver extends ExternalSolver{
 	     */
 	    public String run(boolean ignoreWarnings) {
 	        
-	    	    StringBuilder programOutput = new StringBuilder();
+	    	    Object lockStdOut = new Object();
+	    	    Object lockStdErr = new Object();
+	    	    StringBuffer programOutput = new StringBuffer();
 		        Process process = null;
 		        String options=" -silent -- ";
-		        OsUtils.errors=new StringBuilder();
-		        OsUtils.result = new StringBuilder();
+		        OsUtils.errors=new StringBuffer();
+		        OsUtils.result = new StringBuffer();
 		        //check for option passed as sparc arguments
 	        	if(Settings.getSingletonInstance().getOptions()!=null)
 	        		options+=Settings.getSingletonInstance().getOptions();
@@ -72,8 +74,8 @@ public class DLVSolver extends ExternalSolver{
 		        }
 		   
 		        OutputStream stdin = process.getOutputStream();	       
-		        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),"ERROR");
-		        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(),"STDOUT");
+		        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),"ERROR",lockStdErr);
+		        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(),"STDOUT",lockStdOut);
 		        errorGobbler.start();
 		        outputGobbler.start();
 		        InputStream stdout = process.getInputStream();
@@ -84,31 +86,53 @@ public class DLVSolver extends ExternalSolver{
 		            stdin.flush();
 		            stdin.close();
 		            try {
-						process.waitFor();
+						process.waitFor();			            
+						
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 		            // read errors:
-		            synchronized (OsUtils.errors) {
+
+		             synchronized(lockStdErr){
+		                while (!errorGobbler.isReady()){
+		                	try {
+		                		lockStdErr.wait();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+		                }
+		            }
 		            if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
 		            	System.out.println(program);
 		                throw new IllegalArgumentException(
 		                        "constructed dlv program constructed contains errors: "
 		                                + OsUtils.errors.toString());
 		            }
-		            }
+		           
 		            // read standard output and append it to programOutput
 		       //     System.out.println(OsUtils.result.toString());
 		            
-						
-		            synchronized (OsUtils.result) {
-		             programOutput.append(OsUtils.result.toString());
+		            
+		          
+		             synchronized(lockStdOut){
+		                while (!outputGobbler.isReady()){
+		                	try {
+								lockStdOut.wait();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+		                }
 		            }
+		             programOutput.append(OsUtils.result.toString());
+		      
 		            
 		      
 		        } catch (IOException ex) {
 		            ex.printStackTrace(); // this exception should not occur!
 		        }
+		    	
 		        return programOutput.toString();
 			
 	    }

@@ -87,6 +87,7 @@ public class PrologSolver extends ExternalSolver {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	
 		return programOutput.toString();
 	}
 

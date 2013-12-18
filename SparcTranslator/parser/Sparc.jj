@@ -15,7 +15,7 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   public HashSet < String > curlyBracketTerms;  // set of all defined record names:
   public HashSet < String > definedRecordNames;  boolean inHead = false;  /**
   * Remove from args all 
-  */  private static HashSet < String > fetchOptions(String [] args)  {    HashSet < String > options = new HashSet < String > ();    for (int i = 0; i < args.length; i++)    {      if (args [i].startsWith("--"))      {        options.add(args [i]);        args = ArrayUtils.removeNthElement(args, i);        i--;      }    }    return options;  }  private static final Set < String > supportedSolvers = new HashSet < String > (Arrays.asList("clingo", "dlv"));  public static void main(String [] args)  {    System.err.println("SPARC  V2.31");    Arguments jArguments = new Arguments();    try    {      new JCommander(jArguments, args);    }    catch (ParameterException ex)    {      System.err.println("ERROR: " + ex.getMessage());      return;    }    if (jArguments.help)    {      show_usage();      return;    }    if (jArguments.solver != null)    {      if (!supportedSolvers.contains(jArguments.solver))      {        System.err.println("Unknown solver: " + jArguments.solver);        return;      }    }    if (jArguments.solver != null && jArguments.solver.equals("clingo"))    {      Settings.getSingletonInstance().setSolver(ASPSolver.Clingo);    }    if (jArguments.solverOpts != null)    {      Settings.getSingletonInstance().setOptions(jArguments.solverOpts);    }    Reader sr = null;    Writer out = null;    if (jArguments.outputFile != null)    {      if (new File(jArguments.outputFile).exists() && !new File(jArguments.outputFile).isDirectory())      {        System.err.println("the output file already exists , do you want to overwrite it? y/n:");        char rep;        try        {
+  */  private static HashSet < String > fetchOptions(String [] args)  {    HashSet < String > options = new HashSet < String > ();    for (int i = 0; i < args.length; i++)    {      if (args [i].startsWith("--"))      {        options.add(args [i]);        args = ArrayUtils.removeNthElement(args, i);        i--;      }    }    return options;  }  private static final Set < String > supportedSolvers = new HashSet < String > (Arrays.asList("clingo", "dlv"));  public static void main(String [] args)  {    System.err.println("SPARC  V2.32");    Arguments jArguments = new Arguments();    try    {      new JCommander(jArguments, args);    }    catch (ParameterException ex)    {      System.err.println("ERROR: " + ex.getMessage());      return;    }    if (jArguments.help)    {      show_usage();      return;    }    if (jArguments.solver != null)    {      if (!supportedSolvers.contains(jArguments.solver))      {        System.err.println("Unknown solver: " + jArguments.solver);        return;      }    }    if (jArguments.solver != null && jArguments.solver.equals("clingo"))    {      Settings.getSingletonInstance().setSolver(ASPSolver.Clingo);    }    if (jArguments.solverOpts != null)    {      Settings.getSingletonInstance().setOptions(jArguments.solverOpts);    }    Reader sr = null;    Writer out = null;    if (jArguments.outputFile != null)    {      if (new File(jArguments.outputFile).exists() && !new File(jArguments.outputFile).isDirectory())      {        System.err.println("the output file already exists , do you want to overwrite it? y/n:");        char rep;        try        {
           InputStreamReader converter = new InputStreamReader(System.in);
 		  BufferedReader in = new BufferedReader(converter);          rep =in.readLine().charAt(0);         }        catch (IOException e)        {          e.printStackTrace();          return;        }        if (rep != 'y' && rep != 'Y')        {          return;        }      }      try      {        out = new FileWriter(jArguments.outputFile);      }      catch (IOException e)      {        e.printStackTrace();      }    }    TypeChecker tc = null;    StringBuilder translatedProgram = new StringBuilder();    try    {      if (jArguments.inputFiles != null && jArguments.inputFiles.size() != 0)      {        if (jArguments.inputFiles.size() > 1)        {          System.err.println("ERROR: multiple input files");          return;        }        try        {          sr = new FileReader(jArguments.inputFiles.get(0));        }        catch (FileNotFoundException fileException)        {          System.err.println("%INPUT FILE ERROR: " + fileException.getMessage());          return;        }      }      if (sr == null) sr = new InputStreamReader(System.in);      SparcTranslator p = new SparcTranslator(sr);      SimpleNode e = p.program();      //process regular expression
       InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);      Translator tr = new Translator(out, p, gen, jArguments.generateASPWarnings, jArguments.generateClingconWarnings);      // do typechecking of rules in the first file
@@ -28,7 +28,9 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
       {
         tr.writeTranslatedProgram();
       }    }    catch (ParseException pe)    {      System.err.println(pe.getMessage());      return;    }
-     System.err.println("program translated");    ExternalSolver solver = null;    AnswerSetParser aParser = null;    try    {      if (Settings.getSolver() == ASPSolver.DLV)      {        solver = new DLVSolver(translatedProgram.toString());        aParser = new DLVAnswerSetParser();      }      else      {        solver = new ClingoSolver(translatedProgram.toString());        aParser = new ClingoAnswerSetParser();      }    }    catch (    FileNotFoundException ex)    {      System.err.println(ex.getMessage());    }    if (jArguments.outputAnswerSets)    {      System.out.println(solver.run(false));    }    else    {      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(solver.run(false)), tc);      qe.run();    }  }  private boolean isInteger(String s)  {    if (s.length() == 1 && s.charAt(0) == '0') return true;    if (s.charAt(0) == '0') return false;    for (int i = 0; i < s.length(); i++)    {      if (!Character.isDigit(s.charAt(i))) return false;    }    return true;  }  /**
+     System.err.println("program translated");    ExternalSolver solver = null;    AnswerSetParser aParser = null;    try    {      if (Settings.getSolver() == ASPSolver.DLV)      {        solver = new DLVSolver(translatedProgram.toString());        aParser = new DLVAnswerSetParser();      }      else      {        solver = new ClingoSolver(translatedProgram.toString());        aParser = new ClingoAnswerSetParser();      }    }    catch (    FileNotFoundException ex)    {      System.err.println(ex.getMessage());    }    if (jArguments.outputAnswerSets)    {      System.out.println(solver.run(false));    }    else    {      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(solver.run(false)), tc);      qe.run();    }  }  private boolean isInteger(String s)  {
+    if(s.length()< 1)
+              return false;    if (s.length() == 1 && s.charAt(0) == '0') return true;    if (s.charAt(0) == '0') return false;    for (int i = 0; i < s.length(); i++)    {      if (!Character.isDigit(s.charAt(i))) return false;    }    return true;  }  /**
   * @return absolute path.
   */  private static String getShortFileName(String fullPath)  {    File file = new File(fullPath);    return file.getName();  }  static final String newLine = System.getProperty("line.separator");  /**
   * Output help message
@@ -1454,9 +1456,12 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   ASTatomicArithmeticTerm jjtn000 = new ASTatomicArithmeticTerm(JJTATOMICARITHMETICTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/  Token t;}{/*@bgen(jjtree) atomicArithmeticTerm */
+/*@egen*/  Token t;
+ }{/*@bgen(jjtree) atomicArithmeticTerm */
   try {
-/*@egen*/  t = number()/*@bgen(jjtree)*/
+/*@egen*/
+  
+  LOOKAHEAD({  (getToken(1) != null && getToken(1).image != null) && (constantsMapping.containsKey(getToken(1).image ) || isInteger(getToken(1).image )) })  t = number()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -1570,24 +1575,37 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}SimpleNode symbolicConstant() :{/*@bgen(jjtree) symbolicConstant */
+/*@egen*/}
+SimpleNode symbolicConstant() :
+{/*@bgen(jjtree) symbolicConstant */
   ASTsymbolicConstant jjtn000 = new ASTsymbolicConstant(JJTSYMBOLICCONSTANT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/  Token t;}{/*@bgen(jjtree) symbolicConstant */
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) symbolicConstant */
   try {
-/*@egen*/  t = < IDENTIFIER >/*@bgen(jjtree)*/
+/*@egen*/
+  t = < IDENTIFIER >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.image = t.image;    jjtn000.beginLine = t.beginLine;    jjtn000.beginColumn = t.beginColumn;    return jjtn000;  }/*@bgen(jjtree)*/
+/*@egen*/
+  {
+    jjtn000.image = t.image;
+    jjtn000.beginLine = t.beginLine;
+    jjtn000.beginColumn = t.beginColumn;
+    return jjtn000;
+  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}SimpleNode symbolicTerm() :{/*@bgen(jjtree) symbolicTerm */
+/*@egen*/
+}SimpleNode symbolicTerm() :{/*@bgen(jjtree) symbolicTerm */
   ASTsymbolicTerm jjtn000 = new ASTsymbolicTerm(JJTSYMBOLICTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -1628,43 +1646,51 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  SimpleNode n;  Token t;  jjtn000.image = "";}{/*@bgen(jjtree) term */
-  try {
-/*@egen*/  LOOKAHEAD(2)  n = symbolicTerm()/*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-  }
-/*@egen*/  {    jjtn000.beginLine = n.beginLine;    jjtn000.beginColumn = n.beginColumn;    return jjtn000;  }| LOOKAHEAD(var() (< CP >| < COMMA >))  t = var()/*@bgen(jjtree)*/
+ try {
+/*@egen*/ LOOKAHEAD(var() (< CP >| < COMMA >))  t = var()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/  {    //System.out.println("t.image");
-    jjtn000.image = t.image;    jjtn000.beginLine = t.beginLine;    jjtn000.beginColumn = t.beginColumn;    return jjtn000;  }| n = arithmeticTerm()/*@bgen(jjtree)*/
+    jjtn000.image = t.image;    jjtn000.beginLine = t.beginLine;    jjtn000.beginColumn = t.beginColumn;    return jjtn000;  }
+| 
+  LOOKAHEAD(2)
+  n = arithmeticTerm()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.beginLine = n.beginLine;
+    jjtn000.beginColumn = n.beginColumn;
+    return jjtn000;
+  }| n = symbolicTerm()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/  {    jjtn000.beginLine = n.beginLine;    jjtn000.beginColumn = n.beginColumn;    return jjtn000;  }/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
 /*@egen*/}SimpleNode termList() :{/*@bgen(jjtree) termList */
   ASTtermList jjtn000 = new ASTtermList(JJTTERMLIST);
   boolean jjtc000 = true;

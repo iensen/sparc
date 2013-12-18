@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import configuration.Settings;
 
+
 import externaltools.DLVSolver;
 import externaltools.ExternalSolver;
 
@@ -231,7 +232,7 @@ public class TestCorrectProgram {
 	      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, true));
 	      System.out.println(translatedProgram);
 	      ExternalSolver solver = new DLVSolver(translatedProgram.toString());
-	      Settings.getSingletonInstance().setOptions(" -n=1 "+options);
+	      Settings.getSingletonInstance().setOptions(" -n=1  "+options);
 	      System.out.println(solver.run(false));
 	 }
 }

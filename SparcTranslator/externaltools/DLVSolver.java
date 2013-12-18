@@ -1,12 +1,7 @@
 package externaltools;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-
 import configuration.Settings;
 /**
  * This class implements operations which can be executed on DLV
@@ -55,86 +50,18 @@ public class DLVSolver extends ExternalSolver{
 	     * @return the output of DLV after running the program
 	     */
 	    public String run(boolean ignoreWarnings) {
-	        
-	    	    Object lockStdOut = new Object();
-	    	    Object lockStdErr = new Object();
-	    	    StringBuffer programOutput = new StringBuffer();
-		        Process process = null;
 		        String options=" -silent -- ";
-		        OsUtils.errors=new StringBuffer();
-		        OsUtils.result = new StringBuffer();
 		        //check for option passed as sparc arguments
 	        	if(Settings.getSingletonInstance().getOptions()!=null)
 	        		options+=Settings.getSingletonInstance().getOptions();
-		        try {
-		        	//create a new process for dlv
-		            process = Runtime.getRuntime().exec(pathToDlv+options);
-		        } catch (IOException e) {
-		            System.err.println(e.getMessage());
-		        }
-		   
-		        OutputStream stdin = process.getOutputStream();	       
-		        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(),"ERROR",lockStdErr);
-		        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(),"STDOUT",lockStdOut);
-		        errorGobbler.start();
-		        outputGobbler.start();
-		        InputStream stdout = process.getInputStream();
-		        try {
-		            // write program to DLV:
-		        //	System.out.println(program.toString());
-		            stdin.write(program.getBytes(), 0, program.length());
-		            stdin.flush();
-		            stdin.close();
-		            try {
-						process.waitFor();			            
-						
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-		            // read errors:
-
-		             synchronized(lockStdErr){
-		                while (!errorGobbler.isReady()){
-		                	try {
-		                		lockStdErr.wait();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-		                }
-		            }
-		            if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
+		        OsUtils.runCommand(pathToDlv, options, program);
+		        if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
 		            	System.out.println(program);
 		                throw new IllegalArgumentException(
 		                        "constructed dlv program constructed contains errors: "
 		                                + OsUtils.errors.toString());
-		            }
-		           
-		            // read standard output and append it to programOutput
-		       //     System.out.println(OsUtils.result.toString());
-		            
-		            
-		          
-		             synchronized(lockStdOut){
-		                while (!outputGobbler.isReady()){
-		                	try {
-								lockStdOut.wait();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-		                }
-		            }
-		             programOutput.append(OsUtils.result.toString());
-		      
-		            
-		      
-		        } catch (IOException ex) {
-		            ex.printStackTrace(); // this exception should not occur!
-		        }
-		    	
-		        return programOutput.toString();
-			
+		            }		       
+		        return OsUtils.result.toString();
 	    }
 
 	    /**

@@ -3,6 +3,8 @@ package warnings;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import utils.Pair;
+
 public class StringListUtils {
 
 	public static String getSeparatedList(ArrayList<String> list,String separator) {

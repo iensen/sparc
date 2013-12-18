@@ -3,6 +3,7 @@ package warnings;
 import java.io.FileNotFoundException;
 
 import sorts.BuiltIn;
+import utils.Pair;
 
 public class ExpandSolve {
     public static int CountOK=0;

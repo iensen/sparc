@@ -6,7 +6,7 @@ import java.util.HashSet;
 import parser.ASTconstantTerm;
 import parser.ASTconstantTermList;
 import parser.ASTsortExpression;
-import warnings.Pair;
+import utils.Pair;
 /**
  * This class represent a node in the group tree (see SortGroupTreeClass for more details)
  * @author Evgenii Balai

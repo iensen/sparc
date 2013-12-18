@@ -2,6 +2,8 @@ package warnings;
 
 import java.util.ArrayList;
 
+import utils.Pair;
+
 public abstract class Formula {
 	FormulaType type;
 	ArrayList<Formula> children;

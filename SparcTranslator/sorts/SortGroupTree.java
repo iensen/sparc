@@ -6,7 +6,7 @@ import java.util.HashSet;
 import parser.ASTconstantTerm;
 import parser.ASTsortExpression;
 import parser.SimpleNode;
-import warnings.Pair;
+import utils.Pair;
 /**
  * This class represents a collection of sorts having the same structure of functional symbols
  * For example, the sorts f(g(a)) and f(g(c)) would belong to the same group.

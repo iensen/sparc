@@ -1,5 +1,7 @@
 package warnings;
 
+import utils.Pair;
+
 public class PrimitiveFormula extends Formula {
 	PrimitiveFormulaType primitiveType;
 	Operand[] operands;

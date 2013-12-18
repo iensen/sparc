@@ -5,7 +5,7 @@ package querying.parsing.query;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import warnings.Pair;
+import utils.Pair;
 import warnings.StringListUtils;
 
 public class QASTatom extends SimpleNode {

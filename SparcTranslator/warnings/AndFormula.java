@@ -1,5 +1,7 @@
 package warnings;
 
+import utils.Pair;
+
 
 
 public class AndFormula extends Formula {

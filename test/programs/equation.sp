@@ -1,4 +1,4 @@
-
+#maxint =64.
 sorts
 predicates
 p(#nat).

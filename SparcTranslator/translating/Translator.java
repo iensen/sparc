@@ -36,7 +36,7 @@ import parser.SparcTranslatorTreeConstants;
 import sorts.BuiltIn;
 import sorts.CurlyBracketsExpander;
 import translating.InstanceGenerator.GSort;
-import utils.Pair;
+import utilities.Pair;
 import warnings.ExpandSolve;
 import warnings.Formula;
 import warnings.RuleReducer;

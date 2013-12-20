@@ -4,7 +4,7 @@ package parser;
 
 import java.util.ArrayList;
 
-import utils.Pair;
+import utilities.Pair;
 import warnings.StringListUtils;
 
 public class ASTterm extends SimpleNode {

@@ -3,7 +3,7 @@ package warnings;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import utils.Pair;
+import utilities.Pair;
 
 public class StringListUtils {
 

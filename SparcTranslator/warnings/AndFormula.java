@@ -1,6 +1,6 @@
 package warnings;
 
-import utils.Pair;
+import utilities.Pair;
 
 
 

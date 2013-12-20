@@ -28,7 +28,7 @@ import parser.ASTvar;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
 import translating.InstanceGenerator;
-import utils.Pair;
+import utilities.Pair;
 
 /**
  * This class if for creation of a formula from an ASP rule The formula will be

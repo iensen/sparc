@@ -2,7 +2,7 @@ package warnings;
 
 import java.util.ArrayList;
 
-import utils.Pair;
+import utilities.Pair;
 
 public abstract class Formula {
 	FormulaType type;

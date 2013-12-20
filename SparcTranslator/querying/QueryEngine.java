@@ -24,7 +24,7 @@ import querying.parsing.query.QASTatom;
 import querying.parsing.query.QASTliteral;
 import querying.parsing.query.QueryParser;
 import typechecking.TypeChecker;
-import utils.Pair;
+import utilities.Pair;
 import warnings.StringListUtils;
 
 public class QueryEngine {

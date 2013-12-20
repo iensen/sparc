@@ -3766,9 +3766,10 @@ class Pair
     case MAXINTDIRECTIVE:
       t = jj_consume_token(MAXINTDIRECTIVE);
       t1 = jj_consume_token(EQ);
-      t2 = number();
+      t2 = jj_consume_token(POSITIVE_INTEGER);
       t3 = jj_consume_token(DOT);
-    BuiltIn.setMaxInt(Integer.parseInt(t2.image));
+    Integer value = Integer.parseInt(t2.image);
+    BuiltIn.setMaxInt(value);
       break;
     case CONSTDIRECTIVE:
       t = jj_consume_token(CONSTDIRECTIVE);

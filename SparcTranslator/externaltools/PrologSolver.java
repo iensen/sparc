@@ -7,7 +7,6 @@ import java.security.SecureRandom;
 public class PrologSolver extends ExternalSolver {
 
 	private String pathToProlog;
-
 	public PrologSolver() throws FileNotFoundException {
 		this(null);
 	}
@@ -28,7 +27,6 @@ public class PrologSolver extends ExternalSolver {
 	}
 	//TODO: Implement ignore warnings properly
 	public String run(boolean ignoreWarnings) {
-
 		// Create a temporary file: FileWriter fw = new
 		// FileWriter(file.getAbsoluteFile());
 		File tempDir = new File(System.getProperty("java.io.tmpdir"));

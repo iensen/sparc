@@ -1964,4 +1964,5 @@ SimpleNode symbolicConstant() :
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void directives(ArrayList < String > directives)       :{}{  (    directive(directives)  )*  {    addBuiltInSorts();  }}void directive(ArrayList < String > directives)       :{  Token t, t1, t2, t3, t4;}{  t = < MAXINTDIRECTIVE > t1 = < EQ > t2 = number() t3 = < DOT >  {    BuiltIn.setMaxInt(Integer.parseInt(t2.image));  }| t = < CONSTDIRECTIVE > t1 = < IDENTIFIER > t2 = < EQ > t3 = number() t4 = < DOT >  {    directives.add(t.image + " " + t1.image + t2.image + t3.image + t4.image);    constantsMapping.put(t1.image, Long.parseLong(t3.image));  }}
+/*@egen*/}void directives(ArrayList < String > directives)       :{}{  (    directive(directives)  )*  {    addBuiltInSorts();  }}void directive(ArrayList < String > directives)       :{  Token t, t1, t2, t3, t4;}{  t = < MAXINTDIRECTIVE > t1 = < EQ > t2 = < POSITIVE_INTEGER > t3 = < DOT >  {
+    Integer value = Integer.parseInt(t2.image);    BuiltIn.setMaxInt(value);  }| t = < CONSTDIRECTIVE > t1 = < IDENTIFIER > t2 = < EQ > t3 = number() t4 = < DOT >  {    directives.add(t.image + " " + t1.image + t2.image + t3.image + t4.image);    constantsMapping.put(t1.image, Long.parseLong(t3.image));  }}

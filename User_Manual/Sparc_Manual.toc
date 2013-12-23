@@ -17,4 +17,4 @@
 \contentsline {subsection}{\numberline {6.2}Type warnings}{14}{subsection.6.2}
 \contentsline {subsubsection}{\numberline {6.2.1}ASP based warning checking}{14}{subsubsection.6.2.1}
 \contentsline {subsubsection}{\numberline {6.2.2}Constraint solver based warning checking}{15}{subsubsection.6.2.2}
-\contentsline {section}{\numberline {7}${\cal SPARC}$ and ASPIDE}{15}{section.7}
+\contentsline {section}{\numberline {7}${\cal SPARC}$ and ASPIDE}{16}{section.7}

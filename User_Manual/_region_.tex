@@ -1,4 +1,4 @@
-\documentclass[12pt, letterpaper]{article}
+\message{ !name(Sparc_Manual.tex)}\documentclass[12pt, letterpaper]{article}
 
 \setlength{\topmargin}{-1.75cm} \setlength{\textheight}{22.5cm}
 \setlength{\oddsidemargin}{0.25cm}
@@ -22,6 +22,9 @@
 %\def \color#1]#2{}
 
 \begin{document}
+
+\message{ !name(Sparc_Manual.tex) !offset(-3) }
+
 
 \newcommand{\hide}[1]{}
 \newcommand{\exercise}[1]{}
@@ -641,18 +644,13 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 \subsubsection{Program rules errors}
 
 In program rules we first check each atom of the form $p(t_1,\dots,t_n)$ and each term occurring in the program $\Pi$ for satisfying
-the definitions of program atom and program term correspondingly\cite{sparc}. Moreover, we check that no sort occurs in a head of a rule of $\Pi$.
+the definitions of program atom and program term correspondingly(!!add reference as soon as it is available). Moreover, we check that no sort occurs in a head of a rule of $\Pi$.
 \subsection{Type warnings}\label{type_warnings}
-During this phase each rule in input ${\cal SPARC}$ program is checked for having at least one ground instance. Warnings are reported if no ground instance for a ${\cal SPARC}$ rule was found.  Two options are available:
-\begin{itemize}
-\item \texttt{-wcon}: find warnings using  constraint solver algorithm described in \cite{sparc}. 
-\item \texttt{-wasp}: find warnings using ASP-based algorithm.
-\end{itemize}
-
-While both algorithms are intended to produce same results, their execution time may vary. We recommend using constraint solver based option for programs involving many arithmetic terms and numeric sorts and ASP-based checker for programs with many deeply-nested records and symbolic terms.     
-
+During this phase each rule in input ${\cal SPARC}$ program is checked for having at least one ground instance. This is done by applying a standard constraint
+satisfaction algorithm to a constraint formula over finite domains[9] produced by algorithms from (!!! add link as soon as it is available).
+Warnings are reported for the rules which have no ground instances.
 \subsubsection{ASP based warning checking} \label{asp_type_warnings}
-The option \texttt{-wasp} should be passed to the  system  to detect and display warnings using a simple ASP based algorithm.
+The option \texttt{-wasp} must be passed to the  system  in order to detect and display warnings using a simple ASP based algorithm.
 For example, consider the ${\cal SPARC}$ program below.
 
 \begin{verbatim}
@@ -673,16 +671,15 @@ The only rule of the program has no ground instances with respect to defined sor
 The execution trace is provided below
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program.sp -A -wasp
-                             -solveropts "-pfilter=warning"
-SPARC  V2.29.5
+SPARC  V2.25
 program translated
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]
-{ warning("p(f(X)):-q(X). ( line: 11, column: 1)")}
+
+{s3(b), s2(f(a)), warning("p(f(X)):-q(X). ( line: 11, column: 1)")}
 \end{verbatim}
 
 The atom \texttt{warning("p(f(X)):-q(X). ( line: 11, column: 1)")} is included into the answer set as an indicator of potential problem.
-
-In general, when the \texttt{-wasp} is passed to ${\cal SPARC}$ system, each answer set will contain 
+When the \texttt{-wasp} is passed to ${\cal SPARC}$ system, each answer set will contain 
 \begin{verbatim}
 warning("rule description") 
 \end{verbatim}
@@ -694,37 +691,35 @@ has_ground_instance("rule description")
 for all other rules of the input program.
 \subsubsection{Constraint solver based warning checking}\label{clp_type_warnings}
 
-The option \texttt{-wcon} must be passed to the  system  in order to detect and display warnings using the algorithm described in \cite{sparc}.
-Consider the following ${\cal SPARC}$ program:
+The option \texttt{-wcon} must be passed to the  system  in order to detect and display warnings using the algorithm described in the paper \cite{?} (!add citation as soon as it is available).
+Consider the same ${\cal SPARC}$ program as above.
 
 \begin{verbatim}
-#maxint = 1000.
 sorts
-#s = 1..1000.
+#s1={a}.
+#s2=f(#s1).
+#s3={b}.
+
 predicates
-p(#s).
-q(#s).
+p(#s2).
+q(#s3).
+
 rules
-p(X-600):- q(X+600).
+p(f(X)):-q(X).
 \end{verbatim}
 
 The only rule of the program has no ground instances with respect to defined sorts.
 The execution trace is provided below
 \begin{verbatim}
-username@machine:~$ java -jar sparc.jar program.sp -A -wcon 
-                                    -solveropts "-pfilter=p"
-%WARNING: Rule p(X-600):-q(X+600). at line 8, column 1 
-is an empty rule
+username@machine:~$ java -jar sparc.jar program.sp -A -wcon
+SPARC  V2.25
+WARNING: Rule p(f(X)):-q(X). at line 11, column 1 is an empty rule
 program translated
 DLV [build BEN/Dec 16 2012   gcc 4.6.1]
-{}
+{s3(b), s2(f(a))}
 \end{verbatim}
 
-\st The message 
-\begin{equation*}
-\texttt{WARNING: Rule p(f(X)):-q(X). at line 8, column 1 is an empty rule} 
-\end{equation*}
-\st is an indicator of a potential problem.
+The message \texttt{WARNING: Rule p(f(X)):-q(X). at line 9, column 1 is an empty rule} is an indicator of a potential problem.
 
 \section{${\cal SPARC}$ and ASPIDE}
 For using ${\cal SPARC}$ in ASPIDE, you will need to install ASPIDE version 1.37.1 or greater. Once it is installed, go to \textit{File -\textgreater Plug-ins -\textgreater Available plugins} menu, 
@@ -744,7 +739,5 @@ You can execute queries and compute answer sets as for usual ASP file.
 \caption{Editing  ${\cal SPARC}$ source file}
 \label{fig:sparc_file}
 \end{figure}
-\bibliography{mybib}
-\bibliographystyle{plain}
 \end{document}
-
+\message{ !name(Sparc_Manual.tex) !offset(-743) }

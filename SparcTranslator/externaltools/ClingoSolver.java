@@ -28,7 +28,7 @@ public class ClingoSolver extends ExternalSolver {
 
 	@Override
 	public String run(boolean ignoreWarnings) {
-		String options=" 0 --shift ";
+		String options=" 0 ";
 		if(Settings.getSingletonInstance().getOptions()!=null)
 			options+=Settings.getSingletonInstance().getOptions();
 

@@ -89,7 +89,7 @@ The system was tested on Java versions 1.6.0\_37 and 1.7.0\_25.
 \begin{enumerate} 
 \item DLV (recommended).
  \url{http://www.dlvsystem.com/dlv/#1}You need to download the \textit{static} version of the executable file.
-\item Clingo \url{http://sourceforge.net/projects/potassco/files/clingo/3.0.5/}.
+\item Clingo \url{http://sourceforge.net/projects/potassco/files/clingo/4.2.1}.
 \end{enumerate}
 
 \item (\textit{optional}) Swi-Prolog. \url{http://www.swi-prolog.org/}. This item is only required if option \textit{-wcon} is used for type warning detection.
@@ -146,9 +146,9 @@ The queries are answered as follows:
 where $X_1, \dots, X_n$ are all variables in $p(t1, \dots, tn)$, $t_1, \dots, t_n$ are ground terms, and the answer to the query $p(t1',\dots,tn')$, obtained from  $p(t1, \dots, tn)$ by replacing each variable $X_i$ by a ground term $t_i$, is \textit{yes}.
 
 }
- 
-For the program $\Pi$ above, written in the file \texttt{program.sp}, we run the queries shown below. 
 
+To run  ${\cal SPARC}$  on the program above, 
+we change current directory to a directory having the file \texttt{program.sp} with the program written in it, and the downloaded file \texttt{sparc.jar}.  Then, we run the command:
 \begin{verbatim}
 username@machine:~$ java -jar sparc.jar program.sp
 SPARC  V2.25
@@ -228,7 +228,7 @@ an argument, and if so, we  describe its meaning.
   For the complete list of clingo options, see 
   \url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
 
-  Note that options "0" and "--shift" are passed to clingo solver by default.
+  Note that the options "0"  is passed to clingo solver by default.
 
 \item \textbf{-Help, -H, -help, --Help, --help, -h}
 
@@ -472,7 +472,7 @@ by replacing $\lplus$ by $\leftarrow$;
 $\alpha$ is expanded in the standard way to a set $X$ of CR-rules,
 i.e., $\alpha(A) = \{\alpha(r)\; :\; r \in A\}$.
 \st A %minimal (with respect to the preference relation $\leq$ of the program)
-collection $A$ of CR-rules of $\Pi$ such that
+collection $A$ of CR-rules of $\Pi$ such that 
 \begin{enumerate}
 \item $R \cup \alpha(X)$ is consistent (i.e., has an answer set), and
 \item any $R_0$ satisfying the above condition has cardinality
@@ -534,7 +534,6 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
  #s={a}.
  #s={b}.
 \end{verbatim}
-
 
 \item In an identifier range id1.. id2 (statement (2) in section \ref{ss}) the first identifier(id1) is lexicographically greater than id2.
 \textit{Example}

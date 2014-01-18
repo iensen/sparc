@@ -1,5 +1,5 @@
 sorts
-#s = {a,b,c}.
+#s = {a}.
 predicates
 p(#s).
 rules

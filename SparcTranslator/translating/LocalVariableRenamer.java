@@ -13,23 +13,47 @@ import parser.SparcTranslatorTreeConstants;
  */
 public class LocalVariableRenamer {
 
-	
+	HashSet<String> bodyVariables;
+
+	public LocalVariableRenamer() {
+		
+	}
+
+	public void setBodyVariables(HashSet<String> bodyVariables) {
+		this.bodyVariables = bodyVariables;
+	}
+
 	public void renameLocalVariables(ASTchoice_element choice_element,int idx,HashMap<String,String> originalNamesMapping) {
 		HashSet<String> localVariables = new HashSet<String>();
 		for (int i = 0; i < choice_element.jjtGetNumChildren(); i++) {
 			if (((SimpleNode) (choice_element.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOM) {
 				localVariables
-						.addAll(fetchVariableNames((SimpleNode) (choice_element
-								.jjtGetChild(i))));
+				.addAll(fetchVariableNames((SimpleNode) (choice_element
+						.jjtGetChild(i))));
 			}
 		}
-
+		// remove variable which do not occur in the body of the aggregate but occur in the body of the corresponding rule
+		for(String var: bodyVariables) {
+			// check if the variable does not occur in the body of the aggregate
+			boolean varToRemove = true;
+			for(int i=0;i<choice_element.jjtGetNumChildren();i++) {
+				if (((SimpleNode) (choice_element.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
+					if(fetchVariableNames((SimpleNode) (choice_element
+							.jjtGetChild(i))).contains(var)) {
+						varToRemove = false;
+					}
+				}
+			}
+			if(varToRemove) {
+				localVariables.remove(var);
+			}
+		}
 		renameLocalVariables(choice_element, "_L" + idx,
 				localVariables,originalNamesMapping);
-	
+
 	}
-	
-	
+
+
 	public void renameLocalVariables(ASTaggregateElement agrelem,int idx,HashMap<String,String> originalNamesMapping) {
 		HashSet<String> localVariables = new HashSet<String>();
 		for (int i = 0; i < agrelem.jjtGetNumChildren(); i++) {
@@ -39,9 +63,27 @@ public class LocalVariableRenamer {
 						.jjtGetChild(i))));
 			}
 		}
+
+		// remove variable which do not occur in the body of the aggregate but occur in the body of the corresponding rule
+		for(String var: bodyVariables) {
+			// check if the variable does not occur in the body of the aggregate
+			boolean varToRemove = true;
+			for(int i=0;i<agrelem.jjtGetNumChildren();i++) {
+				if (((SimpleNode) (agrelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
+					if(fetchVariableNames((SimpleNode) (agrelem
+							.jjtGetChild(i))).contains(var)) {
+						varToRemove = false;
+					}
+				}
+			}
+			if(varToRemove) {
+				localVariables.remove(var);
+			}
+		}
+
 		renameLocalVariables(agrelem, "_L" + idx, localVariables,originalNamesMapping);
 	}
-	
+
 	/**
 	 * Rename all local variables in given AST subtree(n) by adding a suffix
 	 * 
@@ -58,9 +100,9 @@ public class LocalVariableRenamer {
 				&& localVariables.contains(n.image)) {
 			originalNamesMapping.put(n.image+addSuffix,originalNamesMapping.get(n.image));
 			n.image = n.image + addSuffix;
-			
+
 		}
-		
+
 		for (int i = 0; i < n.jjtGetNumChildren(); i++) {
 			renameLocalVariables((SimpleNode) (n.jjtGetChild(i)), addSuffix,
 					localVariables,originalNamesMapping);
@@ -69,7 +111,7 @@ public class LocalVariableRenamer {
 			originalNamesMapping.put(n.toString(false), n.toString(true));
 		}
 	}
-	
+
 	/**
 	 * Fetch variables from given node
 	 * 

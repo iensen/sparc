@@ -509,8 +509,31 @@ public class Translator {
 		}
 	}
 
+	private HashSet<String> findBodyVariables(SimpleNode node) {
+		HashSet<String> vars = new HashSet<String>();
+		if(node.getId() == SparcTranslatorTreeConstants.JJTBODY) {
+			VariableFetcher vf = new VariableFetcher();
+			vf.fetchVariables(node,vars);
+			return vars;
+		}
+		for(int i=0;i<node.jjtGetNumChildren();i++) {
+		 vars = findBodyVariables((SimpleNode)node.jjtGetChild(i));
+			if(vars!= null)
+				return vars;			
+		}
+		return null;
+	}
+	
 	private void renameLocalVariables(SimpleNode n,
 			HashMap<String, String> originalNameMapping) {
+		
+		if(n.getId() == SparcTranslatorTreeConstants.JJTPROGRAMRULE) {
+			HashSet<String> bodyVariables = findBodyVariables(n);
+			if(bodyVariables == null)
+				bodyVariables = new HashSet<String>();
+			renamer.setBodyVariables(bodyVariables);
+			
+		}
 		if (n.getId() == SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT) {
 			renamer.renameLocalVariables((ASTaggregateElement) n,
 					localElemCount++, originalNameMapping);
@@ -983,7 +1006,7 @@ public class Translator {
 	 */
 	public void writeTranslatedProgram() {
 		try {
-			if (out != null) {
+			if (out != null && this.translatedOutput!=null) {
 				out.write(this.translatedOutput.toString());
 				out.flush();
 			}

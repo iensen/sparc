@@ -103,7 +103,8 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.35");
+    System.err.println("SPARC  V2.36");
+
     Arguments jArguments = new Arguments();
     try
     {
@@ -4056,15 +4057,15 @@ class Pair
     return false;
   }
 
+  private boolean jj_3_7() {
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
   private boolean jj_3_17() {
     if (jj_3R_37()) return true;
     if (jj_3R_38()) return true;
     if (jj_3R_39()) return true;
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_3R_28()) return true;
     return false;
   }
 

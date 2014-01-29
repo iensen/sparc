@@ -1,5 +1,5 @@
 \documentclass[12pt, letterpaper]{article}
-
+\usepackage[hyphens]{url}
 \setlength{\topmargin}{-1.75cm} \setlength{\textheight}{22.5cm}
 \setlength{\oddsidemargin}{0.25cm}
 \setlength{\evensidemargin}{0.25cm} \setlength{\textwidth}{16.2cm}
@@ -9,10 +9,9 @@
 \usepackage{amsmath}
 \usepackage[normalem]{ulem}
 \usepackage{fontenc}
-\usepackage{hyperref}
 \usepackage{footnote}
-
-\usepackage{palatino, url, multicol, listings} % for multiple columns
+\usepackage[breaklinks]{hyperref}
+\usepackage{palatino, multicol, listings} % for multiple columns
 \lstset{mathescape=true, basicstyle=\ttfamily,}
 
 %\usepackage{pictex}
@@ -82,22 +81,38 @@
 
 \st For using the system, you need to have the following installed:
 \begin{enumerate}
-\item Java Runtime Environment (JRE) can be found here \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
+\item Java Runtime Environment (JRE) can be found at \\
+{\scriptsize
+\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}
+}.\\
 The system was tested on Java versions 1.6.0\_37 and 1.7.0\_25.
-\item The SPARC to ASP translator. It can be downloaded here: \url{https://github.com/iensen/sparc/blob/master/sparc.jar?raw=true}.
+\item The SPARC to ASP translator. It can be downloaded at \\ 
+{\scriptsize
+\url{https://github.com/iensen/sparc/blob/master/sparc.jar?raw=true}
+}.
 \item An ASP solver. It can be one of the following:
 \begin{enumerate} 
 \item DLV (recommended).
- \url{http://www.dlvsystem.com/dlv/#1}You need to download the \textit{static} version of the executable file.
-\item Clingo \url{http://sourceforge.net/projects/potassco/files/clingo/4.2.1}.
+{\scriptsize
+ \url{http://www.dlvsystem.com/dlv/#1}
+}. You need to download the \textit{static} version of the executable file.
+\item Clingo  {\scriptsize
+ \url{http://sourceforge.net/projects/potassco/files/clingo/4.2.1}
+}.
 \end{enumerate}
 
-\item (\textit{optional}) Swi-Prolog. \url{http://www.swi-prolog.org/}. This item is only required if option \textit{-wcon} is used for type warning detection.
+\item (\textit{optional}) Swi-Prolog. {\scriptsize \url{http://www.swi-prolog.org/}}. This item is only required if option \textit{-wcon} is used for type warning detection.
 (See sections \ref{option} and \ref{clp_type_warnings}).
 
 \end{enumerate}
 If you are using the dlv solver, rename the solver executable file to \textit{dlv} (\textit{dlv.exe} for windows).
-Be sure to add the path to the directory where the solver executable is located to the \texttt{PATH} system variable (see figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo).
+
+Be sure the PATH system variable includes the directory where the solver executable is located. For instructions on how to view/modify the PATH system variable, see either of the following links:\\
+{\scriptsize
+\url{http://www.java.com/en/download/help/path.xml}\\
+\url{http://www.cyberciti.biz/faq/appleosx-bash-unix-change-set-path-environment-variable/}\\
+}
+To check if the solver is installed correctly, run the command \texttt{dlv -v} (for dlv) or \\ \texttt{clingo - v} (for clingo). See figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo.
 
 \begin{figure}[p]
 \centering
@@ -222,12 +237,14 @@ an argument, and if so, we  describe its meaning.
 
 
   For the complete list of dlv options, see 
+  {\scriptsize
   \url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
-
+}
 
   For the complete list of clingo options, see 
+ {\scriptsize
   \url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
-
+}
   Note that the options "0"  is passed to clingo solver by default.
 
 \item \textbf{-Help, -H, -help, --Help, --help, -h}
@@ -728,21 +745,25 @@ DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 \section{${\cal SPARC}$ and ASPIDE}
 For using ${\cal SPARC}$ in ASPIDE, you will need to install ASPIDE version 1.37.1 or greater. Once it is installed, go to \textit{File -\textgreater Plug-ins -\textgreater Available plugins} menu, 
 and press install button in the row containing ${\cal SPARC}$ plug-in (see Fig.\ref{fig:plug_install}).
-\begin{figure}[p]
+\begin{figure}[ht]
 \centering
-\includegraphics[width=0.9\textwidth]{plugin.png}
+\includegraphics[width=0.7\textwidth]{plugin.png}
 \caption{Installing ${\cal SPARC}$ plugin}
 \label{fig:plug_install}
 \end{figure}
 
+
+\pagebreak
 Once the plugin is installed, you can create a source file and start coding (see Fig.\ref{fig:sparc_file}).
 You can execute queries and compute answer sets as for usual ASP file.
-\begin{figure}[p]
+\begin{figure}[ht]
 \centering
-\includegraphics[width=0.9\textwidth]{sparc_file.png}
+\includegraphics[width=0.7\textwidth]{sparc_file.png}
 \caption{Editing  ${\cal SPARC}$ source file}
 \label{fig:sparc_file}
 \end{figure}
+
+
 \bibliography{mybib}
 \bibliographystyle{plain}
 \end{document}

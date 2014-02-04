@@ -16,6 +16,4 @@ package utilities;
             this.first = first;
             this.second = second;
         }
-
-
 }

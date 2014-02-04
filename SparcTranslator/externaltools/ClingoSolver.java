@@ -28,19 +28,30 @@ public class ClingoSolver extends ExternalSolver {
 
 	@Override
 	public String run(boolean ignoreWarnings) {
-		String options=" 0 ";
+		String options = "";
+		
 		if(Settings.getSingletonInstance().getOptions()!=null)
-			options+=Settings.getSingletonInstance().getOptions();
-
+			options+=" "+ Settings.getSingletonInstance().getOptions()+" ";
+		else {
+			options=" 0 ";
+		}
+		
 		OsUtils.runCommand(pathToClingo, options, program);
 		String[] errorLines = OsUtils.errors.toString().split("\\n");
 		StringBuilder errors = new StringBuilder();
 		for (String line: errorLines) {
 			line = line.trim();
-			if(ignoreWarnings && !line.toLowerCase().startsWith("%") || !ignoreWarnings)
+			if(ignoreWarnings && line.indexOf(": warning:")==-1 || !ignoreWarnings)
 				errors.append(line);
-
 		}
+		
+		if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
+           	System.out.println(program);
+               throw new IllegalArgumentException(
+                       "constructed clingo program constructed contains errors: "
+                               + OsUtils.errors.toString());
+        }	
+		   
 		return OsUtils.result.toString();
 	}
 

@@ -12,8 +12,12 @@ public class WarningRuleCreator {
 				+ ", column: " + columnNumber + ")\"";
 
 		StringBuilder rule1 = new StringBuilder("has_grounding(" + ruleId
-				+ "):-");
-
+				+ ")");
+		
+        if(bodySortAtoms.size()>0) {
+        	rule1.append( ":-");
+        }
+        
 		for (int i = 0; i < bodySortAtoms.size(); i++) {
 			if (i != 0)
 				rule1.append(",");

@@ -8,9 +8,11 @@ import java.io.Reader;
 
 import org.junit.Test;
 
+import configuration.ASPSolver;
 import configuration.Settings;
 
 
+import externaltools.ClingoSolver;
 import externaltools.DLVSolver;
 import externaltools.ExternalSolver;
 
@@ -165,7 +167,7 @@ public class TestCorrectProgram {
 	
 	@Test
 	public void testSudoku() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/sudoku.sp"," -pfilter=warning ");
+		testFile("../test/programs/sudoku.sp");
 	}
 	
 	@Test
@@ -175,7 +177,7 @@ public class TestCorrectProgram {
 	
 	@Test
 	public void testUsaSP1() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/usaSP1.sp"," -filter=occurs");
+		testFile("../test/programs/usaSP1.sp");
 	}
 	
 	@Test
@@ -221,7 +223,9 @@ public class TestCorrectProgram {
 		        sr = new FileReader(filePath);
 		  } catch (FileNotFoundException e) {
 		        e.printStackTrace();
+		 
 		  }
+		  Settings.setSolver(ASPSolver.Clingo);
 		  SparcTranslator p= new SparcTranslator(sr);
 		  SimpleNode e=p.program();
 	      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
@@ -231,8 +235,10 @@ public class TestCorrectProgram {
 	      StringBuilder translatedProgram=new StringBuilder();
 	      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, true));
 	      System.out.println(translatedProgram);
-	      ExternalSolver solver = new DLVSolver(translatedProgram.toString());
-	      Settings.getSingletonInstance().setOptions(" -n=1  "+options);
-	      System.out.println(solver.run(false));
+	     // ExternalSolver solver = new DLVSolver(translatedProgram.toString());
+	    
+	      ExternalSolver solver= new ClingoSolver(translatedProgram.toString());
+	      Settings.getSingletonInstance().setOptions(" 0  "+options);
+	      System.out.println(solver.run(true));
 	 }
 }

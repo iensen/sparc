@@ -40,6 +40,7 @@ public class QueryEngine {
 		sc = new Scanner(System.in);
 		this.tc = tc;
 		this.answerSets = answerSets;
+	
 		try {
 			if (Settings.getSolver() == ASPSolver.DLV) {
 				solver = new DLVSolver();
@@ -56,6 +57,10 @@ public class QueryEngine {
 
 	public void run() {
 		QASTliteral query;
+		if(answerSets.size() == 0 ) {
+			System.err.println("ERROR: Your program is inconsistent");
+			return;
+		}
 		while (true) {
 			try {
 				query = readQuery();
@@ -180,9 +185,12 @@ public class QueryEngine {
 		ArrayList<AnswerSet> answerSets = answerSetParser
 				.getAnswerSets(solverOutPut);
 		// should be exactly oonstructASPProgramPrefix(query);ne answer set:
-		AnswerSet theOnlyAnswerSet = answerSets.get(0);
-		return theOnlyAnswerSet;
-
+		if(answerSets.size()<1) {
+			return null;
+		} else {
+		    AnswerSet theOnlyAnswerSet = answerSets.get(0);
+		    return theOnlyAnswerSet;
+		}
 	}
 
 	private String constructASPProgram(QASTatom query) {

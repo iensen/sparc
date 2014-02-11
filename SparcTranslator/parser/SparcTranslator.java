@@ -192,7 +192,7 @@ class Pair
       }
       if (sr == null) sr = new InputStreamReader(System.in);
       SparcTranslator p = new SparcTranslator(sr);
-      SimpleNode e = p.program();
+      SimpleNode programTree = p.program();
       //process regular expression
       InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
       tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
@@ -204,9 +204,9 @@ class Pair
         tr.setInputFileName(fileName);
         tc.setInputFileName(fileName);
       }
-      if(e.jjtGetNumChildren() >2)//if program is not empty      {
-        tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
-        translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, true));
+      if(programTree.jjtGetNumChildren() >2)//if program is not empty      {
+        tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
+        translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, true));
       }
       if(jArguments.outputFile != null)
       {

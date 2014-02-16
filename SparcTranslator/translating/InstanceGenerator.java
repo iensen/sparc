@@ -521,8 +521,14 @@ public class InstanceGenerator {
 			ASTconstantTermList termList = (ASTconstantTermList) curlyBrackets
 					.jjtGetChild(0);
 			return generateInstances(termList,generateRecords);
-		} else { // setExpression
+		} else if(child.getId() == SparcTranslatorTreeConstants.JJTSETEXPRESSION) { // setExpression
 			return generateInstances((ASTsetExpression) child,generateRecords);
+		} else  { //Functional symbol
+			if(generateRecords) {
+				return generateInstances((ASTfunctionalSymbol)child);
+			} else {
+				return new HashSet<String>();
+			}
 		}
 	}
 

@@ -393,6 +393,8 @@ public class RuleReducer {
 			return new PrimitiveFormula(new Term(termNode), gset);
 		case SparcTranslatorTreeConstants.JJTSETEXPRESSION:
 			return reduceTerm(termNode, (ASTsetExpression) child);
+		case SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL:
+			return reduceTerm(termNode, (ASTfunctionalSymbol)child);
 		default:
 			return null;
 		}

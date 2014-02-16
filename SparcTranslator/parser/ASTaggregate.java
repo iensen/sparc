@@ -34,7 +34,6 @@ class ASTaggregate extends SimpleNode {
 	  }
 	  sb.append(((ASTaggregateFunction)this.jjtGetChild(curIndex)).toString());
 	  ++curIndex;
-	  sb.append("{");
 	  sb.append(((ASTaggregateElements)this.jjtGetChild(curIndex)).toString());
 	  ++curIndex;
 	  sb.append("}");

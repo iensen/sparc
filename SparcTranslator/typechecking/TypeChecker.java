@@ -966,6 +966,8 @@ public class TypeChecker {
 			return checkTerm(term, (ASTcurlyBrackets) child);
 		case SparcTranslatorTreeConstants.JJTSETEXPRESSION:
 			return checkTerm(term, (ASTsetExpression) child);
+		case SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL:
+			return checkTerm(term,(ASTfunctionalSymbol)child);
 		default:
 			return false;
 		}

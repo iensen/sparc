@@ -87,13 +87,13 @@ public interface SparcTranslatorConstants {
   /** RegularExpression Id. */
   int HEAD_OR = 38;
   /** RegularExpression Id. */
-  int AGGREGATE_COUNT = 39;
+  int AGGREGATE_COUNT_OB = 39;
   /** RegularExpression Id. */
-  int AGGREGATE_SUM = 40;
+  int AGGREGATE_SUM_OB = 40;
   /** RegularExpression Id. */
-  int AGGREGATE_MIN = 41;
+  int AGGREGATE_MIN_OB = 41;
   /** RegularExpression Id. */
-  int AGGREGATE_MAX = 42;
+  int AGGREGATE_MAX_OB = 42;
   /** RegularExpression Id. */
   int OSB = 43;
   /** RegularExpression Id. */
@@ -163,10 +163,10 @@ public interface SparcTranslatorConstants {
     "\"$\"",
     "\"~\"",
     "\"|\"",
-    "\"#count\"",
-    "\"#sum\"",
-    "\"#min\"",
-    "\"#max\"",
+    "<AGGREGATE_COUNT_OB>",
+    "<AGGREGATE_SUM_OB>",
+    "<AGGREGATE_MIN_OB>",
+    "<AGGREGATE_MAX_OB>",
     "\"[\"",
     "\"]\"",
     "\"#\"",

@@ -293,8 +293,8 @@ This section starts with a keyword $sorts$ followed by a collection of sort defi
 \begin{verbatim}
   sort_name=sort_expression.
 \end{verbatim}
-
-The sort expression on the right hand side denotes collection of strings called $sorts$. We divide all the sorts into \textit{basic} and \textit{non-basic}. 
+\texttt{sort\_name} is an identifier preceeded by a pound sign \#.
+\texttt{sort\_expression}  on the right hand side denotes collection of strings called $sorts$. We divide all the sorts into \textit{basic} and \textit{non-basic}. 
 
 \st \textit{Basic sorts} are defined as named collections of identifiers, i.e, strings consisting of
 \begin{itemize}
@@ -308,33 +308,13 @@ Non-basic sorts also contain \textit{records} of the form $id(\alpha_1,\dots, \a
 $\alpha_1, \dots, \alpha_n$ are either identifiers or records. 
 
 
-\st We define sorts by means of expressions(in what follows sometimes referred as statements) of five types:
+\st We define sorts by means of expressions (in what follows sometimes referred as statements) of five types:
 
 \begin{enumerate}
- \item \textbf{set-theoretic expression}.
- \begin{verbatim}
-  set_expression := #sort_name | {ground_term_list}
-  set_expression := (set_expression) 
-                    | (set_expression + set_expression ) 
-                    | (set_expression * set_expression ) 
-                    | (set_expression - set_expression )
-  \end{verbatim}
-The operations $+$ $*$ and $-$ stand for union, intersection and difference correspondingly.
-\texttt{ground\_term\_list} is set of \textit{ground terms}, defined as follows:
-\begin{itemize}
- \item numbers and constants are ground terms;
- \item If $f$ is an identifier and $\alpha_1, \dots, \alpha_n$ are ground terms, then $f(\alpha_1,\dots, \alpha_n)$ is a ground term.
-\end{itemize}
-\textit{Example} : 
-\begin{verbatim}
- sort1={f(a),a,b,2}.
- sort2={1,2,3} + {a,b,f(c)} -  {f(a),a,b,2}.
-\end{verbatim}
-According to the definition, \texttt{sort1} consists of ground terms $\{f(a),a,b,2\}$, and \texttt{sort2} is $\{1,2,3,f(c)\}$ 
 
 \item \textbf{numeric range}.
 \begin{verbatim}
- numeric_range := number1 .. number2
+ numeric_range := number1..number2
 \end{verbatim}
 
 \textit{number1} should be smaller or equal than \textit{number2}. The expression defines the set 
@@ -343,16 +323,16 @@ of subsequent numbers $\{number1, number1+1, \dots, number2\}$
 \textit{Example:}
 
 \begin{verbatim}
- sort1=1..3
+ #sort1=1..3
 \end{verbatim}
-\texttt{sort1} consists of numbers $\{1,2,3\}$.
+\texttt{\#sort1} consists of numbers $\{1,2,3\}$.
 
 
 \item \textbf{identifier range}
 
 
 \begin{verbatim}
- id_range := id1 .. id2
+ id_range := id1..id2
 \end{verbatim}
 
 \textit{id1} should be lexicographically smaller or equal than \textit{id2}. 
@@ -364,35 +344,31 @@ The expression defines the set of all strings \\ S=$\{s: id1\leq s \leq id2 \lan
 \textit{Example:}
 
 \begin{verbatim}
- sort1=a..f.
+ #sort1=a..f.
 \end{verbatim}
-\texttt{sort1} consists of latin letters $\{a,b,c,d,e,f\}$.
 
-\item \textbf{concatenation}
+\texttt{\#sort1} consists of latin letters $\{a,b,c,d,e,f\}$.
+
+\item \textbf{set of ground terms}
+
+
 \begin{verbatim}
-concatenation := [b_stmt_1] ... [b_stmt_n]
+ ground_terms_set := {t_1,..,,t_n}
 \end{verbatim}
 
-\texttt{b\_stmt\_1}, $\dots$, \texttt{b\_stmt\_n} must be \textit{basic statements}, defined as follows:
-
-
+\texttt{ground\_terms\_set} denotes a set of ground terms $\{t_1,...,t_n\}$, defined as follows:
 \begin{itemize}
- \item statements of the forms (2)-(4) are basic
- \item statement $S$ of the form (1) is basic if:
- \begin{itemize}
-  \item all curly brackets occurring in $S$ contain only constants consisting of latin letters and digits
-  \item all sorts occurring in $S$ are defined by basic statements 
- \end{itemize}
+ \item numbers and constants are ground terms;
+ \item If $f$ is an identifier and $\alpha_1, \dots, \alpha_n$ are ground terms, then $f(\alpha_1,\dots, \alpha_n)$ is a ground term.
 \end{itemize}
-Note that basic statement can only define a basic sort not containing records.
-
-\textit{Example\footnote{We allow a shorthand `b` for singleton  set \{b\}}.:}
-
+\textit{Example} : 
 \begin{verbatim}
- sort1=[b][1..100].
+ #sort1={f(a),a,b,2}.
 \end{verbatim}
 
-\texttt{sort1} consists of identifiers $\{b1,b2,\dots, b100\}$.
+
+
+
 
 
 \item \textbf{record}
@@ -409,7 +385,7 @@ Note that basic statement can only define a basic sort not containing records.
 \end{verbatim}
 Variables \texttt{var\_1,...,var\_n} are optional as well as the condition.
 Condition can only contain variables from the list \texttt{var\_1,...,var\_n}.
-If there is a subcondion \texttt{var\_i REL var\_j}, where REL is either $\{>,\geq,<,\leq\}$ then \texttt{sortname\_i} and then \texttt{sortname\_j}
+If there is a subcondition \texttt{var\_i REL var\_j}, where REL is either $\{>,\geq,<,\leq\}$ then \texttt{sortname\_i} and then \texttt{sortname\_j}
 must be defined by basic statements.
 
 The expression defines a collection of ground terms 
@@ -421,7 +397,50 @@ The expression defines a collection of ground terms
  #sf=f(s(X),s(Y),s(Z)): (X=Y or Y=Z). 
 \end{verbatim}
 
-The sort \texttt{sf} consists of records $\{f(1,1,2),f(1,1,1),f(2,1,1)\}$
+The sort \texttt{\#sf} consists of records $\{f(1,1,2),f(1,1,1),f(2,1,1)\}$
+ \item \textbf{set-theoretic expression}.
+ \begin{verbatim}
+  set_expression := sort_name | ground_term_set|functional_term
+  set_expression := (set_expression) 
+                    | (set_expression + set_expression ) 
+                    | (set_expression * set_expression ) 
+                    | (set_expression - set_expression )
+  \end{verbatim}
+\texttt{sort\_name} must be a name of a sort occurring in one of the preceeding sort definitions. 
+The operations $+$ $*$ and $-$ stand for union, intersection and difference correspondingly.
+
+\textit{Example} : 
+\begin{verbatim}
+ #sort1={a,b,2}.
+ #sort2={1,2,3} + {a,b,f(c)} + f(#sort1).
+\end{verbatim}
+ \texttt{\#sort2} consists of ground terms $\{1,2,3,a,b,f(c),f(a),f(b),f(2)\}$.
+\item \textbf{concatenation}
+\begin{verbatim}
+concatenation := [b_stmt_1] ... [b_stmt_n]
+\end{verbatim}
+
+\texttt{b\_stmt\_1}, $\dots$, \texttt{b\_stmt\_n} must be \textit{basic statements}, defined as follows:
+
+
+\begin{itemize}
+ \item statements of the forms (1)-(3) are basic
+ \item statement $S$ of the form (5) is basic if:
+ \begin{itemize}
+ \item it does not contain sort expressions of the form (4), denoting sets of records
+  \item all curly brackets occurring in $S$ contain only constants consisting of latin letters and digits
+  \item all sorts occurring in $S$ are defined by basic statements 
+ \end{itemize}
+\end{itemize}
+Note that basic statement can only define a basic sort not containing records.
+
+\textit{Example\footnote{We allow a shorthand `b` for singleton  set \{b\}}.:}
+
+\begin{verbatim}
+ #sort1=[b][1..100].
+\end{verbatim}
+
+\texttt{sort1} consists of identifiers $\{b1,b2,\dots, b100\}$.
 
 \end{enumerate}
 
@@ -434,7 +453,7 @@ $predicates$
 \st and is followed by statements of the form
 
 \st
-$pred\_symbol(sortName,\dots,sortName)$
+$pred\_symbol(\#sortName,\dots,\#sortName)$
 
 \st
 

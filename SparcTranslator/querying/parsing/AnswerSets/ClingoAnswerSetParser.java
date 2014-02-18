@@ -18,7 +18,11 @@ public class ClingoAnswerSetParser extends AnswerSetParser{
           if(nextLine.startsWith("Answer")) {
               AnswerSet answerSet=new AnswerSet();
               String answerSetLine=sc.nextLine();
-              Collections.addAll(answerSet.atoms,answerSetLine.split("\\s+"));
+              if(answerSetLine.length()>0 && !answerSetLine.matches("/^\\s*$/")) {
+            	   String[] list= answerSetLine.split("\\s+");
+                   Collections.addAll(answerSet.atoms,list);
+              }
+           
               result.add(answerSet);
           }
         }

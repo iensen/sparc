@@ -52,7 +52,11 @@ public class StringListUtils {
 				lastBeginIndex=i+1;
 			}
 		}
-		arguments.add(argumentString.substring(lastBeginIndex,argumentString.length()));
+		String toAdd = argumentString.substring(lastBeginIndex,argumentString.length());
+		if(toAdd.length() != 0 && !toAdd.matches("/^\\s*$/") ) {
+			arguments.add(toAdd);
+		}
+		
 		return arguments;
 		
 	}

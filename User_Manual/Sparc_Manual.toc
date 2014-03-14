@@ -5,16 +5,18 @@
 \contentsline {section}{\numberline {3}Command Line Options}{5}{section.3}
 \contentsline {section}{\numberline {4}Syntax Description}{6}{section.4}
 \contentsline {subsection}{\numberline {4.1}Directives}{6}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Sort definitions}{7}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Predicate Declarations}{10}{subsection.4.3}
-\contentsline {subsection}{\numberline {4.4}Program Rules}{10}{subsection.4.4}
-\contentsline {section}{\numberline {5}Answer Sets}{11}{section.5}
-\contentsline {section}{\numberline {6}Typechecking}{12}{section.6}
-\contentsline {subsection}{\numberline {6.1}Type errors}{12}{subsection.6.1}
-\contentsline {subsubsection}{\numberline {6.1.1}Sort definition errors}{12}{subsubsection.6.1.1}
-\contentsline {subsubsection}{\numberline {6.1.2}Predicate declarations errors}{14}{subsubsection.6.1.2}
-\contentsline {subsubsection}{\numberline {6.1.3}Program rules errors}{14}{subsubsection.6.1.3}
-\contentsline {subsection}{\numberline {6.2}Type warnings}{14}{subsection.6.2}
-\contentsline {subsubsection}{\numberline {6.2.1}ASP based warning checking}{14}{subsubsection.6.2.1}
-\contentsline {subsubsection}{\numberline {6.2.2}Constraint solver based warning checking}{15}{subsubsection.6.2.2}
-\contentsline {section}{\numberline {7}${\cal SPARC}$ and ASPIDE}{16}{section.7}
+\contentsline {section}{\numberline {5}Syntax Description}{7}{section.5}
+\contentsline {subsection}{\numberline {5.1}Directives}{7}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Sort definitions}{7}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Predicate Declarations}{10}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Program Rules}{11}{subsection.5.4}
+\contentsline {section}{\numberline {6}Answer Sets}{11}{section.6}
+\contentsline {section}{\numberline {7}Typechecking}{12}{section.7}
+\contentsline {subsection}{\numberline {7.1}Type errors}{12}{subsection.7.1}
+\contentsline {subsubsection}{\numberline {7.1.1}Sort definition errors}{13}{subsubsection.7.1.1}
+\contentsline {subsubsection}{\numberline {7.1.2}Predicate declarations errors}{15}{subsubsection.7.1.2}
+\contentsline {subsubsection}{\numberline {7.1.3}Program rules errors}{15}{subsubsection.7.1.3}
+\contentsline {subsection}{\numberline {7.2}Type warnings}{15}{subsection.7.2}
+\contentsline {subsubsection}{\numberline {7.2.1}ASP based warning checking}{15}{subsubsection.7.2.1}
+\contentsline {subsubsection}{\numberline {7.2.2}Constraint solver based warning checking}{16}{subsubsection.7.2.2}
+\contentsline {section}{\numberline {8}${\cal SPARC}$ and ASPIDE}{17}{section.8}

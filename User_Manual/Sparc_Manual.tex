@@ -112,7 +112,7 @@ Be sure the PATH system variable includes the directory where the solver executa
 \url{http://www.java.com/en/download/help/path.xml}\\
 \url{http://www.cyberciti.biz/faq/appleosx-bash-unix-change-set-path-environment-variable/}\\
 }
-To check if the solver is installed correctly, run the command \texttt{dlv -v} (for dlv) or \\ \texttt{clingo - v} (for clingo). See figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo.
+To check if the solver is installed correctly, run the command \texttt{dlv -v} (for dlv) or \\ \texttt{clingo -v} (for clingo). See figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo.
 
 \begin{figure}[p]
 \centering
@@ -271,7 +271,7 @@ Specify the file where the sparc program is located.
 Directives should be written before sort definitions, at the very beginning of a program.
 ${\cal SPARC}$ allows two types of directives:
 \subsection*{\#maxint}
-Directive \#maxint specifies maximal nonnegative number which could be used in arithmetic calculations. For example,
+Directive \#maxint specifies the maximum nonnegative number that could be used in arithmetic calculations. For example,
 \begin{verbatim}
  #maxint=15.
 \end{verbatim}
@@ -283,61 +283,81 @@ Directive \#const allows one to define constant values. The syntax is:
    #const constantName = constantValue.
 \end{verbatim}      
 \st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
- and $constantValue$ is either a nonnegative number or the name of another constant defined above.  
+ and $constantValue$ is either a nonnegative number or the name of another constant defined before it.  
+
+
+\section{Syntax Description}
+
+\subsection{Directives}
+Directives should be written before sort definitions, at the very beginning of a program.
+${\cal ELPS}$ allows two types of directives:
+\subsection*{\#maxint}
+Directive \#maxint specifies the maximum nonnegative number that could be used in arithmetic calculations.
+For example,
+\begin{verbatim}
+ #maxint=15.
+\end{verbatim}
+\st limits integers to [0,15].
+\subsection*{\#const}
+Directive \#const allows one to define constant values. The syntax is:
+
+\begin{verbatim}
+   #const constantName = constantValue.
+\end{verbatim}      
+\st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
+ and $constantValue$ is either a nonnegative number or the name of another constant defined before it.  
 
 
 \subsection{Sort definitions}\label{ss}
 
 This section starts with a keyword $sorts$ followed by a collection of sort definitions of the form:
 
-\begin{verbatim}
-  sort_name=sort_expression.
-\end{verbatim}
-\texttt{sort\_name} is an identifier preceeded by a pound sign \#.
-\texttt{sort\_expression}  on the right hand side denotes collection of strings called $sorts$. We divide all the sorts into \textit{basic} and \textit{non-basic}. 
+\begin{equation*}
+  sort\_name=sort\_expression.
+\end{equation*}
+\textit{sort\_name} is an identifier preceeded by the pound sign (\#).
+\textit{sort\_expression}  on the right hand side denotes a collection of strings called  $a~sort$. We divide all the sorts into \textit{basic sorts} and \textit{non-basic sorts}. 
 
-\st \textit{Basic sorts} are defined as named collections of identifiers, i.e, strings consisting of
+\st \textit{Basic sorts} are defined as named collections of numbers and \textit{identifiers}, i.e, strings consisting of
 \begin{itemize}
- \item latin letters: $\{a,b,c,d,...,z,A,B,C,D,...,Z\}$
+ \item letters: $\{a,b,c,d,...,z,A,B,C,D,...,Z\}$
  \item digits: $\{0,1,2,...,9\}$
  \item underscore: $\_$
 \end{itemize}
-and either starting from a letter or containing only digits.
+and starting with a lowercase letter.
 
-Non-basic sorts also contain \textit{records} of the form $id(\alpha_1,\dots, \alpha_2)$, where id is an identifier and 
-$\alpha_1, \dots, \alpha_n$ are either identifiers or records. 
+A \textit{non-basic sort} also contains at least one \textit{record} of the form $id(\alpha_1,\dots, \alpha_n)$ where $id$ is an identifier and 
+$\alpha_1, \dots, \alpha_n$ are either identifiers, numbers or records. 
 
 
-\st We define sorts by means of expressions (in what follows sometimes referred as statements) of five types:
+\st We define sorts by means of expressions (in what follows sometimes referred to as statements) of six types:
 
 \begin{enumerate}
 
-\item \textbf{numeric range}.
-\begin{verbatim}
- numeric_range := number1..number2
-\end{verbatim}
-
-\textit{number1} should be smaller or equal than \textit{number2}. The expression defines the set 
-of subsequent numbers $\{number1, number1+1, \dots, number2\}$
+\item
+\textbf{numeric range} is of the form:
+\begin{equation*}
+number_1..number_2
+\end{equation*}
+where $number_1$ and $number_2$ are non-negative numbers such that $number_1 \le number_2$. The expression defines the set 
+of sequential numbers \\$\{number_1, number_1+1, \dots, number_2\}$.
 
 \textit{Example:}
 
 \begin{verbatim}
- #sort1=1..3
+ #sort1=1..3.
 \end{verbatim}
 \texttt{\#sort1} consists of numbers $\{1,2,3\}$.
 
 
-\item \textbf{identifier range}
+\item \textbf{identifier range} is of the form:
 
-
-\begin{verbatim}
- id_range := id1..id2
-\end{verbatim}
-
-\textit{id1} should be lexicographically smaller or equal than \textit{id2}. 
-\textit{id1} and \textit{id2} should both consist of digits and letters and start from a lowercase letter.
-The expression defines the set of all strings \\ S=$\{s: id1\leq s \leq id2 \land |id1|\leq |s| \leq |id2|\}$
+\begin{equation*}
+  id_1..id_2
+\end{equation*}
+where $id_1$ and $id_2$ are identifiers both starting with a lowercase letter.
+$id_1$ should be lexicographically \footnote{ The Unicode (UTF-16) is used for  ordering of individual characters} smaller than or equal to  $id_2$, and the length of $id_1$ must be less than or equal to the length of $id_2$. That is,  $id_1 \leq id_2$ and $|id_1| \leq |id_2|$.
+The expression defines the set of strings  $\{s: id_1\leq s \leq id_2 \land |id_1|\leq |s| \leq |id_2|\}$.
 
 
 
@@ -347,18 +367,16 @@ The expression defines the set of all strings \\ S=$\{s: id1\leq s \leq id2 \lan
  #sort1=a..f.
 \end{verbatim}
 
-\texttt{\#sort1} consists of latin letters $\{a,b,c,d,e,f\}$.
+\texttt{\#sort1} consists of letters $\{a,b,c,d,e,f\}$.
 
-\item \textbf{set of ground terms}
+\item \textbf{set of ground terms} is of the form:
 
-
-\begin{verbatim}
- ground_terms_set := {t_1,..,,t_n}
-\end{verbatim}
-
-\texttt{ground\_terms\_set} denotes a set of ground terms $\{t_1,...,t_n\}$, defined as follows:
+\begin{equation*}
+\{t_1,..,,t_n\}
+\end{equation*}
+The expression denotes a set of \textit{ground terms} $\{t_1,...,t_n\}$, defined as follows:
 \begin{itemize}
- \item numbers and constants are ground terms;
+ \item numbers and identifiers are ground terms;
  \item If $f$ is an identifier and $\alpha_1, \dots, \alpha_n$ are ground terms, then $f(\alpha_1,\dots, \alpha_n)$ is a ground term.
 \end{itemize}
 \textit{Example} : 
@@ -371,25 +389,26 @@ The expression defines the set of all strings \\ S=$\{s: id1\leq s \leq id2 \lan
 
 
 
-\item \textbf{record}
+\item \textbf{set of records} is of the form:
 
-
-\begin{verbatim}
- functional_term := f(sort_name1(var_1),..., sort_namen(var_n)):
+\begin{equation*}
+f(sort\_name_1(var_1),..., sort\_name_n(var_n)):
                                      condition(var_1,...,var_n)
- condition(var_1,...,var_n) := var_i REL var_j 
- condition(var_1,...,var_n) :=   condition and condition 
-              | condition or condition 
-              | not(condition) 
-              | (condition)
-\end{verbatim}
-Variables \texttt{var\_1,...,var\_n} are optional as well as the condition.
-Condition can only contain variables from the list \texttt{var\_1,...,var\_n}.
-If there is a subcondition \texttt{var\_i REL var\_j}, where REL is either $\{>,\geq,<,\leq\}$ then \texttt{sortname\_i} and then \texttt{sortname\_j}
-must be defined by basic statements.
+\end{equation*}
+where $f$ is an identifier, for $ 1\leq i\leq m$ $sort\_name_i$ occurs in one of the preceeding sort definitions and  the condition on variables $var_1,...,var_n$ (written as $condition(var_1,...,var_n)$) is defined as follows:
+\begin{itemize}
+\item if $var_i$ and $var_j$ occur in the sequence  $var_1,...,var_n$ and $\odot$ is an element of $\{>,<,\le,\ge\}$, then $var_i \odot var_j$ is a condition on   $var_1,...,var_n$.
+\item if $\mathcal{C}_1$ and $\mathcal{C}_2$ are both conditions on  $var_1,...,var_n$, and $\oplus$ is an element of  $\{\cup,\cap\}$, then
+$(\mathcal{C}_1 \oplus \mathcal{C}_2)$ is a condition on  $var_1,...,var_n$.
+\item if $\mathcal{C}$ is a  condition on  $var_1,...,var_n$, then $not(\mathcal{C})$ is also a condition on  $var_1,...,var_n$.
+\end{itemize}
+Variables $var_1,...,var_n$ occurring in parenthesis after sort names are optional as well as the condition :$condition(var_1,...,var_n)$.
+
+If a condition contains a subcondition $var_i~\odot~var_j$,  then the sorts  $sortname_i$ and  $sortname_j$
+must be defined by basic statements (the definition of a basic statement is given below after the definition of a concatenation statement).
 
 The expression defines a collection of ground terms 
-\\ $\{f(t_1,\dots,t_n): condition(t_1,\dots, t_n)~is~true \land t_1 \in s_i \land \dots \land t_n \in s_n\}$
+\\ $\{f(t_1,\dots,t_n):  t_1 \in s_i \land \dots \land t_n \in s_n \land (condition(X_1,\dots, X_n)|_{X_1 = t_1,\dots,X_n = t_n})\}$
 
 \textit{Example}
 \begin{verbatim}
@@ -398,16 +417,17 @@ The expression defines a collection of ground terms
 \end{verbatim}
 
 The sort \texttt{\#sf} consists of records $\{f(1,1,2),f(1,1,1),f(2,1,1)\}$
- \item \textbf{set-theoretic expression}.
- \begin{verbatim}
-  set_expression := sort_name | ground_term_set|functional_term
-  set_expression := (set_expression) 
-                    | (set_expression + set_expression ) 
-                    | (set_expression * set_expression ) 
-                    | (set_expression - set_expression )
-  \end{verbatim}
-\texttt{sort\_name} must be a name of a sort occurring in one of the preceeding sort definitions. 
+ \item \textbf{set-theoretic expression} can be in one of the following forms:
+\begin{itemize}
+\item $\#sort\_name$  
+\item an expression of the form (3), denoting a set of ground terms
+\item an expression of the form (4), denoting a set of records
+\item $(S_1 \bigtriangledown S_2)$, where $\bigtriangledown \in \{+,-,*\}$ and both $S_1$ and $S_2$ are set theoretic expressions
+\end{itemize}
+
+$\#sort\_name$ must be a name of a sort occurring in one of the preceeding sort definitions. 
 The operations $+$ $*$ and $-$ stand for union, intersection and difference correspondingly.
+\pagebreak
 
 \textit{Example} : 
 \begin{verbatim}
@@ -415,12 +435,12 @@ The operations $+$ $*$ and $-$ stand for union, intersection and difference corr
  #sort2={1,2,3} + {a,b,f(c)} + f(#sort1).
 \end{verbatim}
  \texttt{\#sort2} consists of ground terms $\{1,2,3,a,b,f(c),f(a),f(b),f(2)\}$.
-\item \textbf{concatenation}
-\begin{verbatim}
-concatenation := [b_stmt_1] ... [b_stmt_n]
-\end{verbatim}
+\item \textbf{concatenation} is of the form
+\begin{equation*}
+ [b\_stmt_1] ... [b\_stmt_n]
+\end{equation*}
 
-\texttt{b\_stmt\_1}, $\dots$, \texttt{b\_stmt\_n} must be \textit{basic statements}, defined as follows:
+$b\_stmt_1, \dots, b\_stmt_n$ must be \textit{basic statements}, defined as follows:
 
 
 \begin{itemize}
@@ -428,11 +448,11 @@ concatenation := [b_stmt_1] ... [b_stmt_n]
  \item statement $S$ of the form (5) is basic if:
  \begin{itemize}
  \item it does not contain sort expressions of the form (4), denoting sets of records
-  \item all curly brackets occurring in $S$ contain only constants consisting of latin letters and digits
+  \item none of curly brackets occurring in $S$ contains a record
   \item all sorts occurring in $S$ are defined by basic statements 
  \end{itemize}
 \end{itemize}
-Note that basic statement can only define a basic sort not containing records.
+Note that basic statement can only define a basic sort.
 
 \textit{Example\footnote{We allow a shorthand `b` for singleton  set \{b\}}.:}
 
@@ -443,23 +463,26 @@ Note that basic statement can only define a basic sort not containing records.
 \texttt{sort1} consists of identifiers $\{b1,b2,\dots, b100\}$.
 
 \end{enumerate}
-
 \subsection{Predicate Declarations}
 
-\noindent  The second part of a  ${\cal SPARC}$ program starts with the keyword
+\noindent  The second part of a  ${\cal ELPS}$ program starts with the keyword
 \st
 $predicates$
 
 \st and is followed by statements of the form
 
+\begin{equation*}
+pred\_symbol(\#sortName_1,\dots,\#sortName_n)
+\end{equation*}
 \st
-$pred\_symbol(\#sortName,\dots,\#sortName)$
 
-\st
+Where $pred\_symbol$ is an identifier (in what follows referred to as a predicate symbol) and  $\#sortName_1$,\dots,$\#sortName_n$ are sorts defined in sort definitions section of the program.
+
+
 
 Multiple declarations containing the same predicate symbol are not allowed.
 0-arity predicates must be declared as $pred\_symbol()$.
-\st For any sort name $SN$, the system includes declaration  $SN(SN)$ automatically.
+\st For any sort name $\#s$, the system includes declaration  $\#s(\#s)$ automatically. 
 
 \subsection{Program Rules}
 
@@ -471,7 +494,7 @@ Multiple declarations containing the same predicate symbol are not allowed.
 CR-rules are of the following form:
 
 \begin{equation}
-   [label:] l_0 \lplus l_1,  \ldots, l_k, not~l_{k+1} \ldots not~l_{n}
+   [label:] l_0 \lplus l_1,  \ldots, l_k, not~l_{k+1} \ldots not~l_{n}.
  \end{equation}
 where $l$'s are literals.
 Literals occurring in the heads of the rules must not be formed by predicate symbols
@@ -479,7 +502,7 @@ occurring as sort names in sort definitions. In addition, rules must not contain
 
 \begin{definition}(Unrestricted Variable)
  A variable occurrung in a rule of a ${\cal SPARC}$ program is called unrestriced if all its occurrences in the rule either belong to some relational atoms of the form 
-$term1$ \textbf{rel} $term2$ (where \textbf{rel} $\in  \{>,>=,<,<=,=,!=$\})  and/or  some terms appearing in a head of a choice or aggregate element. 
+$term1$ \textbf{rel} $term2$ (where \textbf{rel} $\in  \{>,>=,<,<=,=,!=$\})  and/or  some term appearing in a head of a choice or aggregate element. 
 \end{definition}
 \begin{example}
 \em{
@@ -548,22 +571,24 @@ Cost ([Weight:Level]): <[1:1]>
 first cr-rule from the program was applied.
 
 \section{Typechecking}
-If no syntax errors, are found,  a static check program is performed all found type-related problems, classified into type errors and type errors.
+If no syntax errors are found, a static check of the program is performed. Any type-related problems found during this check are classified into type errors and type warnings.
 \subsection{Type errors}
-Type errors are considered as serious issues which make it  impossible to complied and execute the program.
-Type errors can occur in all four section of a ${\cal SPARC}$ program.
+Type errors are considered as serious issues which make it  impossible to compile and execute the program.
+Type errors can occur in all four sections of a ${\cal ELPS}$ program.
 \subsubsection{Sort definition errors}
+The following are possible causes of a sort definition error  that will result in a type error  message from ELPS:
 \begin{enumerate}
-\item  Set-theoretic expression (statement (2) in section \ref{ss}) contains a name of undefined sort.
+\item  A set-theoretic expression (statement 5 in section \ref{ss}) containing a sort name that has not been defined.
 
 \textit{Example:}
 \begin{verbatim}
  sorts
  #s={a}.
- #s2=#s1-s.
+ #s2=#s1-#s.
 \end{verbatim}
 
-\item  Sort with the same name is defined more than once.
+\item  Declaring a sort more than once.
+
 \textit{Example:}
 \begin{verbatim}
  sorts
@@ -571,14 +596,16 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
  #s={b}.
 \end{verbatim}
 
-\item In an identifier range id1.. id2 (statement (2) in section \ref{ss}) the first identifier(id1) is lexicographically greater than id2.
-\textit{Example}
+\item An identifier range $id_1..id_2$ (statement 2 in section \ref{ss}) where $id_1$ is greater than $id_2$.
+
+\textit{Example:}
 \begin{verbatim}
  sorts
  #s=zbc..cbz.
 \end{verbatim}
 
-\item In a numeric range $n1..n2$ (statement (2) in section \ref{ss})  n1 is greater than n2.
+\item A numeric range $n_1..n_2$ (statement 1 in section \ref{ss}) where  $n_1$ is greater than $n_2$.
+
 \textit{Example:}
 \begin{verbatim}
  sorts
@@ -586,15 +613,16 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 \end{verbatim}
 
 
-\item Numeric range (statement (2) in section \ref{ss}) $n1..n2$  contains an undefined constant.
+\item A numeric range (statement 2 in section \ref{ss}) $n_1..n_2$ that  contains an undefined constant.
 
+\textit{Example:}
 \begin{verbatim}
  #const n1=5.
  sorts
  #s=n1..n2.
 \end{verbatim}
 
-\item In an identifier range $id1..id2$ (statement (3) in section \ref{ss})  the length of the first identifier(id1) is greater than length of the second. 
+\item An identifier range $id_1..id_2$ (statement 3 in section \ref{ss}) where  the length of $id_1$ is greater than the length of $id_2$. 
 
 
 \textit{Example:}
@@ -603,7 +631,7 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
  #s=abc..a.
 \end{verbatim}
 
-\item Concatenation (statement  (4) in section \ref{ss}) contains a non-basic sort.
+\item A concatenation (statement  4 in section \ref{ss}) that contains a non-basic sort.
 
 \textit{Example:}
 \begin{verbatim}
@@ -614,7 +642,7 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 
 
 
-\item Record definition (statement (5) in section \ref{ss}) contains an undefined sort.
+\item A record definition (statement 5 in section \ref{ss}) that contains an undefined sort.
 
 \textit{Example:}
 \begin{verbatim}
@@ -625,8 +653,9 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 
 
 
-\item Definition of record (statement (5) in section \ref{ss}) contains a condition with relation $>,<,\geq,\leq$ such that the
+\item A record definition  (statement 5 in section \ref{ss}) that contains a condition with relation $>,<,\geq,\leq$ such that the
    corresponding sorts are not basic.
+
 \textit{Example:}
 \begin{verbatim}
 #s={a,b}.
@@ -634,7 +663,7 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
 #s2=g(s1(X),s2(Y)):X>Y.
 \end{verbatim}
 
-\item  Variable is used more than once in record definition(statement  (5) in section \ref{ss}).
+\item  A variable that is used more than once in a record definition (statement  5 in section \ref{ss}).
 
 \textit{Example:}
 
@@ -643,7 +672,7 @@ Type errors can occur in all four section of a ${\cal SPARC}$ program.
  #s1={a}.
  #s=f(#s1(X),#s1(X)):(X!=X).
 \end{verbatim}
-\item Sort contains an empty collection of ground terms.
+\item A sort that contains an empty collection of ground terms.
 
 \textit{Example}
 \begin{verbatim}

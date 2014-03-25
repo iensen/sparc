@@ -43,7 +43,7 @@ public class ClingoSolver extends ExternalSolver {
 			line = line.trim();
 			System.out.println(line);
 			System.out.println(ignoreWarnings);
-			if(ignoreWarnings && line.indexOf("% warning:")!=-1 || !ignoreWarnings)
+			if(ignoreWarnings && (line.indexOf("% warning:")!=-1 || line.indexOf(": warning:")!=-1) || !ignoreWarnings)
 				errors.append(line);
 		}
 		

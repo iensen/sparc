@@ -41,10 +41,10 @@ public class ClingoSolver extends ExternalSolver {
 		StringBuilder errors = new StringBuilder();
 		for (String line: errorLines) {
 			line = line.trim();
-			System.out.println(line);
-			System.out.println(ignoreWarnings);
-			if(ignoreWarnings && (line.indexOf("% warning:")!=-1 || line.indexOf(": warning:")!=-1) || !ignoreWarnings)
+			if(ignoreWarnings && line.indexOf("% warning:")!=-1 && line.indexOf(": warning:")!=-1 ||!ignoreWarnings) {
 				errors.append(line);
+			}
+			
 		}
 		
 		if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {

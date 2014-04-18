@@ -104,7 +104,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.42");
+    System.err.println("SPARC  V2.43");
 
     Arguments jArguments = new Arguments();
     try

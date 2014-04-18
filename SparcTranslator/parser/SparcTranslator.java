@@ -104,7 +104,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.43");
+    System.err.println("SPARC  V2.44");
 
     Arguments jArguments = new Arguments();
     try
@@ -256,7 +256,7 @@ class Pair
     }
     else
     {
-      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(solver.run(false)), tc);
+      QueryEngine qe = new QueryEngine(aParser.getAnswerSets(solver.run(true)), tc);
       qe.run();
     }
   }

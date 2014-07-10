@@ -285,9 +285,6 @@ Directive \#const allows one to define constant values. The syntax is:
 \st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
  and $constantValue$ is either a nonnegative number or the name of another constant defined before it.  
 
-
-\section{Syntax Description}
-
 \subsection{Directives}
 Directives should be written before sort definitions, at the very beginning of a program.
 ${\cal ELPS}$ allows two types of directives:
@@ -782,26 +779,129 @@ DLV [build BEN/Dec 16 2012   gcc 4.6.1]
 \st is an indicator of a potential problem.
 \pagebreak
 \section{${\cal SPARC}$ and ASPIDE}
-For using ${\cal SPARC}$ in ASPIDE, you will need to install ASPIDE version 1.37.1 or greater. Once it is installed, go to \textit{File -\textgreater Plug-ins -\textgreater Available plugins} menu, 
+\subsection{Installation}
+
+For using ${\cal SPARC}$ in ASPIDE, you will need to install ASPIDE(version 1.42 or greater). 
+The installer is available from {\scriptsize
+\url{https://www.mat.unical.it/ricca/aspide/download.html}
+}. See the instructions here:  {\scriptsize
+\url{https://www.mat.unical.it/ricca/aspide/documentation.html}
+}.  Once ASPIDE is installed, go to \textit{File -\textgreater Plug-ins -\textgreater Available plugins} menu, 
 and press install button in the row containing ${\cal SPARC}$ plug-in (see Fig.\ref{fig:plug_install}).
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.7\textwidth]{plugin.png}
+\includegraphics[width=0.9\textwidth]{plugin.png}
 \caption{Installing ${\cal SPARC}$ plugin}
 \label{fig:plug_install}
 \end{figure}
 
 
 \pagebreak
-Once the plugin is installed, you can create a source file and start coding (see Fig.\ref{fig:sparc_file}).
-You can execute queries and compute answer sets as for usual ASP file.
+\subsection{Creating Projects and Adding  ${\cal SPARC}$  source files}
+ASPIDE uses \textit{workspaces} to store projects. Workspace is a folder that can contain multiple projects. ASPIDE can have only one workspace opened, that is selected by a user when ASPIDE starts. Source files should belong to a project to be used by  ASPIDE query engine and answer set computation tools. 
+
+\begin{itemize}
+\item To create a new project, go to the menu \textit{File -\textgreater New} and select \textit{New Project} submenu. Specify the project name in the pop-up window and click on \textbf{Finish} button. You should see a new project appeared in \textbf{workspace explorer}. 
+\item To add a new SPARC file, right click on the project to display context menu and select \textit{New -\textgreater File -\textgreater SPARC File} as it is shown on Figure \ref{fig:createfile} . Choose the file name in the pop-up window. You should see a new file added under the project in workspace explorer and displayed in ASPIDE editor window.
+\end{itemize}
+
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.7\textwidth]{sparc_file.png}
-\caption{Editing  ${\cal SPARC}$ source file}
-\label{fig:sparc_file}
+\includegraphics[width=0.9\textwidth]{project.png}
+\caption{Adding  ${\cal SPARC}$ source file }
+\label{fig:createfile}
+\end{figure}
+  
+\subsection{Executing queries and computing Answer sets} 
+You can execute queries and compute answer sets as for usual ASP file.
+To execute a query, open a sparc file in the ASPIDE editor and click on the button with a question mark in the toolbar:
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{openqueries.jpg}
+\caption{Open Query Interface}
+\label{fig:openqueries}
 \end{figure}
 
+A window will appear where you can input and run queries.
+To run a query, 
+\begin{itemize}
+\item mark \textbf{Epistemic Mode} checkbox (this is to follow the definition of query given in the class)
+\item input your query into editbox named \textbf{Query} or select one from history
+\end{itemize}
+The results will appear in the listview named \textbf{Results}.
+See fig \ref{fig:runquery} for details.
+\pagebreak
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{runquery.jpg}
+\caption{Execute a query}
+\label{fig:runquery}
+\end{figure}
+\pagebreak
+
+To compute answer sets of the program, press the button with green arrow marked on figure \ref{fig:ansshow}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{toolbarans.jpg}
+\caption{Open answer sets window}
+\label{fig:ansshow}
+\end{figure}
+
+In the appeared \textbf{Run Configurations} window: 
+\begin{itemize}
+\item make sure a correct path to dlv in selected in \textbf{Executable} listbox. 
+\item press \textbf{Run} button to see the answer sets
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{answindow.jpg}
+\caption{Run configurations window}
+\label{fig:ansset}
+\end{figure}
+\pagebreak
+
+In the displayed window, answer sets are grouped by predicate symbols in their literals.
+On figure \ref{fig:ansres}, two answer sets are shown. The first one  contains two literals $p(a,b)$ and $p(e,f)$ and some literals with predicate symbol $q$.  
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{results.jpg}
+\caption{Answer Sets}
+\label{fig:ansres}
+\end{figure}
+
+
+
+ 
+\subsection{Warnings Checking}
+
+To see allow ASPIDE to show warnings (section \ref{type_warnings}), you need to install swi-prolog on your system. Swi-prolog is available from  {\scriptsize
+\url{http://www.swi-prolog.org/Download.html}
+} 
+
+After swi-prolog is installed, go to the ASPIDE menu \textit{File -\textgreater Preferences}. In the appeared window select the tab \textbf{Executables/Solvers} and add a new \textit{executable} named \textit{swipl} with a path pointing to the swi-prolog executable. Usually, it is named \textit{swipl} in Unix/MacOS operating system and \textit {swipl.exe} in Windows. Click on \textbf{Save} button to close the window.
+See the details on figure \ref{fig:addswipl}.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{swipl_add.jpg}
+\caption{Adding swi-prolog executable}
+\label{fig:addswipl}
+\end{figure}
+\pagebreak
+After the executable is added, you need to specify a flag property for the ${\cal SPARC}$ plug-in to make it check warnings.
+Go to ASPIDE menu \textit{File -\textgreater Plug-ins -\textgreater  Manage Plug-ins}. In the appeared window click on the cell Properties in SPARC plug-in line and add a new property \texttt{CHECK\_WARNINGS=TRUE} as it is shown on figure \ref{fig:addprop}.
+Click on \textbf{Close} button to save the results.
+\textbf{RESTART ASPIDE FOR THE NEW CHANGES TO TAKE EFFECT}. 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{property.jpg}
+\caption{Adding swi-prolog executable}
+\label{fig:addprop}
+\end{figure}
+\pagebreak
+After the restart, you should be able to see the warnings in the  left lower corner of aspide interface (\textbf{Error Console}). 
 
 \bibliography{mybib}
 \bibliographystyle{plain}

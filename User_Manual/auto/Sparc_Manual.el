@@ -20,7 +20,14 @@
      "asp_type_warnings"
      "clp_type_warnings"
      "fig:plug_install"
-     "fig:sparc_file")
+     "fig:createfile"
+     "fig:openqueries"
+     "fig:runquery"
+     "fig:ansshow"
+     "fig:ansset"
+     "fig:ansres"
+     "fig:addswipl"
+     "fig:addprop")
     (TeX-add-symbols
      '("blk" 2)
      '("ee" 1)

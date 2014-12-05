@@ -170,6 +170,16 @@ public class TestError {
 				getError("../test/errors/unrestr.sp"),
 				"null: program rule p(f(X)):-Y<2,Z<2,F>3,#count{Q:Q<W,p(W),T<2},p(Y). at line 6, column 1 contains unrestricted global variables F,T,Z and unrestricted local variables Q");
 	}
+	
+
+	@Test
+	public void testUnrestr_local() throws FileNotFoundException {
+		assertEquals("Error message was wrong",
+				getError("../test/errors/unrestr_local.sp"),
+				"null: program rule p(Z):-#count{X:p(Y)}. at line 6, column 1 contains unrestricted local variables X");
+	}
+	
+	
 
 	private String getError(String filePath) throws FileNotFoundException {
 		Reader sr = null;

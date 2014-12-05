@@ -509,15 +509,25 @@ public class Translator {
 		}
 	}
 
-	private HashSet<String> findBodyVariables(SimpleNode node) {
+	// find all global variables occurring in the body of the rule
+	
+	private HashSet<String> findBodyGlobalVariables(SimpleNode node) {
 		HashSet<String> vars = new HashSet<String>();
-		if(node.getId() == SparcTranslatorTreeConstants.JJTBODY) {
-			VariableFetcher vf = new VariableFetcher();
-			vf.fetchVariables(node,vars);
-			return vars;
+		
+		if(node.getId() == SparcTranslatorTreeConstants.JJTBODY) {	
+			for(int i=0;i<node.jjtGetNumChildren();i++) {
+				SimpleNode atom = (SimpleNode)node.jjtGetChild(i);
+		        SimpleNode atomChild = (SimpleNode) atom.jjtGetChild(0);
+		        if(atomChild.getId() != SparcTranslatorTreeConstants.JJTAGGREGATE) {
+		        	VariableFetcher vf = new VariableFetcher();
+					vf.fetchVariables(atomChild,vars);
+		        }
+			}
+			
 		}
+		
 		for(int i=0;i<node.jjtGetNumChildren();i++) {
-		 vars = findBodyVariables((SimpleNode)node.jjtGetChild(i));
+		 vars = findBodyGlobalVariables((SimpleNode)node.jjtGetChild(i));
 			if(vars!= null)
 				return vars;			
 		}
@@ -528,7 +538,7 @@ public class Translator {
 			HashMap<String, String> originalNameMapping) {
 		
 		if(n.getId() == SparcTranslatorTreeConstants.JJTPROGRAMRULE) {
-			HashSet<String> bodyVariables = findBodyVariables(n);
+			HashSet<String> bodyVariables = findBodyGlobalVariables(n);
 			if(bodyVariables == null)
 				bodyVariables = new HashSet<String>();
 			renamer.setBodyVariables(bodyVariables);
@@ -790,7 +800,7 @@ public class Translator {
 					  "global variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.first, ","):"") +
 					(unrestrictedVariablesLists.second.size()>0 ?
 							((unrestrictedVariablesLists.first.size()>0)? " and ":"")+
-					"unrestricted local variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.second, ","):""));
+					"local variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.second, ","):""));
 					
 		}
 		arithmeticVariables.removeAll(simpleOccurVariables);

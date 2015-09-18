@@ -285,24 +285,7 @@ Directive \#const allows one to define constant values. The syntax is:
 \st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
  and $constantValue$ is either a nonnegative number or the name of another constant defined before it.  
 
-\subsection{Directives}
-Directives should be written before sort definitions, at the very beginning of a program.
-${\cal ELPS}$ allows two types of directives:
-\subsection*{\#maxint}
-Directive \#maxint specifies the maximum nonnegative number that could be used in arithmetic calculations.
-For example,
-\begin{verbatim}
- #maxint=15.
-\end{verbatim}
-\st limits integers to [0,15].
-\subsection*{\#const}
-Directive \#const allows one to define constant values. The syntax is:
-
-\begin{verbatim}
-   #const constantName = constantValue.
-\end{verbatim}      
-\st where $constantName$  must begin with a lowercase letter and may be composed of letters, underscores and digits,
- and $constantValue$ is either a nonnegative number or the name of another constant defined before it.  
+  
 
 \subsection{Sort definitions}\label{ss}
 
@@ -455,7 +438,7 @@ Note that basic statement can only define a basic sort.
 \end{enumerate}
 \subsection{Predicate Declarations}
 
-\noindent  The second part of a  ${\cal ELPS}$ program starts with the keyword
+\noindent  The second part of a  ${\cal SPARC}$ program starts with the keyword
 \st
 $predicates$
 
@@ -562,7 +545,7 @@ first cr-rule from the program was applied.
 If no syntax errors are found, a static check of the program is performed. Any type-related problems found during this check are classified into type errors and type warnings.
 \subsection{Type errors}
 Type errors are considered as serious issues which make it  impossible to compile and execute the program.
-Type errors can occur in all four sections of a ${\cal ELPS}$ program.
+Type errors can occur in all four sections of a ${\cal SPARC}$ program.
 \subsubsection{Sort definition errors}
 The following are possible causes of a sort definition error  that will result in a type error  message from ${\cal SPARC}$:
 \begin{enumerate}
@@ -907,3 +890,8 @@ After the restart, you should be able to see the warnings in the  left lower cor
 \bibliographystyle{plain}
 \end{document}
 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

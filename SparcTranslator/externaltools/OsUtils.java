@@ -27,18 +27,26 @@ extends Thread {
 
 	@Override
 	public void run () {	 
-
+        int count = 0;
+        final int maxCount = 100000000;
 		try {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line;
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null ) {
+				count += line.length();
+				if(count > maxCount) {
+			    	 System.err.println("ERROR: the output from the solver exceeds "  + Integer.toString(maxCount)+  " characters."
+			    	 		+ "\n Your program has too many answer sets and we can't process all of them.");
+			    	 // finish him!
+			    	 Runtime.getRuntime().halt(0);	
+				}
 				//System.out.println(type + ">" + line);
 				if(type.equals("STDOUT")) {	
 					OsUtils.result.append(line).append("\n");  		
 				}
 				else if(type.equals("ERROR")) {	
-					OsUtils.errors.append(line).append("\n");		
+					    OsUtils.errors.append(line).append("\n");
 				}
 
 			}
@@ -48,7 +56,6 @@ extends Thread {
 		synchronized (lock) {
 			ready = true;
 			lock.notifyAll();
-
 		}
 
 	}

@@ -13,8 +13,10 @@ import parser.ASTaggregateElement;
 import parser.ASTatom;
 import parser.ASTbody;
 import parser.ASTchoice_element;
+import parser.ASTdisplay;
 import parser.ASTextendedNonRelAtom;
 import parser.ASTextendedSimpleAtomList;
+import parser.ASTnonRelAtom;
 import parser.ASTpredSymbol;
 import parser.ASTprogram;
 import parser.ASTprogramRule;
@@ -29,6 +31,7 @@ import parser.ASTterm;
 import parser.ASTtermList;
 import parser.ASTunlabeledProgramCrRule;
 import parser.ASTunlabeledProgramRule;
+import parser.Node;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
@@ -47,10 +50,12 @@ public class Translator {
 	// mapping from sort names to sort expressions assigned to the sorts
 	private HashMap<String, ASTsortExpression> sortNameToExpression;
 	// mapping from predicate names to a list of names of sorts describing
-	// arguments
 	private HashMap<String, ArrayList<String>> predicateArgumentSorts;
 	// consistency restoring rule labels
 	private HashSet<String> ruleLabels;
+	// renaming of original sort names to their ASP translation
+	private HashMap<String,String> sortRenaming;
+	
 	private Writer out;// output
 	private String inputFileName;// name of file being parsed( for error
 									// reporting)
@@ -98,6 +103,7 @@ public class Translator {
 		if(generateClingconWarnings) {
 			ruleReducer=new RuleReducer(sortNameToExpression, predicateArgumentSorts, gen);
 		}
+		
 	}
 
 	/**
@@ -126,8 +132,12 @@ public class Translator {
 	 *             constraints for variable in the body).
 	 */
 	public String translateProgram(ASTprogram program,
-			HashSet<String> generatingSorts, boolean writeWarningsToSTDERR)
+			HashSet<String> generatingSorts,
+			HashMap<String,String> sortsRenaming,
+			boolean writeWarningsToSTDERR)
 			throws ParseException {
+		this.sortRenaming = sortsRenaming;
+		
 		translatedOutput = new StringBuilder();
 		localElemCount = 0;
 		labelId = 0;
@@ -142,22 +152,34 @@ public class Translator {
 	    
 	    // generate sorts
 		for (String s : generatingSorts) {
-			String s2 = predicateArgumentSorts.get("#" + s).get(0);
-			gen.addSort(s2, sortNameToExpression.get(s), true);
+			gen.addSort(s, sortNameToExpression.get(s), true);
 		}
 
 		writeDirectives(program);
 		translateRules((ASTprogramRules) program.jjtGetChild(2),writeWarningsToSTDERR);
+		
+		// translate display:
+		HashSet<String> usedNames = new HashSet<String>();
+		usedNames.addAll(sortRenaming.values());
+		usedNames.addAll(predicateArgumentSorts.keySet());
+	
 		// append instances of generating sorts to the resulting program store
 		for (GSort sort : gen.generatedSorts) {
 			for (String instance : sort.instances) {
-				appendStringToTranslation(sort.sortName);
+				String name = sort.sortName;
+				if(sortsRenaming.containsKey(name))
+					name = sortRenaming.get(name);
+				appendStringToTranslation(name);
 				appendStringToTranslation("(");
 				appendStringToTranslation(instance);
 				appendStringToTranslation(").");
 				appendNewLineToTranslation();
 			}
 		}
+		
+		if(program.jjtGetNumChildren()>3)
+		       translateDisplay(usedNames, (ASTdisplay) program.jjtGetChild(3));
+
 		// write warnings if the flag was set to true
 		if (writeWarningsToSTDERR) {
 			for (String warning : mainTranslator.getWarnings()) {
@@ -174,9 +196,118 @@ public class Translator {
 				throw new ParseException(warningStrings.toString());
 			}
 		}
-
+		
+		System.out.println(translatedOutput.toString());	
 		return translatedOutput.toString();
 
+	}
+	
+	
+	/**
+	 * Takes display section and expands shorthands #s. to #s(X) and p. to p(X1,...,Xn),
+	 * where n is the arity of the predicate p
+	 * @param display (note, this input is being modified)
+	 */
+	private void ExpandShortHands(ASTdisplay display) {
+		for(int i=0 ; i< display.jjtGetNumChildren(); i++) {
+			ASTnonRelAtom atom = (ASTnonRelAtom) display.jjtGetChild(i);			
+			ASTpredSymbol pred = (ASTpredSymbol)atom.jjtGetChild(0);
+			// if atom is a sort name, and it does not have any arguments, we append an argument "X" to it:
+			if(pred.hasPoundSign()) {
+			    if(atom.jjtGetNumChildren() == 1) {
+			    	ASTtermList tlist= new ASTtermList(SparcTranslatorTreeConstants.JJTTERMLIST);
+			    	tlist.jjtAddChild(new ASTterm("X"), 0);
+			    	atom.jjtAddChild(tlist, 1);
+			    }
+			}
+			
+			if(!pred.hasPoundSign() && atom.jjtGetNumChildren()==1
+					&& predicateArgumentSorts.get(pred.image).size()>0) {
+				ASTtermList tlist= new ASTtermList(SparcTranslatorTreeConstants.JJTTERMLIST);
+				for(int j=0; j<predicateArgumentSorts.get(pred.image).size(); j++) {
+					tlist.jjtAddChild(new ASTterm("X"+Integer.toString(i+1)), 0);
+				}
+		    	atom.jjtAddChild(tlist, 1);				
+			}			
+		}
+			
+	}
+
+	/**
+	 * 
+	 * @param usedNames - predicate names already used in the program
+	 * @param display - the display section of the program (represented by ast) 
+	 *                  consisting of the display keyword
+	 *                  followed by a sequence of statements of the form [-]p(t_1,...,t_n).
+	 *                  or of the form p, where [-]p is a shorthand for [-]p(X_1,...,X_n),
+	 *                  and both [-]p(t_1,...,t_n) and [-] p(X_1,...,X_n) are literals of P
+	 * @result function extends translatedOutput with a sequence of rules of the form
+	 *         p'(t_1,...,t_n) :- p(t_1,...,t_n), where p' is a fresh predicate name
+	 *         for each p(t_1,...,t_n) in the display 
+	 *         followed by a comment % p1',....,pn', where p1',...,pn' are all fresh predicates used        
+	 */
+	private void translateDisplay(HashSet<String> usedNames, ASTdisplay display) {
+		
+		ExpandShortHands(display);
+		ArrayList<String> displayPredicateNames = new ArrayList<String>();
+		for(int i=0 ; i< display.jjtGetNumChildren(); i++) {
+			ASTnonRelAtom atom = (ASTnonRelAtom) display.jjtGetChild(i);	
+			// create a rule  p'(t_1,...,t_n) :- p(t_1,...,t_n)
+			
+			ASTpredSymbol pred = (ASTpredSymbol)atom.jjtGetChild(0);
+			
+			String body = null;
+			if(pred.hasPoundSign() && sortRenaming.containsKey(pred.image)) {
+                	body = atom.toStringWithPredicateRenamed(sortRenaming.get(pred.image));
+            } else {
+                	body = atom.toString();
+            }
+	
+			String newName ="";
+			boolean prevNegative = pred.negative;
+			boolean prevPoundSign = pred.hasPoundSign();
+			pred.negative = false;
+			
+			if(pred.hasPoundSign() && sortRenaming.containsKey(pred.image)) {
+				newName = extendtoUniqueName(sortRenaming.get(pred.image), usedNames);
+			} else {
+				newName =  extendtoUniqueName(pred.image, usedNames);
+			}
+			
+			usedNames.add(newName);
+			displayPredicateNames.add(newName);
+			pred.setPoundSign(false);
+			pred.negative = false;
+			String head = atom.toStringWithPredicateRenamed(newName);
+			appendStringToTranslation(head.toString() + ":-" + body.toString() + ".");
+			appendNewLineToTranslation();
+			// restore the pound sign and negativity:
+			pred.setPoundSign(prevPoundSign);
+			pred.negative = prevNegative;
+		}
+		
+	    // add the comment	
+		StringBuilder sb = new StringBuilder();
+		sb.append("%");
+		for(String s: displayPredicateNames) {
+			sb.append(" " + s);
+		}
+		appendStringToTranslation(sb.toString());
+		appendNewLineToTranslation();
+	}
+	
+	/**
+	 * 
+	 * @param s a string
+	 * @param usedNames - a set of strings
+	 * @return a new string s' such that s' = s + x, where x is a shortest sequence of underscores 
+	 *         such that s + x is not in usedNames
+	 */
+	private String extendtoUniqueName(String s, HashSet<String> usedNames) {
+		while (usedNames.contains(s)) {
+			s = s + "_";
+		}
+		return s;
 	}
 
 	/**
@@ -717,9 +848,7 @@ public class Translator {
 		
 		ensureVariableSafety(rule, originalRule, originalNameMapping,
 				newSortAtoms);
-		//after this we need to add extra sort for nat:
-		String natSortName=predicateArgumentSorts.get("#nat").get(0);
-		predicateArgumentSorts.put(natSortName,new ArrayList<String>(Arrays.asList(natSortName)));
+
 	
 		// fetch expressions:
 		fetchGlobalExpressions(rule,newSortAtoms);
@@ -767,7 +896,7 @@ public class Translator {
 			newAtoms.add(applyAtom);
 			addAtomsToRulesBody(rule, newAtoms);
 		}
-		appendStringToTranslation(rule.toString());
+		appendStringToTranslation(rule.toString(sortRenaming));
 		appendNewLineToTranslation();
 	}
 
@@ -805,13 +934,12 @@ public class Translator {
 		}
 		arithmeticVariables.removeAll(simpleOccurVariables);
 		if(!arithmeticVariables.isEmpty()) {
-			String s2 = predicateArgumentSorts.get("#nat").get(0);
-			gen.addSort(s2, sortNameToExpression.get("nat"), true);
+			gen.addSort("nat", sortNameToExpression.get("nat"), true);
 			Pair<ArrayList<String>,ArrayList<String>> unrestrictedArithmVariablesLists=splitLocalGlobalVariables(arithmeticVariables);
 			//add some #nat atoms to the body:
 			for(int i=0;i<unrestrictedArithmVariablesLists.first.size();i++)
 			{
-			       newSortAtoms.add(createSortAtom(predicateArgumentSorts.get("#nat").get(0), new ASTterm(unrestrictedArithmVariablesLists.first.get(i))));
+			       newSortAtoms.add(createSortAtom(sortRenaming.get("nat"), new ASTterm(unrestrictedArithmVariablesLists.first.get(i))));
 			}
 		    if(!unrestrictedArithmVariablesLists.second.isEmpty()) {
 		    	//add some nat atoms to the body of local elements
@@ -848,7 +976,7 @@ public class Translator {
 			vf.fetchVariables(n,variablesInElement);
 			for(String varName:variablesToAdd) {
 				if(variablesInElement.contains(varName)) {
-					ASTatom atomToAdd=createSortAtom(predicateArgumentSorts.get("#nat").get(0),new ASTterm(varName));
+					ASTatom atomToAdd=createSortAtom(sortRenaming.get("nat"),new ASTterm(varName));
 					ArrayList<ASTatom> atomListToAdd=new ArrayList<ASTatom>( Arrays.asList(atomToAdd));
 					
 					if(n.getId()==SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT) {

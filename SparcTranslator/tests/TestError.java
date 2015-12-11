@@ -200,7 +200,7 @@ public class TestError {
 			tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 			StringBuilder translatedProgram = new StringBuilder();
 			translatedProgram.append(tr.translateProgram((ASTprogram) e,
-					p.generatingSorts, true));
+					p.generatingSorts, p.sortRenaming, true));
 			System.out.println(translatedProgram);
 			ExternalSolver solver = new DLVSolver(translatedProgram.toString());
 			Settings.getSingletonInstance().setOptions(" -n=1 ");

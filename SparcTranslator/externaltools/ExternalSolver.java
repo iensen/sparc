@@ -25,4 +25,8 @@ public abstract class ExternalSolver {
    public void setProgram(String program) {
 	   this.program=program;
    }
+   
+   public String getProgram() {
+	   return program;
+   }
 }

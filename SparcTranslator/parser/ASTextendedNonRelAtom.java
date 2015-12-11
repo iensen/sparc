@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public class ASTextendedNonRelAtom extends SimpleNode {
 	public ASTextendedNonRelAtom(int id) {
 		super(id);
@@ -16,13 +18,13 @@ public class ASTextendedNonRelAtom extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public String toString() {
+	public String toString(HashMap<String,String> sortRenaming) {
 		StringBuilder sb = new StringBuilder();
 		if (!this.image.equals("")) {
 			sb.append(this.image + " ");
 		}
 		// predSymbol
-		sb.append(((SimpleNode) this.jjtGetChild(0)).toString());
+		sb.append(((ASTpredSymbol) this.jjtGetChild(0)).toString(sortRenaming));
 		if (this.jjtGetNumChildren() > 1) {
 			sb.append("(");
 			// termList

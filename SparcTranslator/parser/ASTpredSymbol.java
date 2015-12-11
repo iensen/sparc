@@ -2,11 +2,12 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public class ASTpredSymbol extends SimpleNode {
 
-	boolean negative = false;
+	public boolean negative = false;
 	boolean hasPoundSign = false;
-	String translatedImage = null;
 
 	public ASTpredSymbol(int id) {
 		super(id);
@@ -29,21 +30,33 @@ public class ASTpredSymbol extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public void setTranslatedImage(String image) {
-		this.translatedImage = image;
-	}
+
 
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		if (negative) {
 			result.append("-");
 		}
-		if (translatedImage != null) {
-			result.append(translatedImage);
-		} else {
-			result.append(image);
-		}
 
+	    result.append(image);
+		return result.toString();
+	}
+	
+	public String toString(HashMap<String,String> sortRenaming) {
+		if(sortRenaming.containsKey(this.image) && this.hasPoundSign) {
+			return toStringWithPredicateRenamed(sortRenaming.get(this.image));
+		} else {
+			return toString();
+		}
+	}
+
+	public String toStringWithPredicateRenamed(String newName) {
+		StringBuilder result = new StringBuilder();
+		if (negative) {
+			result.append("-");
+		}
+		
+	    result.append(newName);
 		return result.toString();
 	}
 }

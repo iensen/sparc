@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 
 public class AnswerSet {
-    public ArrayList<String> atoms;
+    public ArrayList<String> literals;
     public AnswerSet() {
-        atoms=new ArrayList<String>();
+        literals=new ArrayList<String>();
     }
 }

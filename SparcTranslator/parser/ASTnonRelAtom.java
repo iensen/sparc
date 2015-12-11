@@ -10,6 +10,19 @@ public class ASTnonRelAtom extends SimpleNode {
 	public ASTnonRelAtom(SparcTranslator p, int id) {
 		super(p, id);
 	}
+	
+	/**
+	 * This construct an nonrelAtom given an atom with no arguments (e.g, p)
+	 * NOTE, IT DOES NOT WORK FOR ARBITRARY STRINGS, E.G, "p(a)"
+	 * @param atomName
+	 */
+	
+	public ASTnonRelAtom(String atomName) {
+		super(SparcTranslatorTreeConstants.JJTNONRELATOM);
+		ASTpredSymbol ps = new ASTpredSymbol(SparcTranslatorTreeConstants.JJTPREDSYMBOL);
+		ps.image= atomName;
+		this.jjtAddChild(ps, 0);	
+	}
 
 	/** Accept the visitor. **/
 	public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
@@ -27,8 +40,22 @@ public class ASTnonRelAtom extends SimpleNode {
 			sb.append(")");
 		}
 		return sb.toString();
-
 	}
+	
+	public String toStringWithPredicateRenamed(String newName) {
+		StringBuilder sb = new StringBuilder();
+		// predSymbol
+		sb.append(((ASTpredSymbol) this.jjtGetChild(0)).toStringWithPredicateRenamed(newName));
+		if (this.jjtGetNumChildren() > 1) {
+			sb.append("(");
+			// termList
+			sb.append(((SimpleNode) this.jjtGetChild(1)).toString());
+			sb.append(")");
+		}
+		return sb.toString();
+	}
+	
+	
 }
 /*
  * JavaCC - OriginalChecksum=9c1c29054e00d5f8fe8bff6b885c4aa6 (do not edit this

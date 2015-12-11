@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public
 class ASTaggregate extends SimpleNode {
   public ASTaggregate(int id) {
@@ -18,7 +20,7 @@ class ASTaggregate extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String,String> sortRenaming) {
 	  //[arithmeticTerm() t1=rel()] aggregateFunction()
 	  //< OB > aggregateElements()
 	  //< CB > [t2=rel() arithmeticTerm()]
@@ -34,7 +36,7 @@ class ASTaggregate extends SimpleNode {
 	  }
 	  sb.append(((ASTaggregateFunction)this.jjtGetChild(curIndex)).toString());
 	  ++curIndex;
-	  sb.append(((ASTaggregateElements)this.jjtGetChild(curIndex)).toString());
+	  sb.append(((ASTaggregateElements)this.jjtGetChild(curIndex)).toString(sortRenaming));
 	  ++curIndex;
 	  sb.append("}");
 	  if(this.image.indexOf('R')!=-1) {

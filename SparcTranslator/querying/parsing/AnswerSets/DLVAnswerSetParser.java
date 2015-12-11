@@ -42,7 +42,7 @@ public class DLVAnswerSetParser extends AnswerSetParser{
                 }
                 AnswerSet answerSet=new AnswerSet();
                
-                answerSet.atoms.addAll(StringListUtils.splitCommaSequence(sb.toString()));
+                answerSet.literals.addAll(StringListUtils.splitCommaSequence(sb.toString()));
                 result.add(answerSet);
             }
         }

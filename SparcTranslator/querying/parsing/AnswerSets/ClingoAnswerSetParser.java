@@ -20,7 +20,7 @@ public class ClingoAnswerSetParser extends AnswerSetParser{
               String answerSetLine=sc.nextLine();
               if(answerSetLine.length()>0 && !answerSetLine.matches("/^\\s*$/")) {
             	   String[] list= answerSetLine.split("\\s+");
-                   Collections.addAll(answerSet.atoms,list);
+                   Collections.addAll(answerSet.literals,list);
               }
            
               result.add(answerSet);

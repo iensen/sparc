@@ -21,99 +21,107 @@ public interface SparcTranslatorConstants {
   /** RegularExpression Id. */
   int PROGRULDEFKEYWORD = 5;
   /** RegularExpression Id. */
-  int NOT = 6;
+  int DISPLAYKEYWORD = 6;
   /** RegularExpression Id. */
-  int NOTOP = 7;
+  int NOT = 7;
   /** RegularExpression Id. */
-  int OR = 8;
+  int NOTOP = 8;
   /** RegularExpression Id. */
-  int AND = 9;
+  int OR = 9;
   /** RegularExpression Id. */
-  int IDENTIFIER = 10;
+  int AND = 10;
   /** RegularExpression Id. */
-  int VARIABLE = 11;
+  int IDENTIFIER = 11;
   /** RegularExpression Id. */
-  int NONZERODIGIT = 12;
+  int VARIABLE = 12;
   /** RegularExpression Id. */
-  int POSITIVE_INTEGER = 13;
+  int NONZERODIGIT = 13;
   /** RegularExpression Id. */
-  int ZERO = 14;
+  int POSITIVE_INTEGER = 14;
   /** RegularExpression Id. */
-  int PLUS = 15;
+  int ZERO = 15;
   /** RegularExpression Id. */
-  int MULT = 16;
+  int PLUS = 16;
   /** RegularExpression Id. */
-  int DIV = 17;
+  int MULT = 17;
   /** RegularExpression Id. */
-  int EQ = 18;
+  int DIV = 18;
   /** RegularExpression Id. */
-  int EQR = 19;
+  int EQ = 19;
   /** RegularExpression Id. */
-  int NOTEQ = 20;
+  int EQR = 20;
   /** RegularExpression Id. */
-  int GT = 21;
+  int NOTEQ = 21;
   /** RegularExpression Id. */
-  int GTEQ = 22;
+  int GT = 22;
   /** RegularExpression Id. */
-  int SM = 23;
+  int GTEQ = 23;
   /** RegularExpression Id. */
-  int SMEQ = 24;
+  int SM = 24;
   /** RegularExpression Id. */
-  int OP = 25;
+  int SMEQ = 25;
   /** RegularExpression Id. */
-  int CP = 26;
+  int OP = 26;
   /** RegularExpression Id. */
-  int OB = 27;
+  int CP = 27;
   /** RegularExpression Id. */
-  int CB = 28;
+  int OB = 28;
   /** RegularExpression Id. */
-  int ORRSEP = 29;
+  int CB = 29;
   /** RegularExpression Id. */
-  int CRRSEP = 30;
+  int ORRSEP = 30;
   /** RegularExpression Id. */
-  int WEAKSEP = 31;
+  int CRRSEP = 31;
   /** RegularExpression Id. */
-  int COMMA = 32;
+  int WEAKSEP = 32;
   /** RegularExpression Id. */
-  int DOT = 33;
+  int COMMA = 33;
   /** RegularExpression Id. */
-  int COLON = 34;
+  int DOT = 34;
   /** RegularExpression Id. */
-  int SEMICOLON = 35;
+  int COLON = 35;
   /** RegularExpression Id. */
-  int DOLLAR = 36;
+  int SEMICOLON = 36;
   /** RegularExpression Id. */
-  int COMPLEMENT = 37;
+  int DOLLAR = 37;
   /** RegularExpression Id. */
-  int HEAD_OR = 38;
+  int COMPLEMENT = 38;
   /** RegularExpression Id. */
-  int AGGREGATE_COUNT_OB = 39;
+  int HEAD_OR = 39;
   /** RegularExpression Id. */
-  int AGGREGATE_SUM_OB = 40;
+  int AGGREGATE_COUNT_OB = 40;
   /** RegularExpression Id. */
-  int AGGREGATE_MIN_OB = 41;
+  int AGGREGATE_SUM_OB = 41;
   /** RegularExpression Id. */
-  int AGGREGATE_MAX_OB = 42;
+  int AGGREGATE_MIN_OB = 42;
   /** RegularExpression Id. */
-  int OSB = 43;
+  int AGGREGATE_MAX_OB = 43;
   /** RegularExpression Id. */
-  int OCB = 44;
+  int OSB = 44;
   /** RegularExpression Id. */
-  int POUND_SIGN = 45;
+  int OCB = 45;
   /** RegularExpression Id. */
-  int IDENTIFIER_WITH_OP = 46;
+  int POUND_SIGN = 46;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM_WITH_OP = 47;
+  int IDENTIFIER_WITH_OP = 47;
   /** RegularExpression Id. */
-  int NEGATIVE_SORT_ATOM_WITH_OP = 48;
+  int NEGATIVE_ATOM_WITH_OP = 48;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM = 49;
+  int NEGATIVE_SORT_ATOM_WITH_OP = 49;
   /** RegularExpression Id. */
-  int SINGLE_LINE_COMMENT = 50;
+  int SORT_ATOM = 50;
   /** RegularExpression Id. */
-  int SPACE = 51;
+  int SORT_ATOM_WITH_OP = 51;
   /** RegularExpression Id. */
-  int MINUS = 52;
+  int NEGATIVE_SORT_ATOM = 52;
+  /** RegularExpression Id. */
+  int NEGATIVE_ATOM = 53;
+  /** RegularExpression Id. */
+  int SINGLE_LINE_COMMENT = 54;
+  /** RegularExpression Id. */
+  int SPACE = 55;
+  /** RegularExpression Id. */
+  int MINUS = 56;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -130,6 +138,7 @@ public interface SparcTranslatorConstants {
     "<SORTDEFKEYWORD>",
     "<PREDDEFKEYWORD>",
     "<PROGRULDEFKEYWORD>",
+    "<DISPLAYKEYWORD>",
     "<NOT>",
     "<NOTOP>",
     "\"or\"",
@@ -173,6 +182,9 @@ public interface SparcTranslatorConstants {
     "<IDENTIFIER_WITH_OP>",
     "<NEGATIVE_ATOM_WITH_OP>",
     "<NEGATIVE_SORT_ATOM_WITH_OP>",
+    "<SORT_ATOM>",
+    "<SORT_ATOM_WITH_OP>",
+    "<NEGATIVE_SORT_ATOM>",
     "<NEGATIVE_ATOM>",
     "<SINGLE_LINE_COMMENT>",
     "<SPACE>",

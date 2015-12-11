@@ -251,11 +251,8 @@ public class TermFetcher {
 			ASTaggregateElement argelem) {
 		HashMap<ASTterm,String> result = new HashMap<ASTterm,String>();
 		for (int i = 0; i < argelem.jjtGetNumChildren(); i++) {
-			if (((SimpleNode) (argelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOM) {
-				unionMaps(result,
-						fetchTermSorts((ASTnonRelAtom) argelem.jjtGetChild(i)));
-			} else if (((SimpleNode) (argelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
-				unionMaps(result,
+	           if (((SimpleNode) (argelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
+				  unionMaps(result,
 						fetchTermSorts((ASTextendedSimpleAtomList) argelem
 								.jjtGetChild(i)));
 			}

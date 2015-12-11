@@ -28,5 +28,11 @@ owns(mike,c).
 turn_key(c).
 %-starts(c).
 
+display 
+
+#car(X).
+starts(X).
+-broken(X).
+
 
 

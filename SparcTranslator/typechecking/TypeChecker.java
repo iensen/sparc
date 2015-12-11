@@ -22,6 +22,7 @@ import parser.ASTconstantTerm;
 import parser.ASTconstantTermList;
 import parser.ASTcurlyBrackets;
 import parser.ASTdisjunction;
+import parser.ASTdisplay;
 import parser.ASTextendedNonRelAtom;
 import parser.ASTextendedSimpleAtomList;
 import parser.ASTfunctionalSymbol;
@@ -280,7 +281,7 @@ public class TypeChecker {
 		} else {
 			list = (ASTtermList) (atom.jjtGetChild(1));
 		}
-		checkAtomTermList(list, pred.image, pred.getBeginLine(),
+		checkAtomTermList(list, (pred.hasPoundSign()?"#":"")+ pred.image, pred.getBeginLine(),
 				pred.getBeginColumn());
 	}
 	
@@ -394,7 +395,7 @@ public class TypeChecker {
 							+ ((ASTterm) termList.jjtGetChild(i)).toString()
 							+ "\"," + (ignoreLineNumbers?"":" at line " + +beginLine + ", column "
 							+ beginColumn) + " is an arithmetic term and not a variable, but "
-							+ "\"" + sortName + "\""+" does not contain a number");
+							+ "\"" + "#" + sortName + "\""+" does not contain a number");
 				}
 				
 			}
@@ -411,7 +412,7 @@ public class TypeChecker {
 							+ ((ASTterm) termList.jjtGetChild(i)).toString()
 							+ "\"," + (ignoreLineNumbers?"": " at line " + +beginLine + ", column "
 							+ beginColumn) + " violates definition of sort "
-							+ "\"" + sortName + "\"");
+							+ "\"" + "#"+ sortName + "\"");
 				else {
 					throw new ParseException(inputFileName + ": "
 							+ "non-ground term \"" + termToCheck.toString()
@@ -559,9 +560,7 @@ public class TypeChecker {
 	private void checkAggregateElement(ASTaggregateElement argelem)
 			throws ParseException {
 		for (int i = 0; i < argelem.jjtGetNumChildren(); i++) {
-			if (((SimpleNode) (argelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOM) {
-				checkNonRelAtom((ASTnonRelAtom) argelem.jjtGetChild(i));
-			} else if (((SimpleNode) (argelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
+			 if (((SimpleNode) (argelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
 				checkExtendedSimpleAtomList((ASTextendedSimpleAtomList) argelem
 						.jjtGetChild(i));
 			}
@@ -618,7 +617,7 @@ public class TypeChecker {
 		} else {
 			list = (ASTtermList) (nonRelAtom.jjtGetChild(1));
 		}
-		checkAtomTermList(list, pred.image, pred.getBeginLine(),
+		checkAtomTermList(list,  (pred.hasPoundSign()?"#":"")+pred.image, pred.getBeginLine(),
 				pred.getBeginColumn());
 	}
 
@@ -1117,4 +1116,32 @@ public class TypeChecker {
 				termName);
 
 	}
+
+	
+	/**
+	 * Given an ast representing display section of a program, typecheck every atom occuring in it
+	 * @param display - AST representing display section of the program
+	 * @throws ParseException 
+	 */
+	public void checkDisplay(ASTdisplay display) throws ParseException{
+	    for(int i=0;i<display.jjtGetNumChildren(); i++) {
+        	ASTnonRelAtom atom = (ASTnonRelAtom) display.jjtGetChild(i);
+        	ASTpredSymbol ps = (ASTpredSymbol) atom.jjtGetChild(0);
+        	if(atom.jjtGetNumChildren() ==1) {
+        		// we only need to check that corresponding predicate or sort name exists
+        			// we need to check that such a sort name was defined!
+        			if(!predicateArgumentSorts.containsKey(ps.image)) {
+        				  throw new ParseException(inputFileName + ": "
+      							+ "the " + (ps.image.startsWith("#")?"sort ":"predicate ") + "\"" + ps.image
+      							+ "\"," + (ignoreLineNumbers?"":"occurring at line " + +ps.getBeginLine() + ", column "
+      							+ ps.getBeginColumn()) + " is not defined by the program");
+      				}			
+        	} else {
+        		checkNonRelAtom(atom);
+        	}
+        	
+	    }
+	}
 }
+
+

@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public class ASTunlabeledProgramCrRule extends SimpleNode {
 	public ASTunlabeledProgramCrRule(int id) {
 		super(id);
@@ -16,7 +18,10 @@ public class ASTunlabeledProgramCrRule extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public String toString() {
+
+	
+    // rewrite repetition
+	public String toString(HashMap<String, String> sortRenaming) {
 		StringBuilder result = new StringBuilder();
 		if (((SimpleNode) this.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTHEAD) {
 			result.append(((SimpleNode) this.jjtGetChild(0)).toString());
@@ -30,7 +35,8 @@ public class ASTunlabeledProgramCrRule extends SimpleNode {
 		}
 		if (body != null) {
 			result.append(":-");
-			result.append(body.toString());
+			if(sortRenaming == null)
+			result.append(body.toString(sortRenaming));
 			result.append(".");
 		}
 		return result.toString();

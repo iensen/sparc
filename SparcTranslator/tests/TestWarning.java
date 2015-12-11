@@ -85,7 +85,7 @@ public class TestWarning {
 			tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 			StringBuilder translatedProgram = new StringBuilder();
 			translatedProgram.append(tr.translateProgram((ASTprogram) e,
-					p.generatingSorts, false));
+					p.generatingSorts, p.sortRenaming, false));
 			
 			System.out.println(translatedProgram);
 			ExternalSolver solver = new DLVSolver(translatedProgram.toString());

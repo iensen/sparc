@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public
 class ASTaggregateElement extends SimpleNode {
   public ASTaggregateElement(int id) {
@@ -18,7 +20,7 @@ class ASTaggregateElement extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String,String> sortRenaming) {
 	  //(n=nonRelAtom() | n=arithmeticTerm())
 	  //(< COMMA > (nonRelAtom() | arithmeticTerm()))* [< COLON > extendedSimpleAtomList()]
 	  int listIndex=this.jjtGetNumChildren();
@@ -35,7 +37,7 @@ class ASTaggregateElement extends SimpleNode {
 	  }
 	  if(listIndex!=this.jjtGetNumChildren()) {
 		  result.append(":");
-		  result.append(((SimpleNode)this.jjtGetChild(listIndex)).toString());
+		  result.append(((ASTextendedSimpleAtomList)this.jjtGetChild(listIndex)).toString(sortRenaming));
 	  }
 	  return result.toString();
 	  

@@ -1953,3 +1953,8 @@ goal(T,fwd_rcs) :- h(maneuver_of(minus_x,fwd_rcs),T).
 goal(T,left_rcs) :- h(maneuver_of(minus_x,left_rcs),T).
 
 goal(T,right_rcs) :- h(maneuver_of(minus_x,right_rcs),T).
+
+
+%display
+%-occurs(X,Y).
+%#command(X).

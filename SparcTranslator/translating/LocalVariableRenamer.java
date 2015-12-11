@@ -57,8 +57,7 @@ public class LocalVariableRenamer {
 	public void renameLocalVariables(ASTaggregateElement agrelem,int idx,HashMap<String,String> originalNamesMapping) {
 		HashSet<String> localVariables = new HashSet<String>();
 		for (int i = 0; i < agrelem.jjtGetNumChildren(); i++) {
-			if (((SimpleNode) (agrelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOM
-					|| ((SimpleNode) (agrelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTARITHMETICTERM) {
+			if (((SimpleNode) (agrelem.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTTERM) {
 				localVariables.addAll(fetchVariableNames((SimpleNode) (agrelem
 						.jjtGetChild(i))));
 			}

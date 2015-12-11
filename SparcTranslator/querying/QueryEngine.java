@@ -119,7 +119,7 @@ public class QueryEngine {
 
 		AnswerSet theOnlyAnswerSet = getAnswerSetOfCorrespondingASPProgram((QASTatom)query.jjtGetChild(0));
 		boolean answerFound = false;
-		for (String atom : theOnlyAnswerSet.atoms) {
+		for (String atom : theOnlyAnswerSet.literals) {
 			if (atom.startsWith("true_in_all_models") && !query.negated || 
 					atom.startsWith("false_in_all_models") && query.negated) {
 				answerFound = true;
@@ -162,7 +162,7 @@ public class QueryEngine {
 		AnswerSet theOnlyAnswerSet = getAnswerSetOfCorrespondingASPProgram((QASTatom)(query.jjtGetChild(0)));
 		// if there is an atom "true_in_all_models, it is yes"
 		// if there is an atom "false_in_all_models, it is no"
-		for (String atom : theOnlyAnswerSet.atoms) {
+		for (String atom : theOnlyAnswerSet.literals) {
 			if (atom.startsWith("true_in_all_models") && !query.negated || 
 					atom.startsWith("false_in_all_models") && query.negated) {
 				System.out.println("yes");
@@ -199,7 +199,7 @@ public class QueryEngine {
 
 		StringBuilder prefix = new StringBuilder();
 		for (AnswerSet aSet : answerSets) {
-			for (String atom : aSet.atoms) {
+			for (String atom : aSet.literals) {
 				boolean negative = false;
 				if (atom.startsWith("-")) {
 					negative = true;

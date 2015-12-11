@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public class ASTunlabeledProgramRule extends SimpleNode {
 	public ASTunlabeledProgramRule(int id) {
 		super(id);
@@ -16,15 +18,15 @@ public class ASTunlabeledProgramRule extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public String toString() {
+	public String toString(HashMap<String,String> sortRenaming) {
 		if(this.image.trim().equals(":~")) { //weak constraint
 			ASTbody body=(ASTbody) this.jjtGetChild(0);
 			if(this.jjtGetNumChildren()>1) {
 				ASTconstraintParams params =(ASTconstraintParams) this.jjtGetChild(1);
-				return ":~"+body.toString()+". "+params.toString();
+				return ":~"+body.toString(sortRenaming)+". "+params.toString();
 			}
 			else {
-				return  ":~"+body.toString()+".";
+				return  ":~"+body.toString(sortRenaming)+".";
 			}
 		}
 		else if (jjtGetNumChildren() > 0
@@ -49,7 +51,7 @@ public class ASTunlabeledProgramRule extends SimpleNode {
 			}
 			if (body != null) {
 				result.append(":-");
-				result.append(body.toString());
+				result.append(body.toString(sortRenaming));
 			}
 			result.append(".");
 			return result.toString();

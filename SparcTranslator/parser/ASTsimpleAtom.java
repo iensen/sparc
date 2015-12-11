@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public
 class ASTsimpleAtom extends SimpleNode {
   public ASTsimpleAtom(int id) {
@@ -18,30 +20,17 @@ class ASTsimpleAtom extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String, String> sortRenaming) {
 	  if(this.jjtGetNumChildren()>0 && 
 			  (((SimpleNode)(this.jjtGetChild(0))).getId()
 					  ==SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM)) {
-		  return ((SimpleNode)(this.jjtGetChild(0))).toString();
+		  return ((ASTextendedNonRelAtom)(this.jjtGetChild(0))).toString(sortRenaming);
 	  }
-	  else if(this.jjtGetNumChildren()==2) {
+	  else {
 		  SimpleNode child1=(SimpleNode)this.jjtGetChild(0);
 		  SimpleNode child2=(SimpleNode)this.jjtGetChild(1);
 		  return child1.toString()+this.image+child2.toString();
 	  }
-	  else if(this.jjtGetNumChildren()==1) {
-		  SimpleNode child1=(SimpleNode)this.jjtGetChild(0);
-		  if(this.image.startsWith(">") || this.image.startsWith("<") ||
-				  this.image.startsWith("<")) {
-			  return child1.toString()+this.image;
-		  }
-		  else {
-			  return this.image+child1.toString();
-		  }
-	  } else {
-		  return this.image;
-	  }
-
   }
 }
 /* JavaCC - OriginalChecksum=9cbfe0f95b70d3aa3d2826468bfaf789 (do not edit this line) */

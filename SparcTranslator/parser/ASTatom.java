@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 import querying.parsing.query.QASTatom;
 import querying.parsing.query.QASTpredSymbol;
 import querying.parsing.query.QASTterm;
@@ -42,7 +44,7 @@ class ASTatom extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String,String> sortRenaming) {
 	   /*
 	   aggregate()|+
 	   symbolicTerm()  rel()  symbolicTerm() |
@@ -55,11 +57,17 @@ class ASTatom extends SimpleNode {
 	   var() eq var()
 	   */ 
 	  if(this.jjtGetNumChildren()>0 && (((SimpleNode)(this.jjtGetChild(0))).getId()
-			  ==SparcTranslatorTreeConstants.JJTAGGREGATE||
-			  (((SimpleNode)(this.jjtGetChild(0))).getId()
-					  ==SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM))) {
-		  return ((SimpleNode)(this.jjtGetChild(0))).toString();
+			  ==SparcTranslatorTreeConstants.JJTAGGREGATE)) {
+		  return ((ASTaggregate)(this.jjtGetChild(0))).toString(sortRenaming);
 	  }
+	  
+	  if(this.jjtGetNumChildren()>0 && (((SimpleNode)(this.jjtGetChild(0))).getId()
+			  ==SparcTranslatorTreeConstants.JJTEXTENDEDNONRELATOM)) {
+		  return ((ASTextendedNonRelAtom)(this.jjtGetChild(0))).toString(sortRenaming);
+	  }
+		
+		 
+	  
 	  else if(this.jjtGetNumChildren()==2) {
 		  SimpleNode child1=(SimpleNode)this.jjtGetChild(0);
 		  SimpleNode child2=(SimpleNode)this.jjtGetChild(1);

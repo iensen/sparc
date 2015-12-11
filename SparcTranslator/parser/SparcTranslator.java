@@ -227,7 +227,13 @@ class Pair
 
       if(programTree.jjtGetNumChildren() == 3)
       {
-          programTree.jjtAddChild(new ASTdisplay(p.predicateArgumentSorts.keySet()),3);
+          HashSet<String > predicatesToDisplay = new HashSet<String > ();
+          for (String predName: p.predicateArgumentSorts.keySet())
+          {
+              if(!predName.startsWith("#"))
+                 predicatesToDisplay.add(predName);
+          }
+          programTree.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
       }
       else
       {
@@ -4116,17 +4122,6 @@ class Pair
     finally { jj_save(32, xla); }
   }
 
-  private boolean jj_3R_109() {
-    if (jj_3R_119()) return true;
-    if (jj_3R_107()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_130() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_26() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(DOT)) return true;
@@ -5072,6 +5067,17 @@ class Pair
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3R_109() {
+    if (jj_3R_119()) return true;
+    if (jj_3R_107()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_130() {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 

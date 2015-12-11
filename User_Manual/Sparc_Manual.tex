@@ -7,6 +7,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{xcolor}
 \usepackage[normalem]{ulem}
 \usepackage{fontenc}
 \usepackage{footnote}
@@ -489,6 +490,78 @@ p(f(X)):-Y<2,2=Z,F>3,#count{Q:Q<W,p(W),T<2},p(Y).
 Variables F,T,Z,Q are unrestricted.
 }  
 \end{example}
+
+\subsection{Display \textit{\textcolor{red}{(New!)}}}
+
+\medskip\noindent
+The last (optional) section of the program starts from the keyword \texttt{display} and is followed by a collection of literals of the program.
+Every literal is followed by a dot symbol ('.').
+
+
+\medskip\noindent
+The section defines which literals are included into the output of answer sets computed in answer set mode (section 2.2). A ground literal is included into the output if and only if it is unifiable with one of the literals from the display section of the program.
+
+
+\medskip\noindent
+\textbf{If the display section is not present, the output contains all the literals formed by all the predicates of the program.}
+
+
+
+\medskip\noindent
+For example, consider the program:
+
+
+\begin{verbatim}
+sorts
+#s = {a,b,c,f(a),f(b)}.
+predicates
+p(#s).
+q().
+s(#s).
+rules
+s(a):- #s(b).
+s(a) :- #s(b).
+-q:- #s(a).
+p(a) :- -q.
+-p(b).
+p(f(a)).
+-p(f(b)).
+display
+-q.
+-p(f(X)).
+p(X).
+#s.
+
+\end{verbatim}
+
+
+\medskip\noindent
+The program has one answer set, and the following literals are shown in the output:
+
+\begin{verbatim}
+{-q, -p(f(b)), p(a), p(f(a)), #s(a), #s(b), #s(c),
+ #s(f(a)), #s(f(b))}
+\end{verbatim}
+
+
+\medskip\noindent
+Note that, for example, \texttt{p(b)} is not shown because it is not unifiable with any of the literals in the display section.
+
+
+\medskip\noindent
+If the display section is removed from the program, the output is as follows:
+
+\begin{verbatim}
+{s(a), -q, p(a), p(f(a)), -p(b), -p(f(b))}
+\end{verbatim}
+
+
+\medskip\noindent
+Note that, when compared to the previous scenario, the literals formed by sort names are not included into the output.
+
+
+
+
 
  
 \section{Answer Sets}

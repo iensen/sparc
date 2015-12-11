@@ -43,7 +43,11 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
 
       // if there is no display, let's create one consisting of all the predicates in the program!
 
-      if(programTree.jjtGetNumChildren() == 3)      {          programTree.jjtAddChild(new ASTdisplay(p.predicateArgumentSorts.keySet()),3);
+      if(programTree.jjtGetNumChildren() == 3)      {
+          HashSet<String > predicatesToDisplay = new HashSet<String > ();
+          for (String predName: p.predicateArgumentSorts.keySet())          {              if(!predName.startsWith("#"))
+                 predicatesToDisplay.add(predName);
+          }          programTree.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
       }
       else      {          tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
       }      translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));

@@ -26,7 +26,12 @@ class ASTdisplay extends SimpleNode {
 	  
 	  int idx = 0; 
 	  for(String p: ps) {
-		 this.jjtAddChild(new ASTnonRelAtom(p), idx++);
+		 ASTnonRelAtom neg = new ASTnonRelAtom(p);
+		 ASTpredSymbol child = (ASTpredSymbol) neg.jjtGetChild(0);
+		 child.negative = true;
+		 ASTnonRelAtom pos = new ASTnonRelAtom(p);
+		 this.jjtAddChild(pos, idx++);
+		 this.jjtAddChild(neg, idx++);
 	  }  
   }
 

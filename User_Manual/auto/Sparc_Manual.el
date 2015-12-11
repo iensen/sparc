@@ -13,6 +13,7 @@
     "amssymb"
     "graphicx"
     "amsmath"
+    "xcolor"
     "ulem"
     "fontenc"
     "footnote"

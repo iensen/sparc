@@ -3665,15 +3665,8 @@ class Pair
         jj_consume_token(COMMA);
         term();
       }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case COLON:
-        jj_consume_token(COLON);
-        extendedSimpleAtomList();
-        break;
-      default:
-        jj_la1[60] = jj_gen;
-        ;
-      }
+      jj_consume_token(COLON);
+      extendedSimpleAtomList();
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     for(int i=0; i<jjtn000.jjtGetNumChildren(); i++)
@@ -3743,7 +3736,7 @@ class Pair
     jjtn000.image = t.image;
         break;
       default:
-        jj_la1[61] = jj_gen;
+        jj_la1[60] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3768,7 +3761,7 @@ class Pair
           ;
           break;
         default:
-          jj_la1[62] = jj_gen;
+          jj_la1[61] = jj_gen;
           break label_22;
         }
         jj_consume_token(COMMA);
@@ -3804,7 +3797,7 @@ class Pair
         ;
         break;
       default:
-        jj_la1[63] = jj_gen;
+        jj_la1[62] = jj_gen;
         break label_23;
       }
       directive(directives);
@@ -3833,7 +3826,7 @@ class Pair
     constantsMapping.put(t1.image, Long.parseLong(t3.image));
       break;
     default:
-      jj_la1[64] = jj_gen;
+      jj_la1[63] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3860,7 +3853,7 @@ class Pair
           ;
           break;
         default:
-          jj_la1[65] = jj_gen;
+          jj_la1[64] = jj_gen;
           break label_24;
         }
         nonRelAtom();
@@ -4699,7 +4692,10 @@ class Pair
     xsp = jj_scanpos;
     if (jj_scan_token(27)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(33)) return true;
+    if (jj_scan_token(33)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(35)) return true;
+    }
     }
     return false;
   }
@@ -5095,7 +5091,7 @@ class Pair
   private boolean jj_lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[66];
+  final private int[] jj_la1 = new int[65];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -5103,10 +5099,10 @@ class Pair
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x40,0x1f,0x0,0x8,0x0,0x20000,0x10000,0x10000,0x14000800,0x0,0x0,0x800,0x800,0x200,0x400,0x4001100,0x0,0x4000000,0x0,0x0,0x0,0xe800,0x800,0x0,0x0,0x0,0xc0000000,0xf800,0xf800,0xf800,0xf800,0x80000000,0xc0000000,0x40000000,0x0,0x800,0x0,0x3f80000,0x3f80000,0x0,0x0,0x0,0x0,0x880,0x80,0x10000,0x60000,0x4001000,0x10000,0x60000,0x800,0x800,0x0,0x3f80000,0x280000,0x800,0x880,0x3f80000,0x0,0x0,0x0,0x0,0x0,0x6,0x6,0x800,};
+      jj_la1_0 = new int[] {0x40,0x1f,0x0,0x8,0x0,0x20000,0x10000,0x10000,0x14000800,0x0,0x0,0x800,0x800,0x200,0x400,0x4001100,0x0,0x4000000,0x0,0x0,0x0,0xe800,0x800,0x0,0x0,0x0,0xc0000000,0xf800,0xf800,0xf800,0xf800,0x80000000,0xc0000000,0x40000000,0x0,0x800,0x0,0x3f80000,0x3f80000,0x0,0x0,0x0,0x0,0x880,0x80,0x10000,0x60000,0x4001000,0x10000,0x60000,0x800,0x800,0x0,0x3f80000,0x280000,0x800,0x880,0x3f80000,0x0,0x0,0x0,0x0,0x6,0x6,0x800,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x4000,0x0,0x1000,0x0,0x1000000,0x1000000,0x4000,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x2,0x1000,0x4000,0x0,0x0,0x4000,0x2,0x1000,0x1,0x0,0x0,0x0,0x0,0x0,0x4,0x4,0x4,0x3f8000,0x80,0x0,0x0,0x10,0x8,0x2,0x2,0x3f8000,0x0,0x1000000,0x0,0x0,0x1000000,0x0,0x8000,0x8000,0x2,0x0,0x0,0x3f8000,0x3f8000,0x0,0x10,0x2,0x8,0xf00,0x2,0x0,0x0,0x3f8000,};
+      jj_la1_1 = new int[] {0x0,0x0,0x4000,0x0,0x1000,0x0,0x1000000,0x1000000,0x4000,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x2,0x1000,0x4000,0x0,0x0,0x4000,0x2,0x1000,0x1,0x0,0x0,0x0,0x0,0x0,0x4,0x4,0x4,0x3f8000,0x80,0x0,0x0,0x10,0x8,0x2,0x2,0x3f8000,0x0,0x1000000,0x0,0x0,0x1000000,0x0,0x8000,0x8000,0x2,0x0,0x0,0x3f8000,0x3f8000,0x0,0x10,0x2,0xf00,0x2,0x0,0x0,0x3f8000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[33];
   private boolean jj_rescan = false;
@@ -5123,7 +5119,7 @@ class Pair
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 66; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5139,7 +5135,7 @@ class Pair
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 66; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5150,7 +5146,7 @@ class Pair
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 66; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5162,7 +5158,7 @@ class Pair
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 66; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5172,7 +5168,7 @@ class Pair
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 66; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5183,7 +5179,7 @@ class Pair
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 66; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -5300,7 +5296,7 @@ class Pair
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 66; i++) {
+    for (int i = 0; i < 65; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

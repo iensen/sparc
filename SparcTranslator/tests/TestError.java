@@ -105,7 +105,7 @@ public class TestError {
 	public void testError12() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error12.sp"),
-				"Line 6, column 4: sort 's1' was not defined");
+				"Line 6, column 4: sort '#s1' was not defined");
 	}
 
 	@Test

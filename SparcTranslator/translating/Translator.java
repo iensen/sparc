@@ -197,7 +197,7 @@ public class Translator {
 			}
 		}
 		
-	
+	    System.out.println(translatedOutput.toString());
 		return translatedOutput.toString();
 
 	}
@@ -819,7 +819,7 @@ public class Translator {
 	 */
 	private void translateRule(ASTprogramRule rule,boolean writeWarningsToSTDERR) throws ParseException {
 		
-		String originalRule = rule.toString();
+		String originalRule = rule.toString(new HashMap<String,String>());
 		int lineNumber = rule.getBeginLine();
 		int columnNumber = rule.getBeginColumn();
 		
@@ -1018,6 +1018,7 @@ public class Translator {
 		ASTpredSymbol pred = new ASTpredSymbol(
 				SparcTranslatorTreeConstants.JJTPREDSYMBOL);
 		pred.image = name;
+		pred.setPoundSign(true);
 		exatom.jjtAddChild(pred, 0);
 		ASTtermList termList = new ASTtermList(
 				SparcTranslatorTreeConstants.JJTTERMLIST);

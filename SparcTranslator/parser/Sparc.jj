@@ -1694,7 +1694,7 @@ SimpleNode symbolicConstant() :
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  SimpleNode n;  Token t;  jjtn000.image = "";}{/*@bgen(jjtree) term */
  try {
-/*@egen*/ LOOKAHEAD(var() (< CP >| < COMMA >))  t = var()/*@bgen(jjtree)*/
+/*@egen*/ LOOKAHEAD(var() (< CP >| < COMMA > | < COLON >))  t = var()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -2004,12 +2004,12 @@ t = < SORT_ATOM_WITH_OP >/*@bgen(jjtree)*/
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  SimpleNode n;}{/*@bgen(jjtree) aggregateElement */
   try {
-/*@egen*/  (    n = term()  )  (    < COMMA >      term()  )*  [ < COLON > extendedSimpleAtomList() ]/*@bgen(jjtree)*/
+/*@egen*/  (    n = term()  )  (    < COMMA >      term()  )*   < COLON > extendedSimpleAtomList()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {
+/*@egen*/   {
     for(int i=0; i<jjtn000.jjtGetNumChildren(); i++)    {
         SimpleNode child = (SimpleNode) jjtn000.jjtGetChild(i);        if(child.getId() == SparcTranslatorTreeConstants.JJTTERM)        {           ASTterm term = (ASTterm) child;
            if(!term.isGround() && !term.isVariable())           {

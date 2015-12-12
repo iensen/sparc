@@ -162,7 +162,7 @@ public class TermFetcher {
 		if (atom.jjtGetNumChildren() == 1) { // 0-arity
 			return new HashMap<ASTterm,String>();
 		}
-		return fetchTermSorts((ASTtermList) (atom.jjtGetChild(1)), pred.image);
+		return fetchTermSorts((ASTtermList) (atom.jjtGetChild(1)), (pred.hasPoundSign()? "#":"") + pred.image);
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class TermFetcher {
 			ASTterm term=(ASTterm)termList.jjtGetChild(i);
 			if(term.hasVariables()) {
 				// add a new atom sort(term) iff it is not the same as original atom predicateName(term).
-				//if(!predicateName.startsWith("#"))
+				if(!predicateName.startsWith("#"))
 				   result.put((ASTterm)termList.jjtGetChild(i),argumentSortList.get(i));
 			}
 		}

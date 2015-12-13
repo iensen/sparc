@@ -1,0 +1,161 @@
+%% s_circuit.sp -- SPARC version of circuit diagnosis from
+%%   Chapter 10 (ASP code in Appendix D.3)
+%% Last Modified: 2/25/14
+%% Diagnosing the problem in a simple circuit.
+%% NOTE: To compute MINIMAL explanations, uncomment the rule cr-rule
+%%       and delete the other. (See notes near the bottom.)
+%% We assume that switches s1 and s2 are mechanical components which
+%% cannot become damaged.  Relay r is a magnetic coil. If not damaged,
+%% it is activated when s1 is closed, causing s2 to close. An
+%% undamaged bulb b emits light if s2 is closed.
+%% The agent is aware of two exogenous actions relevant
+%% to its work: break, which causes the circuit bulb
+%% to become faulty, and surge, which damages the relay and
+%% also the bulb if the latter is not protected.
+
+#const n = 1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#step = 0..n.
+#bulb = {b}.
+#relay = {r}.  
+#comp = #bulb + #relay.
+#agent_switch = {s1}.
+#switch = [s][1..2].
+
+#inertial_fluent = prot(#bulb) +           % true if bulb is protected 
+                   closed(#switch) +
+                   ab(#comp).
+#defined_fluent = active(#relay) + 
+                  on(#bulb).
+#fluent = #inertial_fluent + #defined_fluent.
+
+#agent_action = close(#agent_switch).
+#exogenous_action = {break, surge}.
+#action = #agent_action + #exogenous_action.
+
+#boolean = {true, false}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+holds(#fluent,#step).
+occurs(#action,#step).
+obs(#fluent, #boolean, #step).
+hpd(#action, #step).
+expl(#action, #step).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% -------------------
+%% System Description:
+%% -------------------
+
+%% Causal laws:
+
+%% close(s1) causes closed(s1)
+holds(closed(s1), I+1) :- occurs(close(s1),I).
+
+%% break causes ab(b)
+holds(ab(b), I+1) :- occurs(break,I).
+
+%% surge causes ab(r)
+holds(ab(r), I+1) :- occurs(surge,I).
+
+%% surge causes ab(b) if -prot(b)
+holds(ab(b), I+1) :- occurs(surge,I),
+                     -holds(prot(b),I).
+
+
+%% State constraints:
+
+%% active(r) if closed(s1), -ab(r)
+holds(active(r), I) :- holds(closed(s1),I),
+                       -holds(ab(r),I).
+
+%% closed(s2) if active(r)
+holds(closed(s2), I) :- holds(active(r),I).
+
+%% on(b) if closed(s2), -ab(b)
+holds(on(b), I) :- holds(closed(s2),I),
+                   -holds(ab(b),I).
+
+
+%% Executability conditions:
+
+%% impossible close(s1) if closed(s1)
+-occurs(close(s1), I) :- holds(closed(s1),I).
+
+
+%% CWA for Defined Fluents
+
+-holds(F,I) :- #defined_fluent(F), 
+               not holds(F,I).
+
+%% General Inertia Axiom
+
+holds(F,I+1) :- #inertial_fluent(F),
+                holds(F,I),
+                not -holds(F,I+1).
+
+-holds(F,I+1) :- #inertial_fluent(F),
+                 -holds(F,I),
+                 not holds(F,I+1).
+                 
+%% CWA for Actions
+
+-occurs(A,I) :- not occurs(A,I).
+
+%% --------
+%% History:
+%% --------
+
+obs(closed(s1), false, 0).
+obs(closed(s2), false, 0).
+obs(ab(b), false, 0).
+obs(ab(r), false, 0).
+obs(prot(b), true, 0).
+
+hpd(close(s1), 0).
+
+obs(on(b), false, 1).
+
+%% -------
+%% Axioms:
+%% -------
+
+%% Full Awareness Axiom:
+holds(F,0) | -holds(F,0) :- #inertial_fluent(F).
+
+%% Take what actually happened into account:
+occurs(A,I) :- hpd(A,I).
+
+%% Reality Check:
+:- obs(F,true,I), -holds(F,I).
+:- obs(F,false,I), holds(F,I).
+
+
+%% -----------------------
+%% Explanation Generation:
+%% -----------------------
+
+%% This rule generates ALL EXPLANATIONS. To find minimal explanations,
+%% replace it with the cr-rule.
+occurs(A,K) | -occurs(A,K) :- #exogenous_action(A),
+                              K < n.
+  
+%% Use this rule instead of the one above to generate 
+%%   MINIMAL EXPLANATIONS:                            
+%% occurs(A,K) :+ #exogenous_action(A),
+%%               K < n.
+
+expl(A,I) :- #exogenous_action(A),
+             occurs(A,I),
+             not hpd(A,I).

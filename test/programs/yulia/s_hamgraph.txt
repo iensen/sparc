@@ -1,0 +1,55 @@
+% hamgraph.sp -- SPARC version of Hamiltonian cycles from Section 6.1
+% Last Modified: 2/7/14
+% Finding Hamiltonian cycles in a directed graph.
+% Problem: Given a directed graph G and an initial vertex v0, find a path
+%          from v0 to v0 that enters each vertex exactly once.
+% A path will be represented by a collections of statements of the form
+% in(v1, v2) for each directed edge from vertex v1 to v2 in the cycle.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#vertex = a..e.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+in(#vertex, #vertex).
+edge(#vertex, #vertex).
+reached(#vertex).
+init(#vertex).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules 
+
+% A path leaves each vertex at most once:
+-in(V2,V) :- in(V1,V),
+             V1 != V2.
+
+% A path enters each vertex at most once:
+-in(V,V2) :- in(V,V1), 
+             V1 != V2.
+             
+% reached(V) holds if the path enters vertex V on its way 
+% from the initial vertex:           
+reached(V2) :- init(V1),
+               in(V1,V2).
+               
+reached(V2) :- reached(V1),
+               in(V1,V2).
+                    
+-reached(V) :- not reached(V). 
+
+% Every vertex of the graph must be reached:
+:- -reached(V).
+
+% Path generation using disjunction:
+in(V1,V2) | -in(V1,V2) :- edge(V1,V2).
+
+% Alternative path generation using a choice rule:
+%{in(V1,V2) : edge(V1,V2)}.
+
+% Input graph:
+edge(a,b).  edge(b,c).  edge(c,d).  edge(d,e).
+edge(e,a).  edge(a,e).  edge(d,a).  edge(c,e).
+init(a). 

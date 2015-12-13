@@ -1,0 +1,139 @@
+%% orphans2.sp -- SPARC version of orphans with priorities between 
+%%  defaults from Section 5.3.
+%% Last Modified: 2/7/14
+%% Simple priorities between defaults
+%% Entitlements for orphans.
+%% Orphans are entitled to assistance according to special government 
+%% program 1.
+%% All children are entitled to program 0.
+%% Program 1 is preferable to program 0,
+%% i.e. a child qualified for receiving assistance
+%% from program 1 shall not receive assistance from program 0
+%% and no one can receive assistance from more than one program.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#person = {mary, bob, rich, patty, charles, susan}.
+#program = {0, 1}.
+#default1 = d1(#person).
+#default2 = d2(#person).
+#default = #default1 + #default2.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+ab(#default).
+entitled(#person, #program).
+check_status(#person).
+record_for(#person).
+father(#person,#person).
+mother(#person,#person).
+parent(#person,#person).
+child(#person). 
+dead(#person).
+parents_dead(#person).
+orphan(#person).
+may_be_orphan(#person).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+%% Default d1: An orphan is entitled to program 1 by default:
+entitled(X,1) :- record_for(X),
+                 orphan(X),
+                 not ab(d1(X)),
+                 not -entitled(X,1).
+                 
+%% Default d2: A child is entitled to program 0 by default:
+entitled(X,0) :- record_for(X),
+                 child(X),
+                 not ab(d2(X)),
+                 not -entitled(X,0).
+                 
+%% A person is not entitled to more than one program.
+-entitled(X,N2) :- record_for(X),
+                   entitled(X,N1),
+                   N1 != N2.
+                 
+%% An orphan is not entitled to program 0:  
+-entitled(X,0) :- record_for(X),
+                  orphan(X). 
+                  
+%% Default d2 cannot be applied if a person may be an orphan:
+ab(d2(X)) :- record_for(X),
+             not -orphan(X).
+            
+%% X is not entitled to any program is X is dead.
+-entitled(X,N) :- record_for(X),
+                  dead(X). 
+                  
+%% X is not entitled to any program if he is not a child:
+-entitled(X,N) :- record_for(X),
+                  -child(X). 
+
+%% If you don't know whether a person is an orphan,
+%% check his status:                  
+check_status(X) :- record_for(X),
+                   not -orphan(X),
+                   not orphan(X).
+                   
+                   
+%% Records:
+
+record_for(bob).
+father(rich,bob).
+mother(patty,bob).
+child(bob).
+
+record_for(rich).
+father(charles,rich).
+mother(susan,rich).
+dead(rich).
+
+record_for(patty).
+dead(patty).
+
+record_for(mary).
+child(mary).
+mother(patty,mary).
+
+%% Uncomment to expand the knowledge base by the information that
+%% Mary has a father (Mike).
+%% father(mike,mary).
+%% record_for(mike).
+
+%% We have complete information about whether someone with a record
+%% is dead (CWA):
+-dead(P) :- record_for(P),
+            not dead(P).
+       
+%% We have complete records of whether someone with a record
+%% is a child (CWA):     
+-child(X) :- record_for(X),
+             not child(X).
+             
+%% P is considered an orphan if he is a child and both parents are dead:
+orphan(P) :- child(P),
+             parents_dead(P).
+             
+%% We know that P is not an orphan if we know for sure that at least one 
+%% of his parents is not dead:
+-orphan(P) :- record_for(P),
+              not may_be_orphan(P).
+              
+may_be_orphan(P) :- record_for(P),
+                    child(P),
+                    not -parents_dead(P).
+
+parent(X,P) :- father(X,P).
+parent(X,P) :- mother(X,P).
+
+parents_dead(P) :- father(X,P),
+                   dead(X),
+                   mother(Y,P),
+                   dead(Y).
+
+-parents_dead(P) :- parent(X,P),
+                    -dead(X).
+

@@ -1,0 +1,91 @@
+%% s_mystery.sp -- SPARC version of murder mystery puzzle from
+%%    Chapter 6, Section 6.2.2
+%% Last Modified: 2/21/14
+%% Vinny has been murdered, and Andy, Ben, and Cole are
+%% suspects. Andy says he did not do it. He says that Ben was
+%% the victim's friend but that Cole hated the victim. Ben
+%% says he was out of town the day of the murder, and besides he
+%% didn't even know the guy. Cole says he is innocent and he saw
+%% Andy and Ben with the victim just before the murder.
+%% Assuming that everyone --- except possibly for the murderer ---
+%% is telling the truth, use ASP to solve the case.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#person = {andy, ben, cole, vinny}.
+#statement = murderer(#person) +
+             hated(#person,#person) +
+             friends(#person,#person) +
+             out_of_town(#person) +
+             know(#person,#person) +
+             innocent(#person) +
+             together(#person,#person).
+#truth_value = {0,1}.
+             
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+says(#person, #statement, #truth_value).
+holds(#statement).
+murderer(#person).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+%% Andy says:
+says(andy, murderer(andy), 0).       %% He didn't do it.
+says(andy, hated(cole, vinny), 1).   %% Cole hated Vinny.
+says(andy, friends(ben, vinny), 1).  %% Ben and Vinny were friends.
+
+%% Ben says:
+says(ben, out_of_town(ben), 1).     %% He was out of town.
+says(ben, know(ben, vinny), 0).     %% He didn't know Vinny. 
+
+%% Cole says:
+says(cole, innocent(cole), 1).        %% He is innocent.
+says(cole, together(andy, vinny), 1). %% He saw Andy and Ben
+says(cole, together(ben, vinny), 1).  %% with the victim.
+
+%% Everyone, except possibly for the murderer, is telling the truth:
+holds(S) :- says(P,S,1),  
+            -holds(murderer(P)).
+-holds(S) :- says(P,S,0),
+             -holds(murderer(P)).
+      
+%% Normally, people aren't murderers:       
+-holds(murderer(P)) :- not holds(murderer(P)).
+                       
+%% Relation together is symmetric and transitive:
+holds(together(A,B)) :- holds(together(B,A)). 
+holds(together(A,B)) :- holds(together(A,C)),
+	                    holds(together(C,B)).
+	                    
+%% Relation friends is symmetric:
+holds(friends(A,B)) :- holds(friends(B,A)).
+
+%% Murderers are not innocent:
+:- holds(innocent(P)),                       
+   holds(murderer(P)). 
+   
+%% A person cannot be together with someone who is out of town:
+:- holds(out_of_town(A)),                    
+   holds(together(A,B)).  
+   
+%% Friends know each other:
+:- -holds(know(A,B)),                        
+    holds(friends(A,B)).
+    
+%% A person who was out of town cannot be the murderer:
+:- holds(murderer(P)),
+   holds(out_of_town(P)).                    
+
+%% For display:
+murderer(P) :- holds(murderer(P)).           
+
+% The murderer is either andy, ben or cole, (exclusively):
+holds(murderer(andy)) | holds(murderer(ben)) | holds(murderer(cole)). 
+
+%% To use the choice rule, replace the disjunction with:
+%% 1{holds(murderer(andy)); holds(murderer(ben)); holds(murderer(cole))}1.

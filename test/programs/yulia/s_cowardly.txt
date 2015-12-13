@@ -1,0 +1,46 @@
+%% cowardly.sp -- SPARC version of cowardly students example 
+%%                from Section 5.1.2
+%% Last Modified: 2/7/14
+%% Cowardly Students -- Strong and weak exceptions to defaults:
+%%   Normally, students are afraid of math.
+%%   Mary is not.
+%%   Students in the math department are not.
+%%   Those in CS may or may not be afraid.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#student = {john, mary, bob, pat}.
+#dept = {english_dept, cs_dept, math_dept}.
+#subject = {math}.
+#default = d(#student).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+in(#student, #dept).
+afraid(#student, #subject).
+ab(#default).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+in(john,english_dept).
+in(mary,cs_dept).
+in(bob,cs_dept).
+in(pat,math_dept).
+
+-in(S,D_1) :- in(S,D_2),
+              D_1 != D_2.
+               
+afraid(S,math) :- not ab(d(S)),
+                  not -afraid(S,math).
+               
+ab(d(mary)). 
+-afraid(mary,math).
+
+-afraid(S,math) :- in(S,math_dept).
+                    
+ab(d(S)) :- not -in(S,cs_dept).
+         
+ab(d(S)) :- not -in(S,math_dept).

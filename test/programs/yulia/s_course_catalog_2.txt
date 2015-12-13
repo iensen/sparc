@@ -1,0 +1,26 @@
+%% s_course_catalog_2.sp -- SPARC version of course catalog example from
+%%    Chapter 5, Section 5.2
+%% Last Modified: 2/12/14
+%% Knowledge bases with null values of the form where several 
+%% possibilities exist for a given value, but we don't know which one.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#prof = {mike, john, bob}.
+#course = {pascal, c, prolog}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+teaches(#prof, #course).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+teaches(mike,pascal).
+teaches(john,c).
+
+-teaches(P,C) :- not teaches(P,C).
+                 
+teaches(mike, prolog) | teaches(john, prolog).

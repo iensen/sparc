@@ -1,0 +1,76 @@
+%% s_bc.sp -- SPARC version of bc.lp from Chapter 8, Section 8.5.1
+%% Last Modified: 2/21/14
+%% Models a domain description of a briefcase with two clasps.
+%% Action toggle(C) causes a particular clasp to be toggled.
+%% If both clasps are up, the briefcase is open.
+
+#const n = 2.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#clasp = {1,2}.
+
+#inertial_fluent = up(#clasp).
+
+#defined_fluent = {open}.
+
+#fluent = #inertial_fluent + #defined_fluent.
+          
+#action = toggle(#clasp).
+
+#step = 0..n.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+holds(#fluent,#step).
+occurs(#action,#step).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% toggle(C) causes up(C) if -up(C)
+holds(up(C), I+1) :- occurs(toggle(C),I),
+                     -holds(up(C), I).
+
+%% toggle(C) causes -up(C) if up(C)
+-holds(up(C), I+1) :- occurs(toggle(C),I),
+                      holds(up(C), I).
+                      
+%% open if up(1), up(2).
+holds(open, I) :- holds(up(1),I),
+                  holds(up(2),I).
+
+%% CWA for Defined Fluents
+-holds(F,I) :- #defined_fluent(F),
+               not holds(F,I).
+
+%% General Inertia Axiom
+
+holds(F,I+1) :- #inertial_fluent(F),
+                holds(F,I),
+                not -holds(F,I+1).
+
+-holds(F,I+1) :- #inertial_fluent(F),
+                 -holds(F,I),
+                 not holds(F,I+1).
+                 
+%% CWA for Actions
+
+-occurs(A,I) :- not occurs(A,I).
+
+
+%% Particular initial situation
+%% Change at will:
+-holds(up(1),0).
+holds(up(2),0).
+-holds(open,0).
+%% Particular occurence of action toggle at step 0
+%% Change at will:
+occurs(toggle(1),0).

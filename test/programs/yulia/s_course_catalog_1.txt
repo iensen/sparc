@@ -1,0 +1,30 @@
+%% s_course_catalog_1.sp -- SPARC version of course catalog example from
+%%    Chapter 5, Section 5.2
+%% Last Modified: 2/12/14
+%% Knowledge bases with null value 'staff'
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#prof = {mike, john}.
+#prof_values = #prof + {staff}.
+#course = {pascal, c, prolog}.
+#default = d(#prof_values, #course).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+teaches(#prof_values, #course).
+ab(#default).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+teaches(mike,pascal).
+teaches(john,c).
+teaches(staff,prolog).
+
+-teaches(P,C) :- not ab(d(P,C)), 
+                 not teaches(P,C).
+                 
+ab(d(P,C)) :- teaches(staff,C).

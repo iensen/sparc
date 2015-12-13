@@ -1,0 +1,127 @@
+%% s_twoarms.sp -- SPARC version of twoarms.lp + initial situation + actions
+%%    from Chapter 8, Section 8.5.3
+%% Last Modified: 2/21/14
+%% Blocks world domain with two robotic arms that can act concurrently.
+
+#const n = 2.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#block = [b][0..7].
+
+#location = #block + {t}.
+
+#inertial_fluent = on(#block(X),#location(Y)):X!=Y.
+
+#defined_fluent = above(#block(X),#location(Y)):X!=Y.
+
+#fluent = #inertial_fluent + #defined_fluent.
+          
+#action = put(#block(X),#location(Y)):X!=Y.
+
+#step = 0..n.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+holds(#fluent,#step).
+occurs(#action,#step).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Laws %%
+
+%% Putting block B on location L at step I
+%% causes B to be on L at step I+1:
+%% put(B,L) causes on(B,L)
+holds(on(B,L),I+1) :- occurs(put(B,L),I).
+
+%% A block cannot be in two locations at once:
+%% -on(B,L2) if on(B,L1), L1 != L2
+-holds(on(B,L2),I) :- holds(on(B,L1),I), 
+                      L1 != L2.
+
+%% Only one block can be set directly on top of another:
+%% -on(B2,B) if on(B1,B), B1 != B2
+-holds(on(B2,B),I) :- #block(B), 
+                      holds(on(B1,B),I),
+                      B1 != B2.
+
+%% B is above L if it is directly on top of it or on top of 
+%% another block that is above L:
+%% above(B,L) if on (B,L)
+%% above(B,L) if on(B,B1), above(B1,L)
+holds(above(B2,B1),I) :- holds(on(B2,B1),I).
+
+holds(above(B2,B1),I) :- holds(on(B2,B),I),
+                         holds(above(B,B1),I).
+                  
+%% It is impossible to move an occupied block:       
+%% impossible put(B,L) if on (B1,B)
+-occurs(put(B,L),I) :- holds(on(B1,B),I).
+
+%% !! This constraint was not needed -- overspecification
+%% It is impossible to move a block onto an occupied block:
+%% impossible put(B1,B) if on(B2,B).
+%%-occurs(put(B1,B),I) :- #block(B),
+%%                        holds(on(B2,B),I).
+
+%% !! New restriction for concurrency
+%% Actions that put B1 on B2 and simultaneously move B2 are impossible:
+%% impossible put(B1,L), put(B2,B2)
+-occurs(put(B1,L),I) | -occurs(put(B2,B1),I). 
+                                      
+                        
+%% CWA for Defined Fluents
+
+-holds(F,I) :- #defined_fluent(F), 
+               not holds(F,I).
+
+%% General Inertia Axiom
+
+holds(F,I+1) :- #inertial_fluent(F),
+                holds(F,I),
+                not -holds(F,I+1).
+
+-holds(F,I+1) :- #inertial_fluent(F),
+                 -holds(F,I),
+                 not holds(F,I+1).
+                 
+%% CWA for Actions
+
+-occurs(A,I) :- not occurs(A,I).
+
+
+%%%%%%%%%%%%%%%%%%%%%        
+        
+%% Initial Situation
+%% Change at will:
+
+%% holds(on(B,L),I): a block B is on location L at step I.
+holds(on(b0,t),0).                         
+holds(on(b3,b0),0).
+holds(on(b2,b3),0).
+holds(on(b1,t),0).
+holds(on(b4,b1),0).
+holds(on(b5,t),0).
+holds(on(b6,b5),0).
+holds(on(b7,b6),0).   
+
+%% If block B is not known to be on location L at step 0,
+%% then we assume it is not.
+-holds(on(B,L),0) :- not holds(on(B,L),0). 
+                     
+                     
+%% Specific Actions
+%% Change at will:
+
+%occurs(put(b2,t),0).
+%occurs(put(b7,b2),0).
+
+occurs(put(b2,t),0).
+occurs(put(b4,b7),0).

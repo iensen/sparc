@@ -1,0 +1,78 @@
+% hierarchy.sp -- SPARC version of Narwhal example 
+%%  Section 4.3
+% Last Modified: 2/7/14
+%% This program creates a hierarchical representation 
+%% implied by the following statements:
+%% The Narwhal is a submarine.
+%% A submarine is a vehicle.
+%% Submarines are black.
+%% The Narwhal is part of the U.S. Navy.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#class = {sub, car, vehicle, machine}.
+#object = {narwhal, mystery}.
+#color = {black, red, white}.
+#branch = {us_navy}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+is_subclass(#class,#class).
+subclass(#class,#class).
+is_a(#object,#class).
+member(#object,#class).
+siblings(#class,#class).
+has_color(#object,#color).
+part_of(#object,#branch).
+alive(#object).
+used_for_travel(#object).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+is_subclass(sub,vehicle).
+is_subclass(car,vehicle).
+is_subclass(vehicle, machine).
+
+%% Subclass Relation:
+subclass(C1,C2) :- is_subclass(C1,C2).
+
+subclass(C1,C2) :- is_subclass(C1,C3),
+                   subclass(C3,C2).
+
+-subclass(C1,C2) :- not subclass(C1,C2).
+                    
+is_a(narwhal,sub).
+is_a(mystery,vehicle).
+
+%% Class Membership:
+member(X,C) :- is_a(X,C).
+member(X,C) :- is_a(X,C0),
+               subclass(C0,C).
+               
+is_a(mystery,vehicle).
+
+siblings(C1,C2) :- is_subclass(C1,C),
+                   is_subclass(C2,C),
+                   C1 != C2.
+-member(X,C2) :- member(X,C1),
+                 siblings(C1,C2),
+                 C1 != C2.
+
+%% Submarines are black:
+has_color(X,black) :- member(X,sub).
+
+%% An object can only have one color.
+%% (Multiple colors can be represented as combinations 
+%% such as black_red.)
+-has_color(X,C2) :- has_color(X,C1),
+                    C1 != C2.
+                
+%% The Narwhal is part of the U.S. Navy                    
+part_of(narwhal,us_navy).
+
+%% Other properties:
+used_for_travel(X) :- member(X,vehicle).
+-alive(X) :- member(X,machine).

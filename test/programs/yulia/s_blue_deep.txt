@@ -1,0 +1,88 @@
+%% s_blue_deep.sp -- SPARC version of blue deep program from
+%%   Chapter 5, Section 5.4.1
+%% Last Modified: 2/20/14
+%% This program is identical to hierachy1.lp except for the 
+%% addition of the information about the Blue Deep and
+%% the change of "Submarines are black" to "Normally, submarines are black."
+%% This program creates a hierarchical representation 
+%% implied by the following statements:
+%% The Narwhal is a submarine.
+%% A submarine is a vehicle.
+%% Normally, submarines are black.
+%% The Narwhal is part of the U.S. Navy.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#class = {sub, car, vehicle, machine}.
+#object = {narwhal, mystery, blue_deep}.
+#color = {black, red, white, blue}.
+#branch = {us_navy}.
+#default = dc(#object).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+is_subclass(#class,#class).
+subclass(#class,#class).
+is_a(#object,#class).
+member(#object,#class).
+siblings(#class,#class).
+has_color(#object,#color).
+part_of(#object,#branch).
+alive(#object).
+used_for_travel(#object).
+ab(#default).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+is_subclass(sub,vehicle).
+is_subclass(car,vehicle).
+is_subclass(vehicle, machine).
+
+%% Subclass Relation:
+subclass(C1,C2) :- is_subclass(C1,C2).
+
+subclass(C1,C2) :- is_subclass(C1,C3),
+                   subclass(C3,C2).
+                   
+-subclass(C1,C2) :- not subclass(C1,C2).
+                    
+
+is_a(narwhal,sub).
+is_a(mystery,vehicle).
+is_a(blue_deep,sub).   
+
+%% Class Membership: 
+member(X,C) :- is_a(X,C).
+member(X,C) :- is_a(X,C0),
+               subclass(C0,C).
+               
+siblings(C1,C2) :- is_subclass(C1,C),
+                   is_subclass(C2,C),
+                   C1 != C2.
+-member(X,C2) :- member(X,C1),
+                 siblings(C1,C2),
+                 C1 != C2.
+
+%% Normally, submarines are black:   
+has_color(X,black) :- member(X,sub),
+                      not ab(dc(X)),
+                      not -has_color(X,black).
+
+%% The Blue Deep is blue:
+has_color(blue_deep,blue).   
+
+%% An object can only have one color.
+%% (Multiple colors can be represented as combinations 
+%% such as black_red.)
+-has_color(X,C2) :- has_color(X,C1),         
+                    C1 != C2. 
+
+%% The Narwhal is part of the U.S. Navy                    
+part_of(narwhal,us_navy).
+
+%% Other properties:
+used_for_travel(X) :- member(X,vehicle).
+-alive(X) :- member(X,machine).

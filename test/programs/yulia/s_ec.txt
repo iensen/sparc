@@ -1,0 +1,130 @@
+%% ec.sp -- SPARC version of electrical circuits from 4.2
+%% Last Modified: 2/7/14 
+% Model of the following electrical circuit:
+%           __
+% ---w0-->-|G0|---w1--->|----|
+%           --          |    |
+%              ---w2--->| G1 |---w4--->|----|
+%                       |    |         | G2 |
+%              ---w3--->|----|         |    |----w5---->
+%                    |-----------w3--->|----|
+% G0 -- NOT gate
+% G1 -- AND gate
+% G2 -- OR gate
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#wire = [w][0..5]. 
+
+#gate = [g][0..2].
+
+#gate_type = {not_gate, and_gate, or_gate}.
+
+#signal = {0, 1}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+type(#gate, #gate_type).
+input(#gate,#wire).
+output(#gate,#wire).
+val(#wire,#signal).
+opposite(#signal,#signal).
+
+sensor_val(#wire,#signal).
+defective(#gate).
+needs_replacing(#gate).
+dangerous_to_replace(#gate).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+type(g0,not_gate).
+input(g0,w0).
+output(g0,w1).
+
+type(g1,and_gate).
+input(g1,w1).
+input(g1,w2).
+input(g1,w3).
+output(g1,w4).
+
+type(g2,or_gate).
+input(g2,w4).
+input(g2,w3).
+output(g2,w5).
+
+% Example circuit input:
+val(w0,1).         % The value of the signal on wire 0 is 1.
+val(w2,0).         % The value of the signal on wire 2 is 0.
+val(w3,1).         % The value of the signal on wire 3 is 1.
+
+% A NOT gate flips the value of the signal:
+
+opposite(0,1).
+opposite(1,0).
+
+val(W1,V1) :- output(G,W1),
+              type(G,not_gate),
+              input(G,W0),
+              val(W0,V0),
+              opposite(V1,V0).
+
+% The output of an AND gate is 0 if at least one input is 0:
+
+val(W1,0) :- output(G,W1),
+             type(G,and_gate),
+             input(G,W0),
+             val(W0,0).
+
+% It is 1 otherwise:
+
+val(W1,1) :- output(G,W1),
+             type(G,and_gate),
+             -val(W1,0).
+
+% The output of an OR gate is 1 if at least one input is 1:
+
+val(W1,1) :- output(G,W1),
+             type(G,or_gate),
+             input(G,W0),
+             val(W0,1).
+
+% It is 0 otherwise:
+
+val(W1,0) :- output(G,W1),
+             type(G,or_gate),
+             -val(W1,1).
+
+% CWA
+-val(W,V) :- not val(W,V).
+     
+% A wire can have only one signal value             
+-val(W,V1) :- val(W,V2),
+              V1 != V2.
+              
+%% Assume we have a sensor that tells us the actual 
+%% value of the output wire of a gate by setting the 
+%% value of predicate sensor_val for that wire.
+%% Then if the sensor value does not match the 
+%% predicted value, the gate must be defective.
+%% To test the program, we artificially set sensor_val:
+sensor_val(w1,1).
+
+%% A gate is defective if the predicted output does not 
+%% match the actual output detected by the sensor:
+defective(G) :- output(G,Output_wire),
+                sensor_val(Output_wire, SV), 
+                val(Output_wire,V),
+                SV != V.
+                
+needs_replacing(G) :- defective(G).
+
+%% We can also encode the knowledge that 
+%% a gate is dangerous to replace if any of
+%% its input wires might have the value 1;
+%% i.e., if it is not known whether the value of W is 0.
+
+dangerous_to_replace(G) :- input(G,W),
+                           not val(W,0).

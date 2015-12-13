@@ -1,0 +1,149 @@
+%% ignite.sp -- SPARC version of Igniting the Burner from Section 9.2.2
+%% Last Modified: 2/24/14
+%% Recommened invocation:
+%%    java -jar sparc.jar s_ignite.sp -A -solveropts "-pfilter=occurs"
+%% A burner is connected to a gas tank through a pipeline. The gas tank is on
+%% the left-most end of the pipeline and the burner is on the right-most end.
+%% The pipeline is made up of sections connected with each other by valves. The
+%% pipe sections can be either pressurized by the tank or unpressurized. Opening
+%% a valve causes the section on its right side to be pressurized if the section
+%% to its left is pressurized. Moreover, for safety reasons, a valve can be 
+%% opened only if the next valve in the line is closed. Closing a valve causes 
+%% the pipe section on its right side to be unpressurized.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#const n=4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#section = [s][1..3].
+#valve = [v][1..2].
+#inertial_fluent = {burner_on} +
+                   opened(#valve).
+#defined_fluent = pressurized(#section).
+#fluent = #inertial_fluent + #defined_fluent.
+#action = {ignite} + open(#valve) + close(#valve).
+#step = 0..n.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+holds(#fluent, #step).
+occurs(#action, #step).
+connected_to_tank(#section).
+connected_to_burner(#section).
+connected(#section, #valve, #section).
+success().
+goal(#step).
+something_happened(#step).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+connected_to_tank(s1).
+connected(s1,v1,s2).
+connected(s2,v2,s3).
+connected_to_burner(s3).
+
+%% ----------------------
+%% AL System Description:
+%% ----------------------
+
+%% pressurized(S) if connected_to_tank(S).
+holds(pressurized(S),I) :- connected_to_tank(S).
+
+%% pressurized(S2) if connected(S1,V,S2),
+%%                    opened(V),
+%%                    pressurized(S1).
+holds(pressurized(S2), I) :- connected(S1,V,S2),
+                             holds(opened(V), I),
+                             holds(pressurized(S1), I).
+
+%% -burner_on if connected_to_burner(S),
+%%               -pressurized(S).
+-holds(burner_on, I) :- connected_to_burner(S),
+                        -holds(pressurized(S),I).
+
+%% open(V) causes opened(V).
+holds(opened(V), I+1) :- occurs(open(V),I).
+
+%% impossible open(V) if opened(V).
+-occurs(open(V),I) :- holds(opened(V),I).
+
+%% impossible open(V1) if connected(S1,V1,S2),
+%%                        connected(S2,V2,S3),
+%%                        opened(V2).
+-occurs(open(V1),I) :- connected(S1,V1,S2),
+                       connected(S2,V2,S3),
+                       holds(opened(V2),I).
+
+%% close(V) causes -opened(V).
+-holds(opened(V), I+1) :- occurs(close(V), I).
+
+%% impossible close(V) if -opened(V).
+-occurs(close(V), I) :- -holds(opened(V), I).
+
+%% ignite causes burner_on.
+holds(burner_on, I+1) :- occurs(ignite, I).
+
+%% impossible ignite if connected_to_burner(S),
+%%                      -pressurized(S).
+-occurs(ignite, I) :- connected_to_burner(S),
+                      -holds(pressurized(S), I).
+
+%% CWA for Defined Fluents
+
+-holds(F,I) :- #defined_fluent(F), 
+               not holds(F,I).
+
+%% General Inertia Axiom
+
+holds(F,I+1) :- #inertial_fluent(F),
+                holds(F,I),
+                not -holds(F,I+1).
+
+-holds(F,I+1) :- #inertial_fluent(F),
+                 -holds(F,I),
+                 not holds(F,I+1).
+                 
+%% CWA for Actions
+
+-occurs(A,I) :- not occurs(A,I).
+
+
+%% ----------------------------------------------
+%% Simple Planning Module using Disjunctive Rule:   
+%% ----------------------------------------------
+  
+success :- goal(I).
+:- not success.
+
+occurs(A,I) | -occurs(A,I) :- not goal(I).
+                              
+%% Do not allow concurrent actions:
+:- occurs(A1,I),
+   occurs(A2,I),
+   A1 != A2.
+
+%% An action occurs at each step before
+%% the goal is achieved:
+
+something_happened(I) :- occurs(A,I).
+
+:- goal(I), goal(I-1),
+   J < I,
+   not something_happened(J).
+   
+      
+%% ------------------
+%% Initial Situation:
+%% ------------------
+-holds(burner_on, 0).
+-holds(opened(v1),0).
+holds(opened(v2),0).
+
+%% -----
+%% Goal:
+%% -----
+goal(I) :- holds(burner_on,I).

@@ -1,0 +1,184 @@
+%% s_crossing.sp -- SPARC version of the missionaries and cannibals 
+%%   code from Appendix D.2 based on the system description in Section 9.2.3
+%% Last Modified: 2/24/14
+%% 
+%% For a quick result, invoke with 
+%%    java -jar sparc.jar s_crossing.sp -A -solver clingo | mkatoms
+%% However, since SPARC doesn't understand #show yet, you may want to wait for 
+%%    java -jar sparc.jar s_crossing.sp -A -solveropts "-pfilter=occurs" | mkatoms
+%% As always, piping the output to mkatoms is optional but nice.
+%%
+%% Three missionaries and three cannibals come to a river
+%% and find a boat that holds at most two people. If the
+%% cannibals ever outnumber the missionaries on either bank,
+%% the missionaries will be eaten.
+%% How can they all cross?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#const n = 11.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#step = 0..n.
+#num = 0..3.           % number of missionaries/cannibals
+#num_boats = 0..1.     % number of boats
+#location = {bank1, bank2}.
+#inertial_fluent = 
+    m(#location,#num) +        % num missionaries at location 
+    c(#location,#num) +        % num cannibals at location
+    b(#location,#num_boats) +  % num_boats at location 
+    {casualties}.              % true if cannibals outnumber missionaries 
+                               %   on the same bank:
+                               
+#fluent = #inertial_fluent.    % (There are no defined fluents in this program.)
+
+%% Action move(NC, NM, Dest):
+%% move NC (a given number of cannibals) and NM (a given number 
+%% of missionaries) to Dest (a destination):
+#action = move(#num, #num, #location).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+holds(#fluent, #step).
+occurs(#action, #step).
+success().
+goal(#step).
+something_happened(#step).
+
+opposite(#location,#location).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+%% opposite bank:
+opposite(bank1,bank2).
+opposite(bank2,bank1).
+
+%%-----------------------------------
+%% Encoding of AL System Description:
+%%-----------------------------------
+
+%% Moving objects increases the number of objects at the 
+%% destination by the amount moved.
+
+holds(m(Dest, N+NM), I+1) :- holds(m(Dest,N),I),
+                             occurs(move(NC, NM, Dest), I).
+
+holds(c(Dest, N+NC), I+1) :- holds(c(Dest,N),I),
+                             occurs(move(NC, NM, Dest), I).
+
+holds(b(Dest, 1), I+1) :- occurs(move(NC, NM, Dest), I).
+
+%% The number of missionaries/cannibals at the opposite bank 
+%% is 3 - number_on_this_bank. The number of boats at the
+%% opposite bank is 1-number_of_boats_on_this_bank.
+
+holds(m(Source, 3-N),I) :- holds(m(Dest, N),I),
+                           opposite(Source,Dest).
+
+holds(c(Source, 3-N),I) :- holds(c(Dest, N),I),
+                           opposite(Source,Dest).
+
+holds(b(Source, 1-NB), I) :- holds(b(Dest,NB),I),
+                             opposite(Source,Dest).
+
+%% There cannot be different numbers of the same type of person
+%% at the same location.
+-holds(m(Loc, N1), I) :- holds(m(Loc, N2),I), 
+                         N1 != N2.
+                         
+-holds(c(Loc, N1), I) :- holds(c(Loc, N2),I), 
+                         N1 != N2.
+
+%% A boat can't be in and not in a location
+-holds(b(Loc, NB1), I) :- holds(b(Loc, NB2), I), 
+                          NB1 != NB2.
+
+%% A boat can't be in two places at once.
+-holds(b(Loc1, N), I) :- holds(b(Loc2, N),I), 
+                         Loc1 != Loc2.
+
+%% There will be casualties if cannibals outnumber missionaries:
+holds(casualties,I) :- holds(m(Loc, NM),I),
+                       holds(c(Loc, NC),I),
+                       NM > 0, NM < NC.
+
+%% It is impossible to move more than two people at the same time;
+%% it is also impossible to move less than 1 person.
+-occurs(move(NC,NM,Dest),I) :- (NC+NM) > 2.
+-occurs(move(NC,NM,Dest),I) :- (NM+NC) < 1.
+
+%% It is impossible to move objects without a boat at the source.
+-occurs(move(NC,NM,Dest), I) :- opposite(Source,Dest),
+                                holds(b(Source,0),I).
+
+%% It is impossible to move N objects from a source if there
+%% aren't at least N objects at the source in the first place.
+-occurs(move(NC,NM,Dest), I) :- opposite(Source,Dest),
+                                holds(m(Source,NMSource), I),
+                                NMSource < NM.
+-occurs(move(NC,NM,Dest), I) :- opposite(Source,Dest),
+                                holds(c(Source,NCSource),I),
+                                NCSource < NC.
+
+%% ----------------------
+%% General Inertia Axioms
+%% ----------------------
+
+holds(F,I+1) :- #inertial_fluent(F),
+                holds(F,I),
+                not -holds(F,I+1).
+
+-holds(F,I+1) :- #inertial_fluent(F),
+                 -holds(F,I),
+                 not holds(F,I+1).
+                 
+%% ---------------
+%% CWA for Actions
+%% ---------------
+
+-occurs(A,I) :- not occurs(A,I).
+
+%% ----------------------------------------------
+%% Simple Planning Module using Disjunctive Rule:
+%% ----------------------------------------------   
+  
+success :- goal(I).
+:- not success.
+
+occurs(A,I) | -occurs(A,I) :- not goal(I).
+                              
+%% Do not allow concurrent actions:
+:- occurs(A1,I),
+   occurs(A2,I),
+   A1 != A2.
+
+%% An action occurs at each step before
+%% the goal is achieved:
+
+something_happened(I) :- occurs(A,I).
+
+:- goal(I), goal(I-1),
+   J < I,
+   not something_happened(J).
+
+%% ------------------
+%% Initial Situation:
+%% ------------------
+
+holds(m(bank1,3), 0).
+holds(c(bank1,3), 0).
+holds(b(bank1,1), 0).
+-holds(casualties,0).
+
+%% -----
+%% Goal:
+%% -----
+
+goal(I) :-
+   -holds(casualties,I),
+    holds(m(bank2,3),I),
+    holds(c(bank2,3),I).

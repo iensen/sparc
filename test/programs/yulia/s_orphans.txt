@@ -1,0 +1,61 @@
+% s_orphans.sp -- SPARC version of orphans program from
+% Chapter 4, Section 4.1.2
+% Last Modified: 2/12/14
+% Defining Orphans
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#person = {mary, bob, mike, rich, kathy, patty}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+child(#person).
+father(#person,#person).
+mother(#person,#person).
+dead(#person).
+parents_dead(#person).
+orphan(#person).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules 
+
+child(mary).        
+child(bob).   
+
+father(mike,mary).   
+father(rich,bob). 
+mother(kathy,mary).  
+mother(patty,bob). 
+
+dead(rich).       
+dead(patty). 
+
+%% CWA's for child, father, mother, and dead:
+
+-child(X) :- not child(X).
+    
+-father(F,C) :- child(C), 
+                not father(F,C).
+    
+-mother(M,C) :- child(C),
+                not mother(M,C).
+    
+-dead(X) :- not dead(X).
+            
+%% P's parents are dead if both the father and the mother of P are dead:
+parents_dead(P) :- father(F,P),
+                   mother(M,P),
+                   dead(F),
+                   dead(M).
+
+%% P is considered an orphan if P is considered a child and 
+%% both parents are dead:
+orphan(P) :- child(P),
+             parents_dead(P).
+             
+%% CWA for orphan:
+-orphan(X) :- not orphan(X). 
+                          
+            

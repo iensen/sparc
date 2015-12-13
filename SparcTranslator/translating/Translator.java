@@ -197,7 +197,7 @@ public class Translator {
 			}
 		}
 		
-	    System.out.println(translatedOutput.toString());
+	    //System.out.println(translatedOutput.toString());
 		return translatedOutput.toString();
 
 	}

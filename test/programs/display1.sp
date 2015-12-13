@@ -19,11 +19,11 @@ p(f(a)).
 -p(f(b)).
 
 
-%display
-%-q.
-%-p(f(X)).
-%p(X).
-%#s.
+display
+-q.
+-p(f(X)).
+p(X).
+#s.
 
 
 

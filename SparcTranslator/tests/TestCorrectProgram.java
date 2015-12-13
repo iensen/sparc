@@ -5,6 +5,9 @@ package tests;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -21,18 +24,23 @@ import parser.ASTprogramRules;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
+import solving.Runner;
 import translating.InstanceGenerator;
 import translating.Translator;
 import typechecking.TypeChecker;
-
+import static org.junit.Assert.*;
 
 public class TestCorrectProgram {
 
 	@Test
 	public void test1sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/1.sp");
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "q(a)","#s1(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/1.sp", anss);
 	}
 	
+	/*
 	@Test
 	public void test2sp() throws FileNotFoundException, ParseException {
 		testFile("../test/programs/2.sp");
@@ -205,18 +213,18 @@ public class TestCorrectProgram {
 		testFile("../test/programs/equation.sp", "-pfilter=p");
 		
 	}
-	
+	*/
 
 
-	 private void testFile(String filePath) throws ParseException, FileNotFoundException
+	 private void testFile(String filePath, HashSet<HashSet<String>> cAnswers) throws ParseException, FileNotFoundException
 	 {
-		 testFile(filePath,"");
+		 testFile(filePath," 0 ",  cAnswers);
 	 }
 	 
 	 
 	 
 
-	 private void testFile(String filePath, String options) throws ParseException, FileNotFoundException
+	 private void testFile(String filePath, String options, HashSet<HashSet<String>> cAnswers) throws ParseException, FileNotFoundException
 	 {
 		  Reader sr = null;
 		  try {  
@@ -225,20 +233,23 @@ public class TestCorrectProgram {
 		        e.printStackTrace();
 		 
 		  }
-		  Settings.setSolver(ASPSolver.Clingo);
+		  Settings.setSolver(ASPSolver.DLV);
 		  SparcTranslator p= new SparcTranslator(sr);
 		  SimpleNode e=p.program();
 	      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
 	      TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
-	      Translator tr = new Translator(null, p, gen, true, false);
+	      Translator tr = new Translator(null, p, gen, false, false);
 	      tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 	      StringBuilder translatedProgram=new StringBuilder();
 	      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, p.sortRenaming, true));
 	      System.out.println(translatedProgram);
 	     // ExternalSolver solver = new DLVSolver(translatedProgram.toString());
 	    
-	      ExternalSolver solver= new ClingoSolver(translatedProgram.toString());
-	      Settings.getSingletonInstance().setOptions(" 0  "+options);
-	      System.out.println(solver.run(true));
+	      ExternalSolver solver= new DLVSolver(translatedProgram.toString());
+	      Settings.getSingletonInstance().setOptions(options);
+	      HashSet<HashSet<String>> oAnswers = new Runner().computeAnswerSets(e, solver);
+	      assertEquals("the answers do not match", cAnswers,oAnswers);
+
+	      
 	 }
 }

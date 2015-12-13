@@ -2,6 +2,7 @@ package solving;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import configuration.ASPSolver;
 import configuration.Settings;
@@ -23,7 +24,7 @@ public class Runner {
 	 * @param sparcProgramTree - AST representing the program
 	 * @param solverInstance - an instance of a solver containing a sparc program
 	 */
-	public void computeAnswerSets(SimpleNode sparcProgramTree, ExternalSolver solverInstance) {
+	public void outputAnswerSets(SimpleNode sparcProgramTree, ExternalSolver solverInstance) {
 
 	   String[] displayPredicates = getDisplayPredicates(solverInstance);
 	   HashMap<String,String> mapDisplay =  mapDisplayToOrigin(displayPredicates, (ASTprogram)sparcProgramTree);
@@ -32,6 +33,41 @@ public class Runner {
 	
 	}
 	
+	/**
+	 * Compute answer sets of the SPARC program stored in sparcProgramTree by running the solver instance 
+	 * and store them in a hashset
+	 * @param sparcProgramTree  - AST representing the program
+	 * @param solverInstance - an instance of a solver containing a sparcProgramTree
+	 * @return answer sets filtered by the display section in the A
+	 */
+	public HashSet<HashSet<String>> computeAnswerSets(SimpleNode sparcProgramTree, ExternalSolver solverInstance) {
+		   String[] displayPredicates = getDisplayPredicates(solverInstance);
+		   HashMap<String,String> mapDisplay =  mapDisplayToOrigin(displayPredicates, (ASTprogram)sparcProgramTree);
+		   ArrayList<AnswerSet> answerSets = getAnswerSets(solverInstance);
+		   return filterAnswerSets(answerSets,mapDisplay);
+	}
+	
+	
+	/**
+	 * Take the answer sets output by solver, and convert them into the set of answer sets
+	 * @param answerSets - answer sets obtain from the solver
+	 * @param mapDisplayToOrigin - a mapping which maps auxiliary predicates used to their original names
+	 */
+	private HashSet<HashSet<String>> filterAnswerSets(ArrayList<AnswerSet> answerSets, HashMap<String, String> mapDisplay) {
+		HashSet<HashSet<String>> assets = new HashSet<HashSet<String>>();
+		for(AnswerSet a: answerSets) {
+			HashSet<String> answerSet = new HashSet<String>();
+			for (String literal: a.literals) {
+				String pname = getPredicateName(literal);
+				if(mapDisplay.containsKey(pname)) {
+					answerSet.add(setNewName(literal, mapDisplay.get(pname)));
+				}	
+			}
+			assets.add(answerSet);
+		}
+		return assets;
+	}
+
 	/**
 	 * Fetch the array of predicates that need to be shown in the answer sets
 	 * @param solverInstance (from this we can obtain the translated program, which, in turn, contains

@@ -1130,9 +1130,9 @@ public class TypeChecker {
         	if(atom.jjtGetNumChildren() ==1) {
         		// we only need to check that corresponding predicate or sort name exists
         			// we need to check that such a sort name was defined!
-        			if(!predicateArgumentSorts.containsKey(ps.image)) {
+        			if(!predicateArgumentSorts.containsKey((ps.hasPoundSign()?"#":"") + ps.image)) {
         				  throw new ParseException(inputFileName + ": "
-      							+ "the " + (ps.image.startsWith("#")?"sort ":"predicate ") + "\"" + ps.image
+      							+ "the " + (ps.hasPoundSign()?"sort ":"predicate ") + "\"" + ps.image
       							+ "\"," + (ignoreLineNumbers?"":"occurring at line " + +ps.getBeginLine() + ", column "
       							+ ps.getBeginColumn()) + " is not defined by the program");
       				}			

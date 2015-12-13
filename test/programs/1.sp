@@ -8,4 +8,12 @@ p(a) :- not q(a).
 -p(a).
 q(a):+. % this is a CR-RULE.
 
+display
+p.
+-p.
+-q.
+q.
+#s1.
+
+
 

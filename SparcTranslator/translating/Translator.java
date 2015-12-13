@@ -875,20 +875,20 @@ public class Translator {
 			String ruleName = getRuleName(rule);
 			ASTatom applyAtom = getApplAtom(ruleName);
 			ASTbody body = ra.getBody();
-			appendStringToTranslation(applyAtom.toString());
+			appendStringToTranslation(applyAtom.toString(sortRenaming));
 			appendStringToTranslation("|-");
-			appendStringToTranslation(applyAtom.toString());
+			appendStringToTranslation(applyAtom.toString(sortRenaming));
 			if (body != null) {
 				appendStringToTranslation(":-");
-				appendStringToTranslation(body.toString());
+				appendStringToTranslation(body.toString(sortRenaming));
 			}
 			appendStringToTranslation(".");
 			appendNewLineToTranslation();
 			appendStringToTranslation(":~");
-			appendStringToTranslation(applyAtom.toString());
+			appendStringToTranslation(applyAtom.toString(sortRenaming));
 			if (body != null) {
 				appendStringToTranslation(",");
-				appendStringToTranslation(body.toString());
+				appendStringToTranslation(body.toString(sortRenaming));
 			}
 			appendStringToTranslation(".");
 			appendNewLineToTranslation();

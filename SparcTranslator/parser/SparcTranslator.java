@@ -275,7 +275,7 @@ class Pair
     }
     if (jArguments.outputAnswerSets)
     {
-      new Runner().computeAnswerSets(programTree, solver);
+      new Runner().outputAnswerSets(programTree, solver);
     }
     else
     {
@@ -558,7 +558,6 @@ class Pair
   final public SimpleNode sortExpression() throws ParseException {
  /*@bgen(jjtree) sortExpression */
   ASTsortExpression jjtn000 = new ASTsortExpression(JJTSORTEXPRESSION);
-
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);SimpleNode n;
   String s;

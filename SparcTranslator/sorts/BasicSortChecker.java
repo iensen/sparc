@@ -36,6 +36,11 @@ public class BasicSortChecker {
 		if (se.getId() == SparcTranslatorTreeConstants.JJTCURLYBRACKETS) {
 			return checkCurlyBrackets((SimpleNode) se);
 		}
+		
+		if(se.getId() == SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL) {
+			return false;
+		}
+		
 		boolean result = true;
 		for (int i = 0; i < se.jjtGetNumChildren(); i++) {
 			result = result

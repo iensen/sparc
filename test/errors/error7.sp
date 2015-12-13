@@ -1,7 +1,7 @@
 %b_expr in concatenation is not a basic sort.
+#maxint = 1.
 sorts
-#s1={a}. 
-#s=f(#s1,#s1).
+#s=f(#nat,#nat).
 #s2=[a][#s].
 predicates
-program rules
+rules

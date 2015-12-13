@@ -558,6 +558,7 @@ class Pair
   final public SimpleNode sortExpression() throws ParseException {
  /*@bgen(jjtree) sortExpression */
   ASTsortExpression jjtn000 = new ASTsortExpression(JJTSORTEXPRESSION);
+
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);SimpleNode n;
   String s;
@@ -3811,7 +3812,7 @@ class Pair
     case MAXINTDIRECTIVE:
       t = jj_consume_token(MAXINTDIRECTIVE);
       t1 = jj_consume_token(EQ);
-      t2 = jj_consume_token(POSITIVE_INTEGER);
+      t2 = number();
       t3 = jj_consume_token(DOT);
     Integer value = Integer.parseInt(t2.image);
     BuiltIn.setMaxInt(value);

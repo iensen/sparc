@@ -34,7 +34,7 @@ public class TestError {
 	public void testError2() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error2.sp"),
-				"sort s1 at line 3 column 5 was not defined");
+				"sort #s1 at line 3 column 5 was not defined");
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class TestError {
 	public void testError7() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error7.sp"),
-				"ERROR: Sort 's' at line 5, column 9 is not a basic sort");
+				"ERROR: Sort '#s' at line 5, column 9 is not a basic sort");
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class TestError {
 	public void testError14_1() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error14(1).sp"),
-				": argument number 1 of predicate p/1, \"7-3\", at line 8, column 1 violates definition of sort \"s\"");
+				": argument number 1 of predicate p/1, \"7-3\", at line 8, column 1 violates definition of sort \"#s\"");
 	}
 
 	@Test
@@ -140,21 +140,21 @@ public class TestError {
 	public void testError15() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error15.sp"),
-				": argument number 1 of predicate p/1, \"f(b)\", at line 8, column 1 violates definition of sort \"s\"");
+				": argument number 1 of predicate p/1, \"f(b)\", at line 8, column 1 violates definition of sort \"#s\"");
 	}
 
 	@Test
 	public void testError16() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error16.sp"),
-				": argument number 1 of predicate p/1, \"1*2\", at line 8, column 1 violates definition of sort \"s\"");
+				": argument number 1 of predicate p/1, \"1*2\", at line 8, column 1 violates definition of sort \"#s\"");
 	}
 
 	@Test
 	public void testError17() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error17.sp"),
-				": argument number 1 of predicate p/1, \"X+1\", at line 8, column 1 is an arithmetic term and not a variable, but \"s\" does not contain a number");
+				": argument number 1 of predicate p/1, \"X+1\", at line 8, column 1 is an arithmetic term and not a variable, but \"#s\" does not contain a number");
 	}
 
 	@Test

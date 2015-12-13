@@ -247,8 +247,8 @@ public class InstanceGenerator {
 	 */
 	private HashSet<String> generateInstances(ASTbasicSort basicSortExp)
 			throws ParseException {
-		int id = ((SimpleNode) basicSortExp.jjtGetChild(0)).getId();
-		switch (id) {
+		SimpleNode child = (SimpleNode) basicSortExp.jjtGetChild(0);
+		switch (child.getId()) {
 		case SparcTranslatorTreeConstants.JJTNUMERICRANGE:
 			return generateInstances((ASTnumericRange) basicSortExp
 					.jjtGetChild(0));
@@ -257,7 +257,7 @@ public class InstanceGenerator {
 					.jjtGetChild(0));
 		case SparcTranslatorTreeConstants.JJTSORTNAME:
 			ASTsortExpression expr = sortNameToExpression
-					.get(basicSortExp.image);
+					.get(child.image);
 			// from parsing phase we know that "expr" is restricted to basic
 			// sorts,
 			// but we still follow the general procedure

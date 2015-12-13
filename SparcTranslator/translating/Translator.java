@@ -924,12 +924,12 @@ public class Translator {
 					+ "program rule "+originalRule
 					+ " at line " + rule.getBeginLine() + ", column "
 					+ rule.getBeginColumn()
-					+ " contains unrestricted "
+					+ " contains "
 					+(unrestrictedVariablesLists.first.size()>0?
-					  "global variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.first, ","):"") +
+					  "unrestricted global variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.first, ","):"") +
 					(unrestrictedVariablesLists.second.size()>0 ?
 							((unrestrictedVariablesLists.first.size()>0)? " and ":"")+
-					"local variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.second, ","):""));
+					"unrestricted local variables "+ StringListUtils.getSeparatedList(unrestrictedVariablesLists.second, ","):""));
 					
 		}
 		arithmeticVariables.removeAll(simpleOccurVariables);

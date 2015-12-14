@@ -180,6 +180,22 @@ public class TestError {
 				"null: program rule p(Z):-#count{X:p(Y)}. at line 6, column 1 contains unrestricted local variables X");
 	}
 	
+	@Test
+	public void testBug4() throws FileNotFoundException {
+		assertEquals("Error message was wrong",
+				getError("../test/errors/bug4.sp"),
+				": argument number 1 of predicate s/1, \"ab\", at line 6, column 1 violates definition of sort \"#s\"");
+	}
+	
+	
+	@Test
+	public void testCoffee() throws FileNotFoundException {
+		assertEquals("Error message was wrong",
+				getError("../test/errors/coffee.sp"),
+				"Line 31, column 16: sort \'#step\' was not defined");
+	}
+	
+	
 	
 
 

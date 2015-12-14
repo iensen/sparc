@@ -42,3 +42,8 @@ holds(F,I+1) :- holds(F,I), not -holds(F,I+1).
 %some actions:
 occurs(put(b2,t),0).
 occurs(put(b7,b2),1).
+
+display
+#block.
+#fluent.
+occurs.

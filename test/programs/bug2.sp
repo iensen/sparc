@@ -11,3 +11,8 @@ rules
 
 :- f(X).
 
+display
+#all.
+#s.
+f.
+

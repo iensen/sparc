@@ -7,4 +7,6 @@ s(a) :- #s(a).
 
 display 
 
-#s(X).
+#s.
+s.
+

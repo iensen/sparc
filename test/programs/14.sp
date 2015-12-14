@@ -9,3 +9,7 @@ rules
 
 p(1).
 
+display
+
+p.
+#s.

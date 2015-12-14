@@ -564,10 +564,10 @@ public class Translator {
 			ArrayList<ASTatom> newAtoms) {
 		HashSet<String> addedAtoms = new HashSet<String>();
 		for (ASTatom a : newAtoms) {
-			if (!addedAtoms.contains(a.toString())) {
+			if (!addedAtoms.contains(a.toString(sortRenaming))) {
 				simpleList.jjtAddChild(ConvertAtomToSimple(a),
 						simpleList.jjtGetNumChildren());
-				addedAtoms.add(a.toString());
+				addedAtoms.add(a.toString(sortRenaming));
 			}
 		}
 

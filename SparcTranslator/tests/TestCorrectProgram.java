@@ -25,6 +25,7 @@ import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
 import solving.Runner;
+import sorts.BuiltIn;
 import translating.InstanceGenerator;
 import translating.Translator;
 import typechecking.TypeChecker;
@@ -125,6 +126,298 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("../test/programs/zhang2.sp", anss);
 	}
+	
+	
+	
+	@Test
+	public void test6sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(1)", "p(2)", "p(3)", "q(2)", "q(3)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/6.sp", anss);
+	}
+	
+	@Test
+	public void test7sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/7.sp", anss);
+	}
+	
+	@Test
+	public void test8sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/8.sp", anss);
+	}
+	
+	@Test
+	public void test9sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/9.sp", anss);
+	}
+	
+	@Test
+	public void test10sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("q(6)","p(6)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/10.sp", anss);
+	}
+	
+	@Test
+	public void test11sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("node(1)","a(1)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/11.sp", anss);
+	}
+	
+	
+	@Test
+	public void test12sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/12.sp", anss);
+	}
+	
+	@Test
+	public void test13sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(a)","p(b)","p(1)","p(f(a))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/13.sp", anss);
+	}
+	
+	
+	@Test
+	public void test14sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(1)","#s(1)","#s(2)","#s(3)","#s(4)","#s(5)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/14.sp", anss);
+	}
+	
+	@Test
+	public void test15sp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(f(a,b))", "p(f(c,d))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/15.sp", anss);
+	}
+	
+	
+	@Test
+	public void testAggr() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(a)","q(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/aggr.sp", anss);
+	}
+	
+	@Test
+	public void testArithmetics1() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(32)","q(1)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/arithmetics1.sp", anss);
+	}
+	
+	@Test
+	public void testArithmetics2() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(1)","q(1)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/arithmetics2.sp", anss);
+	}
+	
+	
+	@Test
+	public void testBlock() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#fluent(on(b1,b6))","#fluent(on(b3,b1))", "#fluent(on(b6,b7))", "#fluent(on(b1,b4))",
+						"#fluent(on(b2,t))", "#fluent(on(b3,b2))", "#block(b6)", "#fluent(on(b5,b0))",
+						"#fluent(on(b2,b3))", "#block(b2)", "#fluent(on(b2,b5))", "#fluent(on(b4,b5))",
+						"#fluent(on(b0,b5))", "#fluent(on(b6,b5))", "#fluent(on(b4,b6))", "#fluent(on(b3,b0))", 
+						"#fluent(on(b2,b4))", "#fluent(on(b1,t))", "#fluent(on(b1,b5))", "#fluent(on(b7,t))", 
+						"#fluent(on(b0,b7))", "#fluent(on(b4,b1))", "#block(b5)", "#fluent(on(b5,b1))", 
+						"#fluent(on(b0,b6))", "#fluent(on(b5,b2))", "#fluent(on(b0,b3))", "#fluent(on(b5,t))", 
+						"#block(b1)", "#fluent(on(b0,b4))", "#fluent(on(b4,b3))", "#fluent(on(b4,b2))", 
+						"#fluent(on(b0,b2))", "#fluent(on(b6,t))", "#fluent(on(b4,t))", "#fluent(on(b1,b7))", 
+						"#fluent(on(b1,b3))", "#fluent(on(b7,b2))", "#fluent(on(b6,b1))", "#fluent(on(b3,b4))", 
+						"#fluent(on(b2,b0))", "#fluent(on(b3,b5))", "#block(b4)", "#fluent(on(b6,b2))", 
+						"#fluent(on(b7,b0))", "#fluent(on(b3,b7))", "#fluent(on(b1,b0))", "#fluent(on(b0,b1))", 
+						"#fluent(on(b5,b4))", "#fluent(on(b1,b2))", "#fluent(on(b6,b3))", "#fluent(on(b7,b1))", 
+						"#fluent(on(b4,b0))", "#fluent(on(b3,b6))", "#fluent(on(b5,b6))", "#fluent(on(b5,b3))", 
+						"occurs(put(b7,b2),1)", "#fluent(on(b7,b6))", "#fluent(on(b0,t))", "#fluent(on(b6,b4))", 
+						"#fluent(on(b4,b7))", "#fluent(on(b3,t))", "occurs(put(b2,t),0)", "#fluent(on(b2,b7))",
+						"#fluent(on(b5,b7))", "#fluent(on(b2,b6))", "#block(b3)", "#fluent(on(b7,b5))", 
+						"#block(b7)", "#block(b0)", "#fluent(on(b7,b4))", "#fluent(on(b7,b3))", 
+						"#fluent(on(b6,b0))", "#fluent(on(b2,b1))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/blocks.sp", anss);
+	}
+	
+	@Test
+	public void testBug() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("holds(loc(rob0,office),0)", "#action(find(rob0,obj0))", "#action(move(rob0,aux_library))", 
+					           "#action(grasp(rob0,obj0))", "#action(move(rob0,main_library))", "#action(move(rob0,office))", 
+                              "#action(move(rob0,kitchen))", "#action(putdown(rob0,obj0))", "holds(loc(rob0,office),1)", 
+                              "holds(loc(rob0,office),2)", "holds(loc(rob0,office),3)", "holds(loc(rob0,office),4)", 
+                              "holds(loc(rob0,office),5)", "holds(loc(rob0,office),6)", "holds(loc(obj0,office),1)", 
+                              "holds(loc(obj0,office),2)", "holds(loc(obj0,office),3)", "holds(loc(obj0,office),4)", 
+                              "holds(loc(obj0,office),5)", "holds(loc(obj0,office),6)", "holds(same_loc(rob0,obj0),1)", 
+                              "holds(same_loc(rob0,obj0),2)", "holds(same_loc(rob0,obj0),3)", "holds(same_loc(rob0,obj0),4)", 
+                              "holds(same_loc(rob0,obj0),5)", "holds(same_loc(rob0,obj0),6)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/bug.sp", anss);
+	}
+	
+	
+	@Test
+	public void testBug2() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#s(a)","#s(b)","#s(c)",
+						      "#all(a)","#all(b)","#all(c)", "#all(d)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/bug2.sp", anss);
+	}
+	
+	@Test
+	public void testBug3() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#s(a)","#s(b)","s(a)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/bug3.sp", anss);
+	}
+	
+	
+	@Test
+	public void testCar() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#car(c)","-broken(c)","starts(c)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/car.sp", anss);
+	}
+	
+
+	@Test
+	public void testCarSp() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#car(c)","broken(c)","-starts(c)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/car_sp.sp", anss);
+	}
+	
+	@Test
+	public void testConstant() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(1)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/constant.sp", anss);
+	}
+	
+	
+	@Test
+	public void testConstants() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("q(2)","p(1)","t(1)", "t(5)","t(f(5))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/constants.sp", anss);
+	}
+	
+	@Test
+	public void testCurlyBrackets2() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(f(2))","p(3)",
+						"p(f(5))","p(f(f(a)))","p(f(f(c)))","p(f(g(x)))","p(f(g(x),c(a)))",
+						"p(f(g(b),c(d)))", "p(f(g(x),c(x)))","p(a)","p(b)","p(c)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/curlyBrackets2.sp", anss);
+	}
+	
+	
+	@Test
+	public void testDisplay1() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#s(a)","#s(b)","#s(c)","#s(f(a))","#s(f(b))","-q","-p(f(b))","p(a)","p(f(a))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/display1.sp", anss);
+	}
+	
+	
+	@Test
+	public void testDisplay2() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("#s(a)","#s(b)","#s(c)","#s(f(a))","#s(f(b))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/display2.sp", anss);
+	}
+	
+	
+	@Test
+	public void testEmpty() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>();
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/empty.sp", anss);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+
+	
+	
 
 	
 	
@@ -306,6 +599,9 @@ public class TestCorrectProgram {
 		 
 		  }
 		  Settings.setSolver(ASPSolver.DLV);
+		  BuiltIn.setMaxInt(5000);
+		  
+		  
 		  SparcTranslator p= new SparcTranslator(sr);
 		  SimpleNode e=p.program();
 	      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
@@ -315,6 +611,7 @@ public class TestCorrectProgram {
 	      StringBuilder translatedProgram=new StringBuilder();
 	      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, p.sortRenaming, true));
 	      System.out.println(translatedProgram);
+	      
 	     // ExternalSolver solver = new DLVSolver(translatedProgram.toString());
 	    
 	      ExternalSolver solver= new DLVSolver(translatedProgram.toString());

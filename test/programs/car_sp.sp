@@ -27,7 +27,11 @@ mobile(P) :- owns(P, X),
 
 owns(mike,c).
 turn_key(c).
-%-starts(c).
+-starts(c).
 
+display 
 
+#car(X).
+-starts(X).
+broken(X).
 

@@ -110,3 +110,7 @@ holds(loc(O, P), I+1) :+ occurs(find(R, O), I).
 :- not hr(I), occurs(find(R, O), I). 
 hr(I) :- holds(loc(O, P), I). 
 
+display
+holds.
+#action.
+

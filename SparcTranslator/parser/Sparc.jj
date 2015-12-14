@@ -24,7 +24,7 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   boolean inDisplay = true;
   int anonSortId = 0;  /**
   * Remove from args all 
-  */  private static HashSet < String > fetchOptions(String [] args)  {    HashSet < String > options = new HashSet < String > ();    for (int i = 0; i < args.length; i++)    {      if (args [i].startsWith("--"))      {        options.add(args [i]);        args = ArrayUtils.removeNthElement(args, i);        i--;      }    }    return options;  }  private static final Set < String > supportedSolvers = new HashSet < String > (Arrays.asList("clingo", "dlv"));  public static void main(String [] args)  {    System.err.println("SPARC  V2.47");
+  */  private static HashSet < String > fetchOptions(String [] args)  {    HashSet < String > options = new HashSet < String > ();    for (int i = 0; i < args.length; i++)    {      if (args [i].startsWith("--"))      {        options.add(args [i]);        args = ArrayUtils.removeNthElement(args, i);        i--;      }    }    return options;  }  private static final Set < String > supportedSolvers = new HashSet < String > (Arrays.asList("clingo", "dlv"));  public static void main(String [] args)  {    System.err.println("SPARC  V2.47.1");
        Arguments jArguments = new Arguments();    try    {      new JCommander(jArguments, args);    }    catch (ParameterException ex)    {      System.err.println("ERROR: " + ex.getMessage());      return;    }    if (jArguments.help)    {      show_usage();      return;    }
     if(!jArguments.outputAnswerSets && jArguments.solverOpts != null &&
     (jArguments.solverOpts.indexOf("filter=") !=-1 || jArguments.solverOpts.indexOf("-n=") !=-1 ||
@@ -40,17 +40,8 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
         String fileName=getShortFileName(jArguments.inputFiles.get(0));
         tr.setInputFileName(fileName);        tc.setInputFileName(fileName);      }
        tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
-
-      // if there is no display, let's create one consisting of all the predicates in the program!
-
-      if(programTree.jjtGetNumChildren() == 3)      {
-          HashSet<String > predicatesToDisplay = new HashSet<String > ();
-          for (String predName: p.predicateArgumentSorts.keySet())          {              if(!predName.startsWith("#"))
-                 predicatesToDisplay.add(predName);
-          }          programTree.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
-      }
-      else      {          tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
-      }      translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
+      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
+            translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
 
       if(jArguments.outputFile != null)
       {
@@ -75,19 +66,34 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  sortNameToExpression = new HashMap < String, ASTsortExpression > ();  predicateArgumentSorts = new HashMap < String, ArrayList < String >> ();  crRuleLabels = new HashSet < String > ();  generatingSorts = new HashSet < String > ();  constantsMapping = new HashMap < String, Long > ();  warnings = new ArrayList < String > ();  curlyBracketTerms = new HashSet < String > ();  definedRecordNames = new HashSet < String > ();
-  sortRenaming = new HashMap<String,String > ();}{/*@bgen(jjtree) program */
+  sortRenaming = new HashMap<String,String > ();
+  SimpleNode disp = null;}{/*@bgen(jjtree) program */
   try {
-/*@egen*/  directives(jjtn000.directives) sortDefinitions() predicateDeclarations() programRules() [display()]< EOF >/*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-  }
-/*@egen*/  {    return jjtn000;  } | < EOF >/*@bgen(jjtree)*/
+/*@egen*/  directives(jjtn000.directives) sortDefinitions() predicateDeclarations() programRules() [disp = display()]< EOF >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
 /*@egen*/  {
+    // if there is no display, let's create one consisting
+      // of all the predicates in the program!
+      if(disp == null)
+      {
+          HashSet<String > predicatesToDisplay = new HashSet<String > ();
+          for (String predName: predicateArgumentSorts.keySet())
+          {
+              if(!predName.startsWith("#"))
+                 predicatesToDisplay.add(predName);
+          }
+          jjtn000.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
+      }
+          return jjtn000;  } | < EOF >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {
+      
     return jjtn000;  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {

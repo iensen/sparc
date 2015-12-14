@@ -111,7 +111,7 @@ class Pair
 
   public static void main(String [] args)
   {
-    System.err.println("SPARC  V2.47");
+    System.err.println("SPARC  V2.47.1");
 
     Arguments jArguments = new Arguments();
     try
@@ -222,23 +222,8 @@ class Pair
       }
 
       tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
+      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
 
-      // if there is no display, let's create one consisting of all the predicates in the program!
-
-      if(programTree.jjtGetNumChildren() == 3)
-      {
-          HashSet<String > predicatesToDisplay = new HashSet<String > ();
-          for (String predName: p.predicateArgumentSorts.keySet())
-          {
-              if(!predName.startsWith("#"))
-                 predicatesToDisplay.add(predName);
-          }
-          programTree.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
-      }
-      else
-      {
-          tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
-      }
       translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
 
       if(jArguments.outputFile != null)
@@ -399,6 +384,7 @@ class Pair
   curlyBracketTerms = new HashSet < String > ();
   definedRecordNames = new HashSet < String > ();
   sortRenaming = new HashMap<String,String > ();
+  SimpleNode disp = null;
     try {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MAXINTDIRECTIVE:
@@ -411,7 +397,7 @@ class Pair
         programRules();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case DISPLAYKEYWORD:
-          display();
+          disp = display();
           break;
         default:
           jj_la1[0] = jj_gen;
@@ -420,6 +406,19 @@ class Pair
         jj_consume_token(0);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
+    // if there is no display, let's create one consisting
+      // of all the predicates in the program!
+      if(disp == null)
+      {
+          HashSet<String > predicatesToDisplay = new HashSet<String > ();
+          for (String predName: predicateArgumentSorts.keySet())
+          {
+              if(!predName.startsWith("#"))
+                 predicatesToDisplay.add(predName);
+          }
+          jjtn000.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
+      }
+
     {if (true) return jjtn000;}
         break;
       case 0:

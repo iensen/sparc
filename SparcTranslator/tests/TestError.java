@@ -17,6 +17,7 @@ import parser.ASTprogramRules;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
+import sorts.BuiltIn;
 import translating.InstanceGenerator;
 import translating.Translator;
 import typechecking.TypeChecker;
@@ -181,6 +182,8 @@ public class TestError {
 	
 	
 
+
+
 	private String getError(String filePath) throws FileNotFoundException {
 		Reader sr = null;
 		try {
@@ -190,6 +193,8 @@ public class TestError {
 		}
 		SparcTranslator p = new SparcTranslator(sr);
 		try {
+			//System.out.println(BuiltIn.getMaxInt());
+			BuiltIn.setMaxInt(2000);
 			SimpleNode e = p.program();
 			InstanceGenerator gen = new InstanceGenerator(
 					p.sortNameToExpression);
@@ -203,9 +208,10 @@ public class TestError {
 					p.generatingSorts, p.sortRenaming, true));
 			System.out.println(translatedProgram);
 			ExternalSolver solver = new DLVSolver(translatedProgram.toString());
-			Settings.getSingletonInstance().setOptions(" -n=1 ");
+			Settings.getSingletonInstance().setOptions(" -n=0 ");
 			System.out.println(solver.run(false));
-		} catch (ParseException ex) {
+
+		} catch (Exception ex) {
 			return ex.getMessage();
 		}
 		return null;

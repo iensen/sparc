@@ -9,5 +9,9 @@ rules
 
 p(X) | -p(X).
 
+display
+p.
+-p.
+
 
 

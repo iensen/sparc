@@ -20,6 +20,14 @@ class ASTaggregate extends SimpleNode {
     return visitor.visit(this, data);
   }
   
+  
+  // disallow toString() call without sort renaming map
+  @Override
+  public String toString() {
+	  throw new UnsupportedOperationException();
+  }
+  
+  
   public String toString(HashMap<String,String> sortRenaming) {
 	  //[arithmeticTerm() t1=rel()] aggregateFunction()
 	  //< OB > aggregateElements()

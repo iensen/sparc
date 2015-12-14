@@ -17,6 +17,14 @@ public class ASTunlabeledProgramCrRule extends SimpleNode {
 	public Object jjtAccept(SparcTranslatorVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
+	
+	 
+	  // disallow toString() call without sort renaming map
+	  @Override
+	  public String toString() {
+		  throw new UnsupportedOperationException();
+	  }
+	  
 
 
 	
@@ -35,7 +43,6 @@ public class ASTunlabeledProgramCrRule extends SimpleNode {
 		}
 		if (body != null) {
 			result.append(":-");
-			if(sortRenaming == null)
 			result.append(body.toString(sortRenaming));
 			result.append(".");
 		}

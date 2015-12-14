@@ -20,7 +20,7 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
   boolean inDisplay = true;
   int anonSortId = 0;  /**
   * Remove from args all 
-  */  private static HashSet < String > fetchOptions(String [] args)  {    HashSet < String > options = new HashSet < String > ();    for (int i = 0; i < args.length; i++)    {      if (args [i].startsWith("--"))      {        options.add(args [i]);        args = ArrayUtils.removeNthElement(args, i);        i--;      }    }    return options;  }  private static final Set < String > supportedSolvers = new HashSet < String > (Arrays.asList("clingo", "dlv"));  public static void main(String [] args)  {    System.err.println("SPARC  V2.47");
+  */  private static HashSet < String > fetchOptions(String [] args)  {    HashSet < String > options = new HashSet < String > ();    for (int i = 0; i < args.length; i++)    {      if (args [i].startsWith("--"))      {        options.add(args [i]);        args = ArrayUtils.removeNthElement(args, i);        i--;      }    }    return options;  }  private static final Set < String > supportedSolvers = new HashSet < String > (Arrays.asList("clingo", "dlv"));  public static void main(String [] args)  {    System.err.println("SPARC  V2.47.1");
        Arguments jArguments = new Arguments();    try    {      new JCommander(jArguments, args);    }    catch (ParameterException ex)    {      System.err.println("ERROR: " + ex.getMessage());      return;    }    if (jArguments.help)    {      show_usage();      return;    }
     if(!jArguments.outputAnswerSets && jArguments.solverOpts != null &&
     (jArguments.solverOpts.indexOf("filter=") !=-1 || jArguments.solverOpts.indexOf("-n=") !=-1 ||
@@ -36,17 +36,8 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
         String fileName=getShortFileName(jArguments.inputFiles.get(0));
         tr.setInputFileName(fileName);        tc.setInputFileName(fileName);      }
        tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
-
-      // if there is no display, let's create one consisting of all the predicates in the program!
-
-      if(programTree.jjtGetNumChildren() == 3)      {
-          HashSet<String > predicatesToDisplay = new HashSet<String > ();
-          for (String predName: p.predicateArgumentSorts.keySet())          {              if(!predName.startsWith("#"))
-                 predicatesToDisplay.add(predName);
-          }          programTree.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
-      }
-      else      {          tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
-      }      translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
+      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
+            translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
 
       if(jArguments.outputFile != null)
       {
@@ -67,7 +58,22 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
 | < SORT_ATOM : "#" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >
 | < SORT_ATOM_WITH_OP : "#" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* "(" >
 | < NEGATIVE_SORT_ATOM : "#" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >| < NEGATIVE_ATOM : "-" [ "a"-"z" ] ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* >}< DEFAULT, IN_PROGRAM_RULES, IN_REGULAREXPRESSIONSEQUENCE >SKIP :{  < SINGLE_LINE_COMMENT :    "%" (~[ "\n", "\r" ])*    (      "\r"    | "\n"    | "\r\n"    )? >| < SPACE : ([ "\n", "\r", "\t", " " ])+ >}< DEFAULT, IN_PROGRAM_RULES, IN_REGULAREXPRESSIONSEQUENCE >TOKEN :{  < MINUS : "-" >}SimpleNode program() :{  sortNameToExpression = new HashMap < String, ASTsortExpression > ();  predicateArgumentSorts = new HashMap < String, ArrayList < String >> ();  crRuleLabels = new HashSet < String > ();  generatingSorts = new HashSet < String > ();  constantsMapping = new HashMap < String, Long > ();  warnings = new ArrayList < String > ();  curlyBracketTerms = new HashSet < String > ();  definedRecordNames = new HashSet < String > ();
-  sortRenaming = new HashMap<String,String > ();}{  directives(jjtThis.directives) sortDefinitions() predicateDeclarations() programRules() [display()]< EOF >  {    return jjtThis;  } | < EOF >  {
+  sortRenaming = new HashMap<String,String > ();
+  SimpleNode disp = null;}{  directives(jjtThis.directives) sortDefinitions() predicateDeclarations() programRules() [disp = display()]< EOF >  {
+    // if there is no display, let's create one consisting
+      // of all the predicates in the program!
+      if(disp == null)
+      {
+          HashSet<String > predicatesToDisplay = new HashSet<String > ();
+          for (String predName: predicateArgumentSorts.keySet())
+          {
+              if(!predName.startsWith("#"))
+                 predicatesToDisplay.add(predName);
+          }
+          jjtThis.jjtAddChild(new ASTdisplay(predicatesToDisplay),3);
+      }
+          return jjtThis;  } | < EOF >  {
+      
     return jjtThis;  }
   }void sortDefinitions() :{}{  (    < SORTDEFKEYWORD >    (      sortDefinition()    )*  )|  {}}void sortDefinition() :{  Token t;  SimpleNode n;}{  < POUND_SIGN > t = < IDENTIFIER > < EQ > n = sortExpression() < DOT >  {    if (sortNameToExpression.containsKey(t.image))    {      throw new ParseException("sort " + t.image + " at line " + t.beginLine + " column " + t.beginColumn + " was already defined");    }    for (String builtInSortName : BuiltIn.sortNames)    {      if (t.image.equals(builtInSortName))      {        throw new ParseException("sort " + t.image + " at line " + t.beginLine + " column " + t.beginColumn + " is built-in and cannot be redefined");      }    }    if (EmptySortChecker.isEmpty((ASTsortExpression) n, sortNameToExpression))    {      throw new ParseException("sort " + t.image + " defined at line " + t.beginLine + " column " + t.beginColumn + " is empty");    }    sortNameToExpression.put(t.image, (ASTsortExpression) n);  }}SimpleNode sortExpression() :{  SimpleNode n;  String s;}{
   LOOKAHEAD(2)  n = setExpression()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;    return jjtThis;  }| LOOKAHEAD({ (getToken(1) != null && (getToken(1).image) != null) && (constantsMapping.containsKey(getToken(1).image) || isInteger(getToken(1).image)) })  n = numericRange()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;    return jjtThis;  }| LOOKAHEAD(identifierRange())  n = identifierRange()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;    return jjtThis;  }| n = concatenation()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;    return jjtThis;  }}SimpleNode setExpression() :{  SimpleNode n;}{  n = additiveSetExpression()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;    return jjtThis;  }}SimpleNode multiplicativeSetExpression() :{  SimpleNode n;}{  n = unarySetExpression()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;  }  (    < MULT > unarySetExpression()  )*  {    return jjtThis;  }}SimpleNode additiveSetExpression() :{  jjtThis.image = "+";  SimpleNode n;}{  n = multiplicativeSetExpression()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;  }  (    (      "+"      {        jjtThis.image += "+";      }    | "-"      {        jjtThis.image += "-";      }    )    multiplicativeSetExpression()  )*  {    return jjtThis;  }}SimpleNode sortName() :{  Token t;}{  t = < IDENTIFIER >  {    if (!sortNameToExpression.containsKey(t.image))    {      throw new ParseException("sort " + "#"+ t.image + " at line " + t.beginLine + " column " + t.beginColumn + " was not defined");    }    else    {      jjtThis.image = t.image;      jjtThis.beginLine = t.beginLine;      jjtThis.beginColumn = t.beginColumn;    }    return jjtThis;  }}SimpleNode unarySetExpression() :{  Token t;  SimpleNode n;}{  t = < POUND_SIGN > sortName()  {    jjtThis.beginLine = t.beginLine;    jjtThis.beginColumn = t.beginColumn;    return jjtThis;  }| n = curlyBrackets()  {    jjtThis.beginLine = n.beginLine;    jjtThis.beginColumn = n.beginColumn;    return jjtThis;  }| t = < OP > setExpression() < CP >  {    jjtThis.beginLine = t.beginLine;    jjtThis.beginColumn = t.beginColumn;    return jjtThis;  }

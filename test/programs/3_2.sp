@@ -4,3 +4,4 @@ predicates
 s(#s).
 rules
 s(1):-#nat(X).
+

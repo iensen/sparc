@@ -225,7 +225,7 @@ public class Translator {
 					&& predicateArgumentSorts.get(pred.image).size()>0) {
 				ASTtermList tlist= new ASTtermList(SparcTranslatorTreeConstants.JJTTERMLIST);
 				for(int j=0; j<predicateArgumentSorts.get(pred.image).size(); j++) {
-					tlist.jjtAddChild(new ASTterm("X"+Integer.toString(i+1)), 0);
+					tlist.jjtAddChild(new ASTterm("X"+Integer.toString(j+1)), j);
 				}
 		    	atom.jjtAddChild(tlist, 1);				
 			}			
@@ -406,12 +406,12 @@ public class Translator {
 	private void addAtomsToBody(ASTbody body, ArrayList<ASTatom> atoms) {
 		HashSet<String> addedAtoms = new HashSet<String>();
 		for(int i=0;i<body.jjtGetNumChildren();i++) {
-			addedAtoms.add(((ASTatom)body.jjtGetChild(i)).toString());
+			addedAtoms.add(((ASTatom)body.jjtGetChild(i)).toString(sortRenaming));
 		}
 		for (int i = 0; i < atoms.size(); i++) {
-			if (!addedAtoms.contains(atoms.get(i).toString())) {
+			if (!addedAtoms.contains(atoms.get(i).toString(sortRenaming))) {
 				body.jjtAddChild(atoms.get(i), body.jjtGetNumChildren());
-				addedAtoms.add((atoms.get(i).toString()));
+				addedAtoms.add((atoms.get(i).toString(sortRenaming)));
 			}
 		}
 	}
@@ -450,7 +450,6 @@ public class Translator {
 			ASTbody createdBody = createBody(atoms);
 			rule.jjtAddChild(createdBody, rule.jjtGetNumChildren());
 		}
-
 	}
 
 	/**

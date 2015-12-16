@@ -144,24 +144,45 @@ public class Runner {
 	 * @param mapDisplayToOrigin - a mapping which maps auxiliary predicates used to their original names
 	 */
 	private void outputFilteredAnswerSets(ArrayList<AnswerSet> answerSets, HashMap<String, String> mapDisplayToOrigin) {
-		boolean firstAnswerSet = true;
-		for(AnswerSet a: answerSets) {
-			if(!firstAnswerSet)
-			  System.out.println(System.getProperty("line.separator"));
-			firstAnswerSet = false;
-			System.out.print("{");
-			boolean firstLit = true;
-			for (String literal: a.literals) {
-				String pname = getPredicateName(literal);
-				if(mapDisplayToOrigin.containsKey(pname)) {
-					if(!firstLit) {
-						System.out.print(", ");	
+
+		if(!Settings.isLOutputFormat()) {
+			boolean firstAnswerSet = true;
+			for(AnswerSet a: answerSets) {
+				if(!firstAnswerSet)
+					System.out.println(System.getProperty("line.separator"));
+				firstAnswerSet = false;
+				System.out.print("{");
+				boolean firstLit = true;
+				for (String literal: a.literals) {
+					String pname = getPredicateName(literal);
+					if(mapDisplayToOrigin.containsKey(pname)) {
+						if(!firstLit) {
+							System.out.print(", ");	
+						}
+						firstLit = false;
+						System.out.print(setNewName(literal, mapDisplayToOrigin.get(pname)));
 					}
-                    firstLit = false;
-					System.out.print(setNewName(literal, mapDisplayToOrigin.get(pname)));
 				}
+				System.out.print("}");	
+				
 			}
-			System.out.print("}");		
+			System.out.print(System.getProperty("line.separator"));
+		} else {
+			for(AnswerSet a: answerSets) {
+				boolean firstLit = true;
+				for (String literal: a.literals) {
+					String pname = getPredicateName(literal);
+					if(mapDisplayToOrigin.containsKey(pname)) {
+						if(!firstLit) {
+							System.out.print(" ");	
+						}
+						firstLit = false;
+						System.out.print(setNewName(literal, mapDisplayToOrigin.get(pname)));
+					}
+				}
+				System.out.print(System.getProperty("line.separator"));
+			}
+			System.out.println(answerSets.isEmpty()?"UNSATISFIABLE":"SATISFIABLE");
 		}
 	}
 	

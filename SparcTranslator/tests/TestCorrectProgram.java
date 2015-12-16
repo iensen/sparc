@@ -386,191 +386,220 @@ public class TestCorrectProgram {
 	
 	
 	@Test
-	public void testEmpty() throws FileNotFoundException, ParseException {
-		HashSet<String> ans1 = new HashSet<String>();
+	public void testEquation() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(2)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("../test/programs/empty.sp", anss);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-	
-
-	
-	
-
-	
-	
-
-
-	/*
-	
-	@Test
-	public void test6sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/6.sp");
-	}
-
-	
-	@Test
-	public void test7sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/7.sp");
-	}
-
-	
-	@Test
-	public void test8sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/8.sp");
-	}
-
-	
-	@Test
-	public void test9sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/9.sp");
-	}
-
-	
-	@Test
-	public void test10sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/10.sp");
-	}
-
-	
-	@Test
-	public void test11sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/11.sp");
-	}
-	
-	@Test
-	public void test12sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/12.sp");
-	}
-	
-	@Test
-	public void test13sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/13.sp");
-	}
-	
-	@Test
-	public void test14sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/14.sp");
-	}
-	
-	@Test
-	public void test15sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/15.sp");
-	}
-	
-	
-	@Test
-	public void testArithmetics1sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/arithmetics1.sp");
-	}
-	
-	@Test
-	public void testArithmetics2sp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/arithmetics2.sp");
-	}
-	
-
-	@Test
-	public void testBlockssp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/blocks.sp");
-	}
-	
-	@Test
-	public void testConstantssp() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/constants.sp");
-	}
-	
-	@Test
-	public void testHam() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/ham.sp");
-	}
-	
-	@Test
-	public void testMaxint() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/maxint.sp");
-	}
-	
-	@Test
-	public void testMys() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/mys.sp");
-	}
-	
-	@Test
-	public void testQSystemProgram() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/qsystem_program.sp");
-	}
-	
-	
-	@Test
-	public void testRange() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/range.sp");
-	}
-	
-	
-	@Test
-	public void testSudoku() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/sudoku.sp");
-	}
-	
-	@Test
-	public void testTeacher() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/teacher.sp");
-	}
-	
-	@Test
-	public void testUsaSP1() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/usaSP1.sp");
-	}
-	
-	@Test
-	public void testWeakConstraints() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/weakc.sp");
-	}
-	
-	@Test
-	public void testzeroArity() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/zeroArity.sp");
+		testFile("../test/programs/equation.sp", anss);
 	}
 	
 	@Test
 	public void testG() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/g.sp");
+		HashSet<String> ans1 = new HashSet<String>(
+				Arrays.asList("p(1)","p(2)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/g.sp", anss);
 	}
 	
 	@Test
-	public void testUnrestr() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/unrestr.sp");
+	public void testGelfond() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>();
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/gelfond.sp", anss);
+	}
+	
+	
+	@Test
+	public void testHam() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
+				"in(5,6)", "in(2,3)", "in(1,2)", "in(4,5)", "in(3,4)", "in(6,1)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/ham.sp", anss);
 	}
 	
 	@Test
-	public void testEquation() throws FileNotFoundException, ParseException {
-		testFile("../test/programs/equation.sp", "-pfilter=p");
+	public void testIgnite() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
+				"connected_to_tank(s1)","connected(s1,v1,s2)","connected(s2,v2,s3)",
+                "connected_to_burner(s3)","fluent(inertial,burner_on)","fluent(inertial,opened(v1))",
+                "fluent(inertial,opened(v2))","fluent(defined,pressurized(s1))",
+                "fluent(defined,pressurized(s2))","fluent(defined,pressurized(s3))",
+                "#section(s1)","#section(s2)",
+                "#section(s3)","#valve(v1)","#valve(v2)","#ov(opened(v1))",
+                "#ov(opened(v2))","#ps(pressurized(s1))","#ps(pressurized(s2))","#ps(pressurized(s3))",
+                "#fluent(pressurized(s1))","#fluent(pressurized(s2))","#fluent(pressurized(s3))",
+                "#fluent(opened(v1))","#fluent(opened(v2))","#fluent(burner_on)",
+                "#ft(inertial)","#ft(defined)","#action(ignite)","#action(open(v1))",
+                "#action(open(v2))","#action(close(v1))","#action(close(v2))","#step(1)",
+                "#step(2)","#step(3)","#step(4)", "#step(0)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/ignite.sp", anss);
+	}
+	
+	@Test
+	public void testInconsistent() throws FileNotFoundException, ParseException {
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		testFile("../test/programs/inconsistent.sp", anss);
+	}
+	
+	@Test
+	public void testInfinite() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("limit(3)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/infinite_program.sp", anss);
+	}
+	
+	
+	
+	@Test
+	public void testMaxInt() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(1)","p(2)","p(3)","p(4)","p(5)","p(6)",
+				                                                          "p(7)","p(8)","p(9)","p(10)","p(0)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/maxint.sp", anss);
+	}
+	
+	@Test
+	public void testMurderer() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("murderer(ben)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/mys.sp", anss);
+	}
+	
+	@Test
+	public void testNat() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("#nat(1)","#nat(2)","#nat(3)","#nat(4)","#nat(5)",
+				                                                 "nat(1)","#nat(0)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/nat.sp", anss);
+	}
+	
+	@Test
+	public void testParan() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(a)","p(1)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/paran.sp", anss);
+	}
+	
+	@Test
+	public void testQsystemProgram() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("x","-p","a","-b"));
+		HashSet<String> ans2 = new HashSet<String>(Arrays.asList("x","p","a","-b"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		anss.add(ans2);
+		testFile("../test/programs/qsystem_program.sp", anss);
+	}
+	
+	@Test
+	public void testRange() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("q(bi)", "q(ba)", "q(ca)", "q(bu)", "q(be)", 
+				"q(bt)", "q(by)", "q(al)", "q(ae)", "q(ay)", "q(au)", "q(bp)", "q(ai)", "q(ap)", "q(bj)",
+				"q(as)", "q(bb)", "q(bf)", "q(cb)", "q(af)", "q(bs)", "q(ab)", "q(bx)", "q(ax)", "q(ao)", 
+				"q(at)", "q(bo)", "q(ak)", "q(aj)", "q(cc)", "q(bk)", "q(ac)", "q(bg)", "q(bc)", "q(bw)", 
+				"q(an)", "q(br)", "q(ar)", "q(bn)", "q(ag)", "q(aw)", "q(cd)", "q(bl)", "q(bh)", "q(bd)", 
+				"q(az)", "q(bv)", "q(ad)", "q(bq)", "q(am)", "q(bm)", "q(aq)", "q(ah)", "q(av)", "q(bz)"));
+	
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
 		
+		testFile("../test/programs/range.sp", anss);
 	}
-	*/
+	
+	@Test
+	public void testRegions() throws FileNotFoundException, ParseException {
+		
+		// no choice rules in DLV
+		if(solver ==  ASPSolver.DLV) {
+			return;
+		}
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("???"));
+	
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		
+		testFile("../test/programs/regions.sp", anss);
+	}
+	
+	
+	
+	@Test
+	public void testSimple123() throws FileNotFoundException, ParseException {
 
+		
+		// no negative arithmetics in DLV
+		if(solver ==  ASPSolver.DLV) {
+			return;
+		}
+	
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(2)"));
+	
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		
+		testFile("../test/programs/simple123.sp", anss);
+	}
+	
+	@Test
+	public void testSudoku() throws FileNotFoundException, ParseException {
+		
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
+				"pos(6,c(2,4))", "pos(6,c(5,5))", "pos(5,c(1,9))", "pos(6,c(8,7))", 
+				"pos(8,c(6,4))", "pos(8,c(4,7))", "pos(3,c(5,7))", "pos(8,c(8,6))", 
+				"pos(9,c(8,5))", "pos(8,c(9,1))", "pos(4,c(2,9))", "pos(6,c(4,3))", 
+				"pos(5,c(4,8))", "pos(7,c(7,6))", "pos(6,c(1,1))", "pos(9,c(7,3))", 
+				"pos(4,c(6,7))", "pos(1,c(1,7))", "pos(6,c(9,6))", "pos(7,c(2,1))", 
+				"pos(3,c(2,8))", "pos(5,c(3,5))", "pos(3,c(6,2))", "pos(7,c(3,7))", 
+				"pos(6,c(3,9))", "pos(3,c(3,3))", "pos(9,c(6,9))", "pos(9,c(3,8))", 
+				"pos(4,c(9,5))", "pos(1,c(9,2))", "pos(2,c(9,9))", "pos(2,c(3,1))", 
+				"pos(1,c(2,3))", "pos(1,c(4,1))", "pos(7,c(4,9))", "pos(3,c(4,5))", 
+				"pos(4,c(8,1))", "pos(3,c(1,6))", "pos(3,c(8,9))", "pos(9,c(2,6))", 
+				"pos(1,c(3,6))", "pos(2,c(2,7))", 
+				"pos(9,c(1,2))", "pos(9,c(5,1))", "pos(2,c(5,8))", "pos(7,c(6,3))", 
+				"pos(8,c(2,5))", "pos(6,c(7,2))", "pos(5,c(2,2))", "pos(1,c(8,8))", 
+				"pos(9,c(9,7))", "pos(8,c(1,8))", "pos(4,c(5,2))", "pos(2,c(4,2))", 
+				"pos(2,c(6,6))", "pos(1,c(7,4))", "pos(1,c(5,9))", "pos(3,c(9,4))", 
+				"pos(5,c(6,1))", "pos(7,c(9,8))", "pos(5,c(9,3))", "pos(5,c(8,4))", 
+				"pos(5,c(5,6))", "pos(8,c(7,9))", "pos(7,c(5,4))", "pos(2,c(8,3))", 
+				"pos(4,c(7,8))", "pos(1,c(6,5))", "pos(8,c(3,2))", "pos(7,c(1,5))", 
+				"pos(9,c(4,4))", "pos(7,c(8,2))", 
+				"pos(2,c(7,5))", "pos(6,c(6,8))", "pos(3,c(7,1))", "pos(4,c(3,4))", 
+				"pos(8,c(5,3))", "pos(5,c(7,7))", "pos(2,c(1,4))", "pos(4,c(4,6))", 
+				"pos(4,c(1,3))"));
+	
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		
+		testFile("../test/programs/sudoku.sp", anss);
+	}
+	
+	@Test
+	public void testSudokuSimple() throws FileNotFoundException, ParseException {
+		
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(a)"));
+	
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		
+		testFile("../test/programs/sudoku_simple.sp", anss);
+	}
+	
+	
+	
+	
+	
+	
+	
 
 
 	 private void testFile(String filePath, IAnswerChecker checker, String options) throws ParseException, FileNotFoundException

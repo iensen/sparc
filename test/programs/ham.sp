@@ -39,3 +39,6 @@ edge(3,4).
 edge(4,5).
 edge(5,6).
 edge(6,1).
+
+display
+in.

@@ -4,7 +4,9 @@ public class Settings {
 	
 private static final Settings singletonInstance = new  Settings();
 ASPSolver solver;
+boolean lout;
 String options;
+
 
 public String getOptions() {
 	return options;
@@ -31,5 +33,14 @@ public static void setSolver(ASPSolver solver) {
 
 public static ASPSolver getSolver() {
 	return singletonInstance.solver;
+}
+
+public static boolean isLOutputFormat() {
+	return singletonInstance.lout;
+}
+
+public static void setLOutputFormat(boolean lout)
+{
+	singletonInstance.lout = lout;
 }
 }

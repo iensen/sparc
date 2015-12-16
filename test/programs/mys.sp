@@ -67,3 +67,7 @@ holds(friends(A,B)) :- holds(friends(B,A)).
 %r9: We introduce murderer relation
 murderer(P) :- holds(murderer(P)).
 
+display
+murderer.
+
+

@@ -1,3 +1,5 @@
+#maxint = 5.
+
 sorts 
 
 predicates
@@ -8,3 +10,4 @@ nat(1).
 
 display 
 #nat.
+nat.

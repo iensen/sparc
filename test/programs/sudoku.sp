@@ -63,3 +63,6 @@ pos(9,c(3,8)).
 pos(4,c(7,8)).
 pos(7,c(9,8)).
 pos(5,c(1,9)).
+
+display
+pos.

@@ -45,3 +45,25 @@ fluent(inertial, burner_on).
 fluent(inertial, opened(V)).
 fluent(defined, pressurized(S)).
 
+display
+fluent.
+connected.
+connected_to_tank.
+connected_to_burner.
+#section.
+#valve.
+#ov.
+#ps.
+#fluent.
+#ft.
+#action .
+#step.
+
+
+
+
+
+
+
+
+

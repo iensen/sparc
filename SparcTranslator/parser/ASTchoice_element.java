@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public
 class ASTchoice_element extends SimpleNode {
   public ASTchoice_element(int id) {
@@ -18,13 +20,13 @@ class ASTchoice_element extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String,String> sortRenaming) {
 	  StringBuilder result=new StringBuilder();
 	  result.append(((SimpleNode)this.jjtGetChild(0)).toString());
 	  //if there is a simpleAtomList
 	  if(this.jjtGetNumChildren()>1) {
 		  result.append(":");
-		  result.append(((SimpleNode)this.jjtGetChild(1)).toString());
+		  result.append(((SimpleNode)this.jjtGetChild(1)).toString(sortRenaming));
 	  }
 	  return result.toString();
 	  

@@ -524,6 +524,6 @@ bad :- good_not_accepted, sending(N1), sending(N2), N1!=N2, not bad_node(N1), no
 % -bad_node(N) :- sending(N).
 0{bad_node(N)}2.
 
-:- not bad.
+%:- not bad.
 
 

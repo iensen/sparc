@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 public class TestCorrectProgram {
 
-	public ASPSolver solver = ASPSolver.DLV;
+	public ASPSolver solverId = ASPSolver.Clingo;
 	@Test
 	public void test1sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "q(a)","#s1(a)"));
@@ -45,7 +45,7 @@ public class TestCorrectProgram {
 	@Test
 	public void testHugesp() throws FileNotFoundException, ParseException {
 		
-		String options = (solver == ASPSolver.Clingo?" 1 ": " -n=1 "); 
+		String options = (solverId == ASPSolver.Clingo?" 1 ": " -n=1 "); 
 		testFile("../test/programs/huge.sp", new AnswerCheckerH(), options);
 	}
 	
@@ -520,7 +520,7 @@ public class TestCorrectProgram {
 	public void testRegions() throws FileNotFoundException, ParseException {
 		
 		// no choice rules in DLV
-		if(solver ==  ASPSolver.DLV) {
+		if(solverId ==  ASPSolver.DLV) {
 			return;
 		}
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("???"));
@@ -538,7 +538,7 @@ public class TestCorrectProgram {
 
 		
 		// no negative arithmetics in DLV
-		if(solver ==  ASPSolver.DLV) {
+		if(solverId ==  ASPSolver.DLV) {
 			return;
 		}
 	
@@ -582,23 +582,22 @@ public class TestCorrectProgram {
 		
 		testFile("../test/programs/sudoku.sp", anss);
 	}
-	
+	/*
 	@Test
 	public void testSudokuSimple() throws FileNotFoundException, ParseException {
 		
-		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(a)"));
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(8)", "p(7)", "p(2)", "p(9)", "p(1)", "p(5)", 
+				"p(3)", "p(4)", "p(6)"));
 	
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		
 		testFile("../test/programs/sudoku_simple.sp", anss);
 	}
+	*/
 	
 	
-	
-	
-	
-	
+
 	
 
 
@@ -611,7 +610,7 @@ public class TestCorrectProgram {
 	 
 	 private void testFile(String filePath, HashSet<HashSet<String>> cAnswers) throws ParseException, FileNotFoundException
 	 {
-		 String options = (solver == ASPSolver.Clingo?" 0 ": ""); 
+		 String options = (solverId == ASPSolver.Clingo?" 0 ": ""); 
 		 testFile(filePath,options,  cAnswers,null);
 	 }
 	 
@@ -627,7 +626,7 @@ public class TestCorrectProgram {
 		        e.printStackTrace();
 		 
 		  }
-		  Settings.setSolver(ASPSolver.DLV);
+		  Settings.setSolver(solverId);
 		  BuiltIn.setMaxInt(5000);
 		  
 		  
@@ -643,7 +642,14 @@ public class TestCorrectProgram {
 	      
 	     // ExternalSolver solver = new DLVSolver(translatedProgram.toString());
 	    
-	      ExternalSolver solver= new DLVSolver(translatedProgram.toString());
+	      
+	      ExternalSolver solver = null;
+	      
+	      if(solverId == ASPSolver.DLV)
+	         solver= new DLVSolver(translatedProgram.toString());
+	      else if(solverId == ASPSolver.Clingo) {
+	    	  solver= new ClingoSolver(translatedProgram.toString());
+	      }
 	      Settings.getSingletonInstance().setOptions(options);
 	      HashSet<HashSet<String>> oAnswers = new Runner().computeAnswerSets(e, solver);
 	      if(checker == null) {

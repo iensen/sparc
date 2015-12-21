@@ -18,12 +18,12 @@ public class ASTunaryCondition extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public String toString(HashMap<String, Integer> map) throws ParseException {
-		ASTvar child1 = ((ASTvar) (this.jjtGetChild(0)));
-		ASTvar child2 = ((ASTvar) (this.jjtGetChild(1)));
+	//public String toString(HashMap<String, Integer> map) throws ParseException {
+	//	ASTvar child1 = ((ASTvar) (this.jjtGetChild(0)));
+	//	ASTvar child2 = ((ASTvar) (this.jjtGetChild(1)));
 		
-		return "{" + map.get(child1.toString()) + this.image + map.get(child2.toString()) + "}";
-	}
+	//	return "{" + map.get(child1.toString()) + this.image + map.get(child2.toString()) + "}";
+	//}
 
 	public String toString() {
 		return image;

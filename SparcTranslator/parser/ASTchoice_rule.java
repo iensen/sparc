@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public
 class ASTchoice_rule extends SimpleNode {
   public ASTchoice_rule(int id) {
@@ -18,7 +20,7 @@ class ASTchoice_rule extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String,String> sortRenaming) {
 	  String []relations=null;
 	  int relationidx=0;
 	  if(this.image!=null && this.image!="") {
@@ -36,7 +38,7 @@ class ASTchoice_rule extends SimpleNode {
 		  ++relationidx;
 	  }
 	  result.append("{");
-	  result.append(((ASTchoice_elements)this.jjtGetChild(childIdx)).toString());
+	  result.append(((ASTchoice_elements)this.jjtGetChild(childIdx)).toString(sortRenaming));
 	  result.append("}");
 	  ++childIdx;
 	  if(relations!=null && relationidx<relations.length) {

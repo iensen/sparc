@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.HashMap;
+
 public
 class ASTdisjunction extends SimpleNode {
   public ASTdisjunction(int id) {
@@ -18,7 +20,7 @@ class ASTdisjunction extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String toString() {
+  public String toString(HashMap<String,String> sortRenaming) {
 	  StringBuilder result=new StringBuilder();
 	  for(int i=0;i<this.jjtGetNumChildren();i++) {
 		  ASTnonRelAtom nonrelAtomatom=(ASTnonRelAtom)this.jjtGetChild(i);

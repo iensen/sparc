@@ -50,7 +50,7 @@ public class ASTunlabeledProgramRule extends SimpleNode {
 		} else {
 			StringBuilder result = new StringBuilder();
 			if (((SimpleNode) this.jjtGetChild(0)).getId() == SparcTranslatorTreeConstants.JJTHEAD) {
-				result.append(((SimpleNode) this.jjtGetChild(0)).toString());
+				result.append(((ASThead) this.jjtGetChild(0)).toString(sortRenaming));
 			}
 			ASTbody body = null;
 			if (this.jjtGetNumChildren() > 1) {

@@ -37,6 +37,7 @@ class Arguments
   , help = true) boolean help;
   @ Parameter(names = "-o", description = "Output file") String outputFile = null;
   @ Parameter(names = "-A", description = "outputAnswerSets") boolean outputAnswerSets = false;
+  @ Parameter(names = "-web", description = "special things for online ide") boolean web = false;
   @ Parameter(names = "-loutput", description = "output answer sets in L format") boolean lout = false;
   @ Parameter(names = "-solver", description = "selected solver") String solver = null;
   @ Parameter(names = "-solveropts", description = "options passed to internal solver")
@@ -125,7 +126,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.47.2");
+        System.err.println("SPARC  V2.47.3");
 
     if (jArguments.help)
     {
@@ -155,6 +156,7 @@ class Pair
     }
 
     Settings.setLOutputFormat(jArguments.lout);
+    Settings.setWebMode(jArguments.web);
 
 
     if (jArguments.solverOpts != null)

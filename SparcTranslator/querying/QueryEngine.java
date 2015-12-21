@@ -40,7 +40,7 @@ public class QueryEngine {
 		sc = new Scanner(System.in);
 		this.tc = tc;
 		this.answerSets = answerSets;
-	
+
 		try {
 			if (Settings.getSolver() == ASPSolver.DLV) {
 				solver = new DLVSolver();
@@ -73,7 +73,7 @@ public class QueryEngine {
 				System.err.println(ex.getMessage());
 			} catch (TokenMgrError ex) {
 				System.err
-						.println("your query must have syntax p(t1,t2...,tn) (where the list of terms may be omitted)");
+				.println("your query must have syntax p(t1,t2...,tn) (where the list of terms may be omitted)");
 			}
 
 		}
@@ -91,7 +91,7 @@ public class QueryEngine {
 
 	private void answerQuery(QASTliteral query) {
 		queryVars = query.fetchVariables();
-		
+
 		// check the query:
 		try {
 			query.evaluateAllArithmetics();
@@ -126,16 +126,19 @@ public class QueryEngine {
 				Pair<String, ArrayList<String>> recordContent = StringListUtils
 						.splitTerm(atom);
 				System.out.print(buildAnswer(recordContent.second));
-
-				String response = sc.nextLine();
-				while (!response.equals("")
-						&& !response.toLowerCase().equals("q")) {
-					System.err
-							.print("Press Enter to continue or input \'q\' to interrupt the query");
-					response = sc.nextLine();
-				}
-				if (response.toLowerCase().equals("q")) {
-					break;
+				if(!Settings.isWebMode()) {
+					String response = sc.nextLine();
+					while (!response.equals("")
+							&& !response.toLowerCase().equals("q")) {
+						System.err
+						.print("Press Enter to continue or input \'q\' to interrupt the query");
+						response = sc.nextLine();
+					}
+					if (response.toLowerCase().equals("q")) {
+						break;
+					}
+				} else{
+					System.out.println();
 				}
 			}
 		}
@@ -189,8 +192,8 @@ public class QueryEngine {
 		if(answerSets.size()<1) {
 			return null;
 		} else {
-		    AnswerSet theOnlyAnswerSet = answerSets.get(0);
-		    return theOnlyAnswerSet;
+			AnswerSet theOnlyAnswerSet = answerSets.get(0);
+			return theOnlyAnswerSet;
 		}
 	}
 

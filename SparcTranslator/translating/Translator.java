@@ -677,9 +677,6 @@ public class Translator {
 		if (n.getId() == SparcTranslatorTreeConstants.JJTAGGREGATEELEMENT) {
 			renamer.renameLocalVariables((ASTaggregateElement) n,
 					localElemCount++, originalNameMapping);
-		} else if (n.getId() == SparcTranslatorTreeConstants.JJTCHOICE_ELEMENT) {
-			renamer.renameLocalVariables((ASTchoice_element) n,
-					localElemCount++, originalNameMapping);
 		} else {
 			for (int i = 0; i < n.jjtGetNumChildren(); i++) {
 				renameLocalVariables((SimpleNode) n.jjtGetChild(i),

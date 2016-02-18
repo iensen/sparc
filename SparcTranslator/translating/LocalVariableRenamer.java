@@ -23,35 +23,7 @@ public class LocalVariableRenamer {
 		this.bodyVariables = bodyVariables;
 	}
 
-	public void renameLocalVariables(ASTchoice_element choice_element,int idx,HashMap<String,String> originalNamesMapping) {
-		HashSet<String> localVariables = new HashSet<String>();
-		for (int i = 0; i < choice_element.jjtGetNumChildren(); i++) {
-			if (((SimpleNode) (choice_element.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOM) {
-				localVariables
-				.addAll(fetchVariableNames((SimpleNode) (choice_element
-						.jjtGetChild(i))));
-			}
-		}
-		// remove variable which do not occur in the body of the aggregate but occur in the body of the corresponding rule
-		for(String var: bodyVariables) {
-			// check if the variable does not occur in the body of the aggregate
-			boolean varToRemove = true;
-			for(int i=0;i<choice_element.jjtGetNumChildren();i++) {
-				if (((SimpleNode) (choice_element.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTEXTENDEDSIMPLEATOMLIST) {
-					if(fetchVariableNames((SimpleNode) (choice_element
-							.jjtGetChild(i))).contains(var)) {
-						varToRemove = false;
-					}
-				}
-			}
-			if(varToRemove) {
-				localVariables.remove(var);
-			}
-		}
-		renameLocalVariables(choice_element, "_L" + idx,
-				localVariables,originalNamesMapping);
 
-	}
 
 
 	public void renameLocalVariables(ASTaggregateElement agrelem,int idx,HashMap<String,String> originalNamesMapping) {

@@ -126,7 +126,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.47.3");
+        System.err.println("SPARC  V2.48");
 
     if (jArguments.help)
     {

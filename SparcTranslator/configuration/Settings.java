@@ -7,6 +7,7 @@ ASPSolver solver;
 boolean lout;
 boolean web;
 String options;
+String commandLineQuery = null;
 
 
 public String getOptions() {
@@ -30,6 +31,15 @@ return singletonInstance;
  
 public static void setSolver(ASPSolver solver) {
 	singletonInstance.solver=solver;
+}
+
+
+public static void setCommandLineQuery(String query) {
+	singletonInstance.commandLineQuery = query;
+}
+
+public static String getCommandLineQuery() {
+	return singletonInstance.commandLineQuery;
 }
 
 public static ASPSolver getSolver() {

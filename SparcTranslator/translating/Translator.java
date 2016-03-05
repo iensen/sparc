@@ -180,6 +180,7 @@ public class Translator {
 		if(program.jjtGetNumChildren()>3)
 		       translateDisplay(usedNames, (ASTdisplay) program.jjtGetChild(3));
 
+		
 		// write warnings if the flag was set to true
 		if (writeWarningsToSTDERR) {
 			for (String warning : mainTranslator.getWarnings()) {
@@ -198,8 +199,26 @@ public class Translator {
 		}
 		
 	    //System.out.println(translatedOutput.toString());
+		if(Settings.getSolver()== ASPSolver.Clingo) {
+			addClingoOptimizations();
+		}
+		
 		return translatedOutput.toString();
 
+	}
+	
+	/**
+	 * The method extends translatedOutput with some show statements 
+	 * so that the output of the solver is restricted
+	 */
+	private void addClingoOptimizations() {
+		String commandLineQuery = Settings.getCommandLineQuery();
+		if(commandLineQuery != null) {
+			// todo: compute the arity later
+			translatedOutput.append("#show " + commandLineQuery + "/0." );
+			appendNewLineToTranslation();
+		}
+		//translatedOutput.append(b)
 	}
 	
 	

@@ -77,16 +77,34 @@ public class QueryEngine {
 			}
 
 		}
-
+	}
+	
+	public void answerGroundQuery(String query) {
+		QASTliteral queryTree = null;
+		try {
+			queryTree = parseQuery(query);
+		} catch (ParseException e) {
+			System.err.println(e.getMessage());
+		}
+		if(!queryTree.isGround()) {
+			System.err
+			.println("non-ground queries are not supported in command line mode");		
+		}
+		queryVars = new HashSet<String>();
+		answerGroundQuery(queryTree);
+	}
+	
+	
+	private QASTliteral parseQuery(String query) throws ParseException {
+		StringReader sr = new StringReader(query);
+		parser = new QueryParser(sr);
+		return parser.parseQuery();		
 	}
 
 	private QASTliteral readQuery() throws ParseException {
 		System.out.print("?- ");
 		String query = sc.nextLine();
-		StringReader sr = new StringReader(query);
-		parser = new QueryParser(sr);
-		QASTliteral literal = parser.parseQuery();
-		return literal;
+		return parseQuery(query);
 	}
 
 	private void answerQuery(QASTliteral query) {
@@ -202,7 +220,9 @@ public class QueryEngine {
 
 		StringBuilder prefix = new StringBuilder();
 		for (AnswerSet aSet : answerSets) {
+		
 			for (String atom : aSet.literals) {
+			//	System.out.println(atom.toString());
 				boolean negative = false;
 				if (atom.startsWith("-")) {
 					negative = true;

@@ -202,7 +202,6 @@ public class Translator {
 		if(Settings.getSolver()== ASPSolver.Clingo) {
 			addClingoOptimizations();
 		}
-		
 		return translatedOutput.toString();
 
 	}
@@ -719,7 +718,7 @@ public class Translator {
 		boolean isChoiceRuleElement = node.getId() == SparcTranslatorTreeConstants.JJTCHOICE_ELEMENT;
 		TermFetcher tf = null;
 		if (isAggregateElement || isChoiceRuleElement) {
-			tf = new TermFetcher(predicateArgumentSorts);
+			tf = new TermFetcher(predicateArgumentSorts,sortNameToExpression);
 			HashMap<ASTterm, String> localFetchedTerms = null;
 			if (isAggregateElement) {
 				localFetchedTerms = tf
@@ -772,7 +771,7 @@ public class Translator {
 	 */
 	private void fetchGlobalTerms(ASTprogramRule rule,
 			ArrayList<ASTatom> newBodyAtoms) throws ParseException {
-		TermFetcher tf = new TermFetcher(predicateArgumentSorts);
+		TermFetcher tf = new TermFetcher(predicateArgumentSorts, sortNameToExpression);
 		HashMap<ASTterm, String> globalFetchedTerms = tf.fetchTermSorts(rule);
 		ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 		for (ASTterm term : globalFetchedTerms.keySet()) {

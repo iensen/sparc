@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package parser;
 
+import java.util.ArrayList;
+
 public
 class ASTsortExpressionList extends SimpleNode {
   public ASTsortExpressionList(int id) {
@@ -27,5 +29,15 @@ class ASTsortExpressionList extends SimpleNode {
 	  }
 	  return sb.toString();
   }
+
+// get the list of sort names from the sort expression List
+public ArrayList<String> getSortNames() {
+	ArrayList<String> sortNames = new ArrayList<String>();
+	for(int i=0;i<this.jjtGetNumChildren();i++) {
+		ASTsortName sName = (ASTsortName)this.jjtGetChild(i);
+		sortNames.add(sName.image);
+	}
+	return sortNames;
+}
 }
 /* JavaCC - OriginalChecksum=c5af95d1f013963ea5018ae5166388a0 (do not edit this line) */

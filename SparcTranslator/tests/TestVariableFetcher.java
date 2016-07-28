@@ -50,7 +50,7 @@ public class TestVariableFetcher {
 	//		if(i==1)break;
 			System.out.println("RULE NUMBER "+(i+1));
 			ASTprogramRule rule=(ASTprogramRule)programRules.jjtGetChild(i);
-			TermFetcher vf=new TermFetcher (predicateArgumentSorts);
+			TermFetcher vf=new TermFetcher (predicateArgumentSorts,sortNameToExpression);
 			HashMap<ASTterm, String> out=   vf.fetchTermSorts(rule);
 			System.out.println(out.toString());
 			

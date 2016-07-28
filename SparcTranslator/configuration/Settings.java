@@ -1,11 +1,14 @@
 package configuration;
 
+
 public class Settings {
 	
 private static final Settings singletonInstance = new  Settings();
 ASPSolver solver;
 boolean lout;
 boolean web;
+boolean disabledEmptySortChecking;
+
 String options;
 String commandLineQuery = null;
 
@@ -42,6 +45,15 @@ public static String getCommandLineQuery() {
 	return singletonInstance.commandLineQuery;
 }
 
+public static boolean isEmptySortCheckingEnabled() {
+	return !singletonInstance.disabledEmptySortChecking;
+}
+
+public static void setEmptySortCheckingDisabled(boolean escd) {
+	singletonInstance.disabledEmptySortChecking = escd;
+}
+
+
 public static ASPSolver getSolver() {
 	return singletonInstance.solver;
 }
@@ -54,6 +66,7 @@ public static void setLOutputFormat(boolean lout)
 {
 	singletonInstance.lout = lout;
 }
+
 public static void setWebMode(boolean web)
 {
 	singletonInstance.web = web;

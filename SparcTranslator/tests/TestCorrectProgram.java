@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 public class TestCorrectProgram {
 
-	public ASPSolver solverId = ASPSolver.Clingo;
+	public ASPSolver solverId = ASPSolver.DLV;
 	@Test
 	public void test1sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "q(a)","#s1(a)"));

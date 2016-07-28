@@ -2,6 +2,8 @@ package translating;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import parser.ASTadditiveSetExpression;
 import parser.ASTaggregateElement;
 import parser.ASTatom;
 import parser.ASTbody;
@@ -10,12 +12,16 @@ import parser.ASTdisjunction;
 import parser.ASTextendedNonRelAtom;
 import parser.ASTextendedSimpleAtomList;
 import parser.ASThead;
+import parser.ASTmultiplicativeSetExpression;
 import parser.ASTnonRelAtom;
 import parser.ASTpredSymbol;
 import parser.ASTprogramRule;
 import parser.ASTsimpleAtom;
+import parser.ASTsortExpression;
+import parser.ASTsortExpressionList;
 import parser.ASTterm;
 import parser.ASTtermList;
+import parser.ASTunarySetExpression;
 import parser.ASTunlabeledProgramCrRule;
 import parser.ASTunlabeledProgramRule;
 import parser.SparcTranslatorConstants;
@@ -33,6 +39,10 @@ public class TermFetcher {
 	// arguments
 	private HashMap<String, ArrayList<String>> predicateArgumentSorts;
 
+	// mapping from sort names to sort expressions assigned to the sorts
+	// this map is needed for optimization purposes to avoid generation of certain sorts
+	private HashMap<String, ASTsortExpression> sortNameToExpression;
+		
 	/**
 	 * Constructor
 	 * 
@@ -40,8 +50,10 @@ public class TermFetcher {
 	 * @param predicateArgumentSorts
 	 */
 	public TermFetcher(
-			HashMap<String, ArrayList<String>> predicateArgumentSorts) {
+			HashMap<String, ArrayList<String>> predicateArgumentSorts,
+			HashMap<String, ASTsortExpression> sortNameToExpression) {
 		this.predicateArgumentSorts = predicateArgumentSorts;
+		this.sortNameToExpression = sortNameToExpression;		
 	}
 
 	/**
@@ -165,6 +177,118 @@ public class TermFetcher {
 		return fetchTermSorts((ASTtermList) (atom.jjtGetChild(1)), (pred.hasPoundSign()? "#":"") + pred.image);
 	}
 
+	
+	/**
+	 * Check if given sort is defined by a sort expression which is a union of disjoint records
+	 * (see the details below) 
+	 * @param sort sort name
+	 * @return true iff sort is defined by an expression of the form #sort= expr_1 + ...expr_n,
+	 *         where 1) each of expr_1,...,expr_n is either of the form fi(#si_1,...,#si_ki), or is a sort #si 
+	 *         defined as #si = fi(#si_1,...,#si_ki),
+	 *         2) fi are pairwise distinct
+	 * 
+	 */
+	private boolean isSumOfDisjointRecordSorts(String sort) {
+		ASTsortExpression expr = sortNameToExpression.get(sort);
+	    SimpleNode exprChild = (SimpleNode) expr.jjtGetChild(0);
+	    if(exprChild.getId()!=SparcTranslatorTreeConstants.JJTSETEXPRESSION)
+	    	return false;
+	    // from now on we can assume childExpr is a set expression!
+	    ASTadditiveSetExpression addExpr = (ASTadditiveSetExpression) exprChild.jjtGetChild(0);
+	    
+	    if(addExpr.image.indexOf('-')!=-1)
+	    	return false; // we should only have additions!
+	    
+	    // collect record names from the sort definition in this set
+	    // this set is used to check if the record names are pairwise distinct 
+	    HashSet<String> recordNames = new HashSet<String>();
+	    
+	    for(int i=0;i<addExpr.jjtGetNumChildren();i++) {
+		    ASTmultiplicativeSetExpression multExpr = (ASTmultiplicativeSetExpression) addExpr.jjtGetChild(i);
+		    ASTunarySetExpression unaryExpr = (ASTunarySetExpression)multExpr.jjtGetChild(0);
+		    SimpleNode unarExprChild = (SimpleNode)unaryExpr.jjtGetChild(0);
+		    String recordName = null;   
+		    if(unarExprChild.getId() == SparcTranslatorTreeConstants.JJTSORTNAME) {
+		    	String argSort = unarExprChild.image;
+		    	ASTsortExpression argSortExpression = sortNameToExpression.get(argSort);
+		      	SimpleNode argExprChild = (SimpleNode) argSortExpression.jjtGetChild(0);
+		      	if(argExprChild.getId()!=SparcTranslatorTreeConstants.JJTSETEXPRESSION)
+			    	return false;
+		        // from now on we can assume argExprChild is a set expression!
+		        ASTadditiveSetExpression argAddExpr = (ASTadditiveSetExpression) argExprChild.jjtGetChild(0);
+		   	 	// we must have exactly one child:
+		        if(argAddExpr.jjtGetNumChildren()!=1)
+		        	return false;
+		        // and this child should be a record
+		        ASTmultiplicativeSetExpression argMultExpr = (ASTmultiplicativeSetExpression) argAddExpr.jjtGetChild(0);
+			    ASTunarySetExpression argUnaryExpr = (ASTunarySetExpression)argMultExpr.jjtGetChild(0);
+			    SimpleNode argUnarExprChild = (SimpleNode)argUnaryExpr.jjtGetChild(0);
+			    if(argUnarExprChild.getId()!=SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL)
+			    	return false;
+			    recordName = argUnarExprChild.image.substring(0, argUnarExprChild.image.indexOf('('));
+			} else if(unarExprChild.getId() == SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL) {
+				recordName = unarExprChild.image.substring(0, unarExprChild.image.indexOf('('));
+		    } else {
+		    	return false; 
+		    }
+		    // check for pairwise distinction:
+		    if(recordNames.contains(recordName))
+		    	return false;
+		     recordNames.add(recordName);			          	
+	    }
+		return true;
+	}
+	
+	
+	/**
+	 * @param sort
+	 * @param recordName
+	 * @param arity
+	 * @return if isSumOfDisjointRecordSorts(sort), and fi(#s1,...,sn) is a part of the sort definition,
+	 * such that n = arity, and f = recordName, then return [#s1,...,#sn]
+	 * otherwise, return null
+	 */
+	private ArrayList<String> getRecordSorts(String sort , String recordName, int arity) {
+		if(!isSumOfDisjointRecordSorts(sort))
+			return null;	
+		ASTsortExpression expr = sortNameToExpression.get(sort);
+	    SimpleNode exprChild = (SimpleNode) expr.jjtGetChild(0);
+	    ASTadditiveSetExpression addExpr = (ASTadditiveSetExpression) exprChild.jjtGetChild(0);
+	    // a variable to store the list of sort expression for record's arguments:
+	    ASTsortExpressionList sortExprList = null;
+	    for(int i=0;i<addExpr.jjtGetNumChildren();i++) {
+		    ASTmultiplicativeSetExpression multExpr = (ASTmultiplicativeSetExpression) addExpr.jjtGetChild(i);
+		    ASTunarySetExpression unaryExpr = (ASTunarySetExpression)multExpr.jjtGetChild(0);
+		    SimpleNode unarExprChild = (SimpleNode)unaryExpr.jjtGetChild(0);
+		    if(unarExprChild.getId() == SparcTranslatorTreeConstants.JJTSORTNAME) {
+		    	String argSort = unarExprChild.image;
+		    	ASTsortExpression argSortExpression = sortNameToExpression.get(argSort);
+		      	SimpleNode argExprChild = (SimpleNode) argSortExpression.jjtGetChild(0);
+		        ASTadditiveSetExpression argAddExpr = (ASTadditiveSetExpression) argExprChild.jjtGetChild(0);
+		   	    ASTmultiplicativeSetExpression argMultExpr = (ASTmultiplicativeSetExpression) argAddExpr.jjtGetChild(0);
+			    ASTunarySetExpression argUnaryExpr = (ASTunarySetExpression)argMultExpr.jjtGetChild(0);
+			    SimpleNode argUnarExprChild = (SimpleNode)argUnaryExpr.jjtGetChild(0);
+			    String sortRecordName = argUnarExprChild.image.substring(0, argUnarExprChild.image.indexOf('('));
+			    if(recordName.equals(sortRecordName)) {
+			        sortExprList = (ASTsortExpressionList)argUnarExprChild.jjtGetChild(0);		       
+			    }			    
+			} else if(unarExprChild.getId() == SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL) {
+				String sortRecordName = unarExprChild.image.substring(0, unarExprChild.image.indexOf('('));
+				if(recordName.equals(sortRecordName)) {
+			        sortExprList = (ASTsortExpressionList)unarExprChild.jjtGetChild(0);
+		        } 			          	
+			}
+	    }
+	    if(sortExprList.jjtGetNumChildren()!=arity)
+	    	   return null;
+	    return sortExprList.getSortNames();
+	    
+	}
+
+	
+	
+	
+	
 	/**
 	 * Fetch sorts for terms with variables occurring in the predicate
 	 * 
@@ -183,10 +307,32 @@ public class TermFetcher {
 		ArrayList<String> argumentSortList=predicateArgumentSorts.get(predicateName);
 		for (int i=0;i<termList.jjtGetNumChildren();i++) {
 			ASTterm term=(ASTterm)termList.jjtGetChild(i);
-			if(term.hasVariables()) {
-				// add a new atom sort(term) iff it is not the same as original atom predicateName(term).
-				if(!predicateName.startsWith("#"))
-				   result.put((ASTterm)termList.jjtGetChild(i),argumentSortList.get(i));
+			if(term.hasVariables()) {	
+				// add new atoms sort(term) iff it is not the same as original atom predicateName(term).
+				if(!predicateName.startsWith("#")) {
+					
+				   // if the term t is of the form f(t1,...,tn) and the sort is of the form
+				   // #s = #s1 + ...#sn,
+				   // where 1) each of #s1,...,sn is either of the form fi(#si_1,...,#si_ki), or is defined as
+			       // #si = fi(#si_1,...,#si_ki),
+				   // 2) the records fi  are pairwise distinct 
+				   // and there exists fi in {f1,...,fn}  s.t, fi = f and n = ki
+				   // then add the sort atoms si_1(f1),...si_n(fn) to the body!
+				   String sort = argumentSortList.get(i);
+				   // a variable that will store #si_1,..#s_in, in case all the conditions are satisfied:
+				   ArrayList<String> recordSorts;
+				     if(isSumOfDisjointRecordSorts(sort) && term.isRecord() && 
+							   ((recordSorts = getRecordSorts(sort, term.getRecordName(), term.getRecordArgs().size())) !=null)) { 
+						   ArrayList<ASTterm> recordArgTerms = term.getRecordArgs();
+						   for(int j=0; j < recordArgTerms.size() ;j++) {
+							   result.put(recordArgTerms.get(j), recordSorts.get(j));
+						   }
+					   }
+				   
+				   else {// add #s(#t) to the body
+				       result.put(term,sort);
+				   }
+				}
 			}
 		}
 		return result;

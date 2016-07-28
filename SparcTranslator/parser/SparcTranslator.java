@@ -35,6 +35,7 @@ class Arguments
     "-Help", "-H", "-help", "--Help", "--help", "-h"
   }
   , help = true) boolean help;
+  @ Parameter(names = "--disable-empty-sort-check", description = "Disable checking of sorts for being non-empty") boolean noEmptyCheck = false;
   @ Parameter(names = "-o", description = "Output file") String outputFile = null;
   @ Parameter(names = "-q", description = "Query") String query = null;
   @ Parameter(names = "-A", description = "outputAnswerSets") boolean outputAnswerSets = false;
@@ -127,13 +128,17 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.49");
+        System.err.println("SPARC  V2.50");
 
     if (jArguments.help)
     {
       show_usage();
       return;
     }
+
+
+
+
     if(!jArguments.outputAnswerSets && jArguments.solverOpts != null &&
     (jArguments.solverOpts.indexOf("filter=") !=-1 || jArguments.solverOpts.indexOf("-n=") !=-1 ||
        jArguments.solverOpts.matches("\u005c\u005cs\u005c\u005cd+\u005c\u005cs")))
@@ -158,7 +163,7 @@ class Pair
 
     Settings.setLOutputFormat(jArguments.lout);
     Settings.setWebMode(jArguments.web);
-
+    Settings.setEmptySortCheckingDisabled(jArguments.noEmptyCheck);
 
     if (jArguments.solverOpts != null)
     {
@@ -535,7 +540,7 @@ class Pair
         {if (true) throw new ParseException("sort " + t.image + " at line " + t.beginLine + " column " + t.beginColumn + " is built-in and cannot be redefined");}
       }
     }
-    if (EmptySortChecker.isEmpty((ASTsortExpression) n, sortNameToExpression))
+    if (Settings.isEmptySortCheckingEnabled()  &&  EmptySortChecker.isEmpty((ASTsortExpression) n, sortNameToExpression))
     {
       {if (true) throw new ParseException("sort " + t.image + " defined at line " + t.beginLine + " column " + t.beginColumn + " is empty");}
     }
@@ -4121,26 +4126,6 @@ class Pair
     finally { jj_save(32, xla); }
   }
 
-  private boolean jj_3_16() {
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_127() {
-    if (jj_3R_128()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_66() {
-    if (jj_3R_97()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_102()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3R_104() {
     if (jj_3R_31()) return true;
     return false;
@@ -4645,13 +4630,13 @@ class Pair
     return false;
   }
 
-  private boolean jj_3R_49() {
-    if (jj_scan_token(CRRSEP)) return true;
+  private boolean jj_3_23() {
+    if (jj_3R_38()) return true;
     return false;
   }
 
-  private boolean jj_3_23() {
-    if (jj_3R_38()) return true;
+  private boolean jj_3R_49() {
+    if (jj_scan_token(CRRSEP)) return true;
     return false;
   }
 
@@ -5080,6 +5065,26 @@ class Pair
 
   private boolean jj_3R_51() {
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_16() {
+    if (jj_3R_38()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_127() {
+    if (jj_3R_128()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_66() {
+    if (jj_3R_97()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_102()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 

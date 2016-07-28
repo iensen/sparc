@@ -202,6 +202,35 @@ public class ASTterm extends SimpleNode {
 			return false;
 		}
 	}
+	
+	public String getRecordName() {
+		
+		if(!isRecord()) {
+			throw new IllegalArgumentException();
+		}
+		
+		SimpleNode symTerm = (SimpleNode) this.jjtGetChild(0);
+		SimpleNode symFunc = (SimpleNode) symTerm.jjtGetChild(0);
+		return symFunc.image.substring(0,symFunc.image.length()-1); 
+		
+		
+	}
+	
+	public ArrayList<ASTterm> getRecordArgs() {
+		
+		if(!isRecord()) {
+			throw new IllegalArgumentException();
+		}
+		
+		SimpleNode symTerm = (SimpleNode) this.jjtGetChild(0);
+		SimpleNode symTermList = (SimpleNode) symTerm.jjtGetChild(1);
+		ArrayList<ASTterm> result = new ArrayList<ASTterm>();
+		for(int i=0;i<symTermList.jjtGetNumChildren();i++) {
+			result.add((ASTterm)symTermList.jjtGetChild(i));
+		}
+		return result;
+	}
+	
 
 	public String toString() {
 		return toString(false);

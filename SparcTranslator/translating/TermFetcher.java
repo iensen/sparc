@@ -225,8 +225,12 @@ public class TermFetcher {
 			    SimpleNode argUnarExprChild = (SimpleNode)argUnaryExpr.jjtGetChild(0);
 			    if(argUnarExprChild.getId()!=SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL)
 			    	return false;
+			    if(argUnarExprChild.jjtGetNumChildren()!=1)// if we have a condition, generate the entire sort
+			    	return false;
 			    recordName = argUnarExprChild.image.substring(0, argUnarExprChild.image.indexOf('('));
 			} else if(unarExprChild.getId() == SparcTranslatorTreeConstants.JJTFUNCTIONALSYMBOL) {
+				if(unarExprChild.jjtGetNumChildren()!=1) // if we have a condition, generate the entire sort
+					return false;
 				recordName = unarExprChild.image.substring(0, unarExprChild.image.indexOf('('));
 		    } else {
 		    	return false; 

@@ -28,7 +28,7 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
       Arguments jArguments = new Arguments();    try    {      new JCommander(jArguments, args);    }    catch (ParameterException ex)    {      System.err.println("ERROR: " + ex.getMessage());      return;    }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.50");
+        System.err.println("SPARC  V2.51");
        if (jArguments.help)    {      show_usage();      return;    }
     
     

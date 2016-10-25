@@ -8,7 +8,7 @@
  jjtree.openNodeScope(jjtn000);
 /*@egen*/Token t=null;}{/*@bgen(jjtree) literal */
  try {
-/*@egen*/ [t=<MINUS >]atom()/*@bgen(jjtree)*/
+/*@egen*/ [t=<MINUS >]atom()[<DOT >]<EOF>/*@bgen(jjtree)*/
  {
    jjtree.closeNodeScope(jjtn000, true);
    jjtc000 = false;
@@ -39,7 +39,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) atom */
    try {
-/*@egen*/   predSymbol()   [ termList() < CP >][<DOT >]/*@bgen(jjtree)*/
+/*@egen*/   predSymbol()   [ termList() < CP >]/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

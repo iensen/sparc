@@ -1,4 +1,14 @@
 <project default="jar">
+    
+
+<target name="clean">
+    <delete>
+    <fileset dir="." includes="**/*.class"/>
+  </delete>
+  
+    </target>
+
+
   <target name="compile">
     <javac srcdir= "SparcTranslator" 
     excludes="**/tests/"

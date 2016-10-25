@@ -22,6 +22,15 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
         ;
       }
       atom();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case DOT:
+        jj_consume_token(DOT);
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        ;
+      }
+      jj_consume_token(0);
    jjtree.closeNodeScope(jjtn000, true);
    jjtc000 = false;
     if(t!=null)
@@ -68,14 +77,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
       case IDENTIFIER_WITH_OP:
         termList();
         jj_consume_token(CP);
-        break;
-      default:
-        jj_la1[1] = jj_gen;
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case DOT:
-        jj_consume_token(DOT);
         break;
       default:
         jj_la1[2] = jj_gen;
@@ -705,7 +706,7 @@ Token t;
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x80,0x443e,0x2000,0x4002,0x1000,0xc0,0x43c,0xc0,0x300,0x4002,0x4002,0x4,0x38,0x300,};
+      jj_la1_0 = new int[] {0x80,0x2000,0x443e,0x4002,0x1000,0xc0,0x43c,0xc0,0x300,0x4002,0x4002,0x4,0x38,0x300,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;

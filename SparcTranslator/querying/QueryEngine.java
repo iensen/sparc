@@ -70,10 +70,12 @@ public class QueryEngine {
 				}
 				answerQuery(query);
 			} catch (ParseException ex) {
-				System.err.println(ex.getMessage());
+				System.err
+				.println("your query must have syntax [-]p(t1,t2...,tn) (where the list of terms may be omitted)");
+		
 			} catch (TokenMgrError ex) {
 				System.err
-				.println("your query must have syntax p(t1,t2...,tn) (where the list of terms may be omitted)");
+				.println("your query must have syntax [-]p(t1,t2...,tn) (where the list of terms may be omitted)");
 			}
 
 		}
@@ -95,13 +97,14 @@ public class QueryEngine {
 	}
 	
 	
-	private QASTliteral parseQuery(String query) throws ParseException {
+	private QASTliteral parseQuery(String query) throws ParseException,TokenMgrError {
 		StringReader sr = new StringReader(query);
 		parser = new QueryParser(sr);
-		return parser.parseQuery();		
+		return parser.parseQuery();
+		
 	}
 
-	private QASTliteral readQuery() throws ParseException {
+	private QASTliteral readQuery() throws ParseException,TokenMgrError {
 		System.out.print("?- ");
 		String query = sc.nextLine();
 		return parseQuery(query);

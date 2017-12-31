@@ -26,17 +26,17 @@ public class TestVariableFetcher {
 
 	@Test
 	public void testUsa()  {
-		testFile("test/usa.sp");
+		testFile("test/programs/usaSP1.sp");
 	}
 	
 	@Test
 	public void testPrimitive()  {
-		testFile("test/fetcher1.sp");
+		testFile("test/programs/fetcher1.sp");
 	}
     
 	@Test
 	public void testFetcher2() {
-		testFile("test/fetcher2.sp");
+		testFile("test/programs/fetcher2.sp");
 	}
 
 	private void testFile(String filePath) {
@@ -48,11 +48,10 @@ public class TestVariableFetcher {
 		}
 		for(int i=0;i<programRules.jjtGetNumChildren();i++) {
 	//		if(i==1)break;
-			System.out.println("RULE NUMBER "+(i+1));
 			ASTprogramRule rule=(ASTprogramRule)programRules.jjtGetChild(i);
 			TermFetcher vf=new TermFetcher (predicateArgumentSorts,sortNameToExpression);
 			HashMap<ASTterm, String> out=   vf.fetchTermSorts(rule);
-			System.out.println(out.toString());
+			//System.out.println(out.toString());
 			
 		}
 	}

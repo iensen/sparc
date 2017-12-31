@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.HashMap;
 
 import org.junit.Test;
 
@@ -56,6 +57,7 @@ public class TestEvaluator {
 	{
 		Reader sr= new StringReader(s);
 		SparcTranslator p= new SparcTranslator(sr);
+		p.constantsMapping = new HashMap<String,Long>();
 	    try {
 			ASTarithmeticTerm t=(ASTarithmeticTerm)p.arithmeticTerm();
 			TermEvaluator teval=new TermEvaluator(t);

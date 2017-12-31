@@ -1,0 +1,681 @@
+sorts definition
+
+boolean(true). 
+boolean(false).
+fluent_type(defined).
+fluent_type(inertial).
+agent(b).
+agent(j).
+
+agent_action(X) :- physical_action(X).				     
+agent_action(X) :- mental_action(X).
+possible_action(X) :- agent_action(X).      
+possible_action(X) :- exogenous_action(X).
+room(1..4).
+step(0..16).
+//We need a sort to range over possible activity components.
+comp(1..10).
+comp(X):-physical_action(X).
+
+index(0..11).//I use index(max_length+1) insted of index(-1),since negative numbers are not supported by dlv
+created_activity(1..10).
+activity(X) :- created_activity(X).
+activity(d).
+physical_action(move(b,R1,R2)) :- connected(R1,R2).
+exogenous_action(move(j,R1,R2)) :- connected(R1,R2).
+possible_fluent(in(A,R)):-agent(A),room(R).
+possible_fluent(meet(A1,A2)) :- agent(A1),agent(A2),A1 != A2.
+possible_fluent(meet(A1,A2)) :- agent(A1),agent(A2),A1 != A2.
+possible_fluent(minor_goal(G)):-possible_goal(G).
+possible_fluent(minor_activity(M)):-activity(M).
+possible_fluent(active_activity(M)):-activity(M).
+possible_fluent(active_goal(G)):-possible_goal(G).
+possible_fluent(status(M,K)):-activity(M),index(K).
+possible_fluent(curr_subact(M1,M)):- activity(M),activity(M1), M1!= M.
+possible_fluent(failure(M)):- activity(M).
+possible_fluent(success(M)):- activity(M).
+possible_fluent(cancelled(M)):- activity(M).
+possible_fluent(irrelevant(M)):- activity(M).
+possible_fluent(in_progress_activity(M)):- activity(M).
+possible_fluent(in_progress_goal(G)):- possible_goal(G).
+possible_fluent(name(X)):-created_activity(X).
+possible_fluent(intended_action(M,AA)):-activity(M),agent_action(AA).
+possible_fluent(form_activity(M,G)):-activity(M),possible_goal(G).
+possible_action(stop(M)):-activity(M).
+possible_action(start(M)):-activity(M).
+possible_action(select(G)):-possible_goal(G).
+possible_action(abandon(G)):-possible_goal(G).
+possible_action(make_explanation).
+created_activity(1..10).
+activity(X) :- created_activity(X).
+
+possible_goal(meet(b,j)).
+is_agentAction(X):-agent_action(X).
+is_exogenousAction(X):-exogenous_action(X).
+possible_action(delay(A)):-agent(A).
+
+
+predicates declaration
+
+connected(room,room)
+fluent(possible_fluent,fluent_type)
+hpd(possible_action,step)
+h(possible_fluent,step)
+o(possible_action,step)
+occurs(possible_action,step)
+neg_occ(possible_action,step)
+currstep(step)
+in_history(step)
+after(step)
+obs(possible_fluent,boolean,step)
+inconsistent_obs(possible_fluent,boolean,step)
+mental_action(possible_action)
+component(activity,index,comp)
+goal(activity,possible_goal)
+exogenous_action(possible_action)
+physical_action(possible_action)
+length(activity,index)
+intended(agent_action,step) 
+unobserved(exogenous_action,step)
+projected_success(activity)
+has_comp(activity,index)
+is_agentAction(agent_action)
+is_exogenousAction(exogenousAction)
+holds(possible_fluent,step)
+status(activity,index,step)
+success(activity,step)
+failure(activity,step)
+cancelled(activity,step)
+intended_index(activity,possible_action,step)
+in_progress_activity(activity,step)
+neg_ip(possible_goal)
+act_formed(activity,possible_goal,step)
+active_activity(activity,step)
+active_goal(possible_goal,step)
+inc_fluent(possible_fluent,step)
+inc_action(possible_action,step)
+meeting(step)
+neg_minor_goal(possible_goal,step)
+neg_minor_activity(activity,step)
+cur_sub(activity,activity,step)
+program rules
+
+// Room connectivity
+connected(1,2).
+connected(2,3).
+connected(3,4).
+connected(R1,R2) :-  connected(R2,R1).
+//Fluents
+fluent(in(A,R),inertial).
+fluent(meet(A1,A2),defined) :- A1 != A2.
+
+//Law of inertia:
+h(F,I+1) :- h(F,I),
+            not -h(F,I+1),
+            I < 16,
+            fluent(F,inertial).
+
+-h(F,I+1) :- -h(F,I),
+             not h(F,I+1),
+             I < 16,
+             fluent(F,inertial).
+			 
+h(meet(A1,A2),I) :- A1 != A2,
+                    h(in(A1,R),I),
+                    h(in(A2,R),I).
+ 
+h(meet(A2,A1),I) :- h(meet(A1,A2),I).
+
+
+// CWA for defined positive fluent:
+-h(F,I) :- fluent(F,defined),
+           not h(F,I).
+
+
+h(in(A,R2),I+1) :- o(move(A,R1,R2),I).
+
+-h(in(A,R2),I) :- h(in(A,R1),I),
+                  R1 != R2.
+
+
+-o(move(A,R1,R2),I) :- -h(in(A,R1),I).
+
+-o(move(A1,R1,R2),I) :- o(move(A2,R1,R2),I),
+                        A1 != A2.
+
+-o(move(A1,R1,R2),I) :- o(move(A2,R2,R1),I).
+
+
+
+exogenous_action(delay(b)).
+
+-o(move(A,R1,R2),I) :- o(delay(A),I).
+
+// reality check for the past, we handle the present separately.
+:-  obs(F,false,I),
+     h(F,I), 
+    currstep(I1),
+    I < I1.
+    
+:-  obs(F,true,I),
+    -h(F,I),
+     currstep(I1),
+     I < I1.
+inconsistent_obs(F,false,I):-  obs(F,false,I),
+  						       h(F,I).
+    					
+inconsistent_obs(F,true,I):-  obs(F,true,I),
+   						      -h(F,I).
+							  
+							  
+// observations of action occurrences and fluent are correct
+o(E,I) :- hpd(E,I).
+// observations at 0 define the initial status
+h(F,0) :- obs(F,true,0).
+-h(F,0) :- obs(F,false,0).
+
+//////// PAGE 9 %%%%%%%%
+
+////////////////////////////////////////////////////////////
+//////////////// Theory of Intentions  %%%%%%%%%%%%%%%%%% 
+///  To reason with the theory using ASP solvers we will need to
+///  restrict the possible length of its activities. We'll denote
+///  this limit by max_len.
+
+fluent(active_activity(M), defined).
+fluent(status(M,K),inertial).
+//The fluent holds when -1 < K < L is the index of the component of activity
+// M that has most recently been executed; K = L+1(11) is used to indicate
+// that activity M is dormant. 
+
+// The fluent is a function of M. This is indicated by the rule
+
+-h(status(M,K1),I) :- h(status(M,K2),I), 
+                      K1 != K2.
+
+// Initially the agent's activities are normally inactive. 
+
+h(status(M,11),0) :- not -h(status(M,11),0).
+
+//when a mental action occurs no other physical, exogenous, or mental action occurs
+
+-o(E,I) :- o(Ma,I), E != Ma,mental_action(Ma).
+
+
+// Activities are moved into and out of the mental state of the agent 
+// by mental actions start and stop.
+
+mental_action(start(M)). 
+mental_action(stop(M)). 
+
+// PAGE 10 %%%%%%%%
+
+
+// Action start which sets the value of status to 0, 
+// and action stop returns the activity to a status of -1.
+
+h(status(M,0),I+1) :- o(start(M),I).
+h(status(M,11),I+1) :- o(stop(M),I).
+
+// There are also natural executability conditions for these actions:
+// an agent can neither start an ongoing activity,
+// nor stop a dormant activity. 
+
+-o(start(M),I) :- h(active_activity(M),I). 
+-o(stop(M),I) :- -h(active_activity(M),I).
+
+// defines active in terms of status   
+
+h(active_activity(M),I) :- -h(status(M,11),I).
+fluent(curr_subact(M1,M), defined).
+// An activity M1 that is the current component of an activity M is a 
+// current sub-activity of M. It is recursively defined in terms of status.
+h(curr_subact(M1,M),I) :- component(M,K+1,M1), 
+                          h(status(M,K),I).
+
+h(curr_subact(M1,M),I) :- h(curr_subact(M2,M),I),
+                          h(curr_subact(M1,M2),I).
+// An activity M1 that is a current sub-activity and its goal are said to
+// be minor.
+
+fluent(minor_activity(M), defined).
+fluent(minor_goal(G), defined).
+
+h(minor_activity(M1),I) :- h(curr_subact(M1,M),I).
+
+h(minor_goal(G),I) :- h(minor_activity(M),I),
+                 goal(M,G).          
+// the stopping of an activity returns its current sub-activities and
+// their goals to an inactive state.
+
+h(status(M1,11),I+1) :- o(stop(M),I),
+                        h(curr_subact(M1,M),I). 
+
+-h(active_goal(G1),I+1) :- o(stop(M),I),
+                      h(curr_subact(M1,M),I), 
+                      goal(M1,G1).
+//The next inertial fluent from the mental state of the agent is active(G).
+
+fluent(active_goal(G),inertial).  
+
+// PAGE 11 %%%%%%%%                     
+             
+// Initially the agent has no active goals.
+-h(active_goal(G),0) :- not h(active_goal(G),0).
+
+// There are two actions, select and abandon a goal G which in this paper, are
+// viewed as usually performed by agent's controllers. In a sense they are
+// viewed as input to out theory.  Action select activates the goal and
+// action abandon returns the goal to an inactive state.
+
+exogenous_action(select(G)).
+exogenous_action(abandon(G)).
+
+h(active_goal(G),I+1) :- o(select(G),I).
+-h(active_goal(G),I+1) :- o(abandon(G),I).
+//There are also two natural executability conditions. 
+// An active goal cannot be selected and an inactive goal cannot be abandoned.
+// To prevent micromanaging of our agents's activities, we do not allow
+// abandoning of minor goals.
+
+-o(select(G1),I) :- h(active_goal(G),I), G1 != G.
+-o(abandon(G),I) :- -h(active_goal(G),I). 
+-o(abandon(G),I) :- h(minor_goal(G),I).
+
+// The active/inactive state of a goal G of an activity M propagates
+// to the goals of M's current sub-activities.
+
+h(active_goal(G1),I) :- h(active_goal(G),I),
+                   goal(M,G),
+                   h(curr_subact(M1,M),I),
+                   goal(M1,G1).
+ 
+-h(active_goal(G1),I) :- -h(active_goal(G),I),
+                    goal(M,G),
+                    h(curr_subact(M1,M),I),
+                    goal(M1,G1). 
+                    
+// To further describe the mental state of the agent executing activity M
+// to achieve goal G it will be convienent to introduce several other 
+// fluents defined in terms of fluents status(M) and active(G).
+
+// Execution of an active activity M is cancelled at step I if
+// M's goal is no longer active.
+
+fluent(cancelled(M), defined).
+
+h(cancelled(M),I) :- h(active_action(M),I),
+                     -h(active_goal(G),I),
+                     goal(M,G).
+                
+//Execution of an active an uncancelled activity M achieves success
+// at step I if M's goal becomes true at .
+
+fluent(success(M), defined).              
+
+//%%%% PAGE 12 %%%%%%%% 
+
+h(success(M),I) :- h(active_activity(M),I),  
+                   goal(M,G), 
+                   h(G,I),
+                   -h(cancelled(M),I).
+             
+// The next axiom returns goal G to an inactive state after being achieved.
+-h(active_goal(G),I+1) :- o(stop(M),I),
+                     goal(M,G),
+                     h(success(M),I).
+
+//The execution of an activity M is completed at I but M's goal
+// remains unfulfilled we say that M is a failure at I.
+
+fluent(failure(M), defined).
+
+h(failure(M),I) :- length(M,K),
+                   h(status(M,K),I),
+                   -h(success(M),I),
+                   -h(cancelled(M),I).  
+
+
+//Our definition of plans naturally lead to the assumption that 
+//the failure of part of the plan indirectly causes the failure of the 
+//entire plan.
+
+h(failure(M),I) :- h(status(M,K),I),
+                   component(M,K+1,M1),
+                   h(failure(M1),I),
+	               -h(success(M),I),
+	               -h(cancelled(M),I).
+
+//If an awakened activity neither failed nor succeeded it
+//is said to be in progress.
+
+fluent(in_progress_activity(M), defined).
+
+h(in_progress_activity(M),I) :- h(active_activity(M),I),  
+                       -h(cancelled(M),I),
+                       -h(success(M),I),
+                       -h(failure(M),I).
+             
+//A current sub-activity is irrelevant if one of its ancestors is a success,
+//failure, or is cancelled.
+
+fluent(irrelevant(M), defined).
+
+// PAGE 13 %%%%%%%%
+
+h(irrelevant(M1),I) :- h(curr_subact(M1,M),I),  
+                       h(success(M),I).
+
+h(irrelevant(M1),I) :- h(curr_subact(M1,M),I),  
+                       h(failure(M),I).
+                       
+h(irrelevant(M1),I) :- h(curr_subact(M1,M),I),  
+                       h(cancelled(M),I).
+
+             
+//The next fluent defines the action of activity M which is intended
+// for execution. Variable Aa ranges over physical and mental agent actions.
+	
+fluent(intended_action(M,Aa), defined). 	    
+
+// If the first not yet executed component of an active activity
+// is an action then it is intended for execution.
+
+h(intended_action(M,PA),I) :- h(status(M,K),I),
+                              component(M,K+1,PA),
+                              h(in_progress_activity(M),I),
+                              -h(irrelevant(M),I),
+							  physical_action(PA).
+    
+//If the first not yet executed component of an active activity is a
+// sub-activity the agent will intend to start this sub-activity.
+
+h(intended_action(M,start(M1)),I) :- h(status(M,K),I),
+                                     component(M,K+1,M1),
+                                     h(in_progress_activity(M),I),
+                                     -h(active_activity(M1),I),
+                                     -h(irrelevant(M1),I).  
+									 
+//// Relevant activities that are a success, failure or cancelled should be stopped.
+
+h(intended_action(M,stop(M)),I) :- h(failure(M),I),
+                                   -h(irrelevant(M),I).  
+                 
+h(intended_action(M,stop(M)),I) :- h(success(M),I), 
+                                   -h(irrelevant(M),I).
+                                   
+h(intended_action(M,stop(M)),I) :- h(cancelled(M),I),
+                                   -h(irrelevant(M),I).
+               
+//// Intended actions propagate up from current sub-activities.
+
+h(intended_action(M,Aa),I) :- h(intended_action(M1,Aa),I),
+                              h(curr_subact(M1,M),I), 
+                              h(in_progress_activity(M),I).   
+
+//// PAGE 14 %%%%%%%%
+
+/// Execution of an intended action that is a physical action increments 
+/// the status.
+
+h(status(M,K+1),I+1) :- o(PA,I),
+		                h(intended_action(M,PA),I),
+                        h(status(M,K),I),
+                        component(M,K+1,PA),
+						 physical_action(PA).
+
+/// Ending a sub-activity increments the status.
+
+h(status(M,K+1),I+1) :- o(stop(M1),I),
+                        h(intended_action(M1,stop(M1)),I),
+	                    h(status(M,K),I),
+                        component(M,K+1,M1).  //h(curr_subact(M1,M),I).  
+               
+
+////// non procrastination axiom %%%%
+/// An agent tends to execute an intended action as soon as possible.
+
+o(Aa,I) :- h(intended_action(M,Aa),I),
+           is_agentAction(Aa),
+           not -o(Aa,I),
+           I < 16.
+
+/// Action abandon interrupts the execution of an intended activity
+
+-o(E,I) :- o(abandon(G),I),
+           h(intended_action(M,E),I).
+//NOT DONE 
+//While executing an intended activity an agent should only execute
+// physical actions that are intended.
+
+intended(PA,I) :- h(intended_action(M,PA),I),physical_action(PA). 
+
+-o(PA,I) :- h(active_activity(M),I),    
+            not intended(PA,I),physical_action(PA).     
+
+
+//%%%%%%%%%%% Diagnosis  %%%%%%%%%%%%%%%
+
+//%%%% PAGE 17 %%%%%%%%
+  
+// When an agent discovers an inconsistent observations, it must make them 
+// find an explanation that resolves the inconsistency between observations
+// and expectations. Mental action make explanation is executed whenever
+// the agent has an inconsistent observation.
+
+mental_action(make_explanation).
+
+o(make_explanation,I) :- inconsistent_obs(F,B,I).
+
+//The cr rule below says taht the agent looking for an explanation of an
+// inconsistent observation may assume that any exogenous action could have
+// occurred in the past.
+
+diag: o(EA,I2) :+ hpd(make_explanation,I1),
+                             I2 < I1,exogenous_action(EA). 
+
+//Note -- the specific exogenous action and the step in which it 
+// hypothetically occurred are not parameters of the action, so the
+// exact explanation is not recorded in the history as a paramenter,
+// all that is recorded is that an explanation was made
+ 
+//Then next two axioms encode the requirement that an explanation resolve all
+// inconsistent observations. An inconsistent observation of fluent F having
+// truth value V at I is resolved if the expected value of F at I+1 is V.
+
+:- inconsistent_obs(F,true,I),  
+   currstep(I+1),              
+   -h(F,I+1).
+
+:- inconsistent_obs(F,false,I),  
+   currstep(I+1),
+   h(F,I+1).   
+
+// We limit possible explanations of the discrepency between observations 
+// and expectations to a single unobserved occurrence of an exogenous action.
+
+unobserved(EA,I) :- o(EA,I),
+                    not hpd(EA,I),exogenous_action(EA).
+:- unobserved(EA1,I1), exogenous_action(EA1),
+   unobserved(EA2,I2), exogenous_action(EA2),
+   EA1 != EA2.
+   
+//          
+/// Planning %%%%%%%%%%
+/// PAGE 18 %%%%%%%%
+
+// we name activities generated by the agent by integers from set.
+
+
+
+fluent(name(X),inertial).
+                   
+h(name(1),0).
+
+h(name(X+1),I+1) :- o(start(X),I),
+                    h(name(X),I).   
+
+-h(name(M),I) :- h(name(M1),I),
+                 M != M1.  
+                 
+// A goal is in progress if the agent is executing an activity M with goal G.                 
+fluent(in_progress_goal(G),defined).
+
+h(in_progress_goal(G),I) :- h(active_activity(M),I), 
+                       goal(M,G).
+ 
+// An activity M is formed to achieve goal G when the goal is active but no
+// activity with this goal is currently in progress.
+
+fluent(form_activity(M,G), defined).
+
+h(form_activity(M,G),I) :- h(active_goal(G),I),
+                           -h(minor_goal(G),I),  // yes so activating of subgoal doesnt cause planning 
+                           h(name(M),I),
+                           -h(in_progress_goal(G),I),
+                           currstep(I1),
+                           I <= I1.
+
+// The goal for the activity which needs to be formed is given by the rule.
+goal(M,G) :-  h(form_activity(M,G),I).
+
+
+
+// The activity's components are generated by cr-rule
+// which says that any possible component can be used to form the activity.
+
+plan : component(M,K,C) :+ h(form_activity(M,G),I),
+                                    currstep(I),
+                                    0 < K.  
+
+//%%%% PAGE 19 %%%%%%%%
+
+// natural constraints on relations component(C,K,M)
+:- component(M,K,M).  
+
+:- component(M,K,C),
+   component(M,K,C1),
+   C1 != C.
+   
+:- component(M,K,C),
+   length(M,K1),
+   K > K1.     
+
+// We only want to generate activities which are expected to succeed in 
+// achieving the goal. This constraint is given by:
+
+:- currstep(I),
+   h(form_activity(M,G),I),
+   not projected_success(M).
+                  
+projected_success(M) :- currstep(I),
+                        h(form_activity(M,G),I),
+                        h(success(M),I2),
+                        I < I2.
+
+// Finally we describe the length of the activty.
+
+has_comp(M,K) :- component(M,K,C).
+
+length(M,K) :- has_comp(M,K),
+               not has_comp(M,K+1).
+
+// The newly formed activity should be executed. 
+
+h(intended_action(M,start(M)),I) :- h(form_activity(M,G),I).
+                        
+
+//Axioms about the history (not described explicitly in paper) 
+
+currstep(I) :- in_history(I),
+               not after(I).
+in_history(I+1) :- hpd(E,I).  
+in_history(I) :- obs(F,B,I).
+
+after(I) :- in_history(I),
+            in_history(I1),
+            I < I1.
+
+/// end axioms about the history %%%%%%%%%%%%%%%%%%
+
+/// Assumptions on occurences of actions
+
+// The agents recorded history of his own actions is correct
+-o(Aa,I) :- currstep(I1),
+            I < I1,
+			is_agentAction(Aa),
+            not hpd(Aa,I).
+            
+
+// The agent normally observes the occurence of exogenous actions            
+-o(EA,I) :- currstep(I1),
+            I < I1,
+            not hpd(EA,I),
+			is_exogenousAction(EA),
+            not o(EA,I).
+            
+            
+
+
+// DISPLAY: %%%%%%%%%%%%%%%%%%%%
+
+occurs(E,I) :-
+         o(E,I).
+neg_occ(E,I) :- -o(E,I).         
+
+holds(Fl,I) :-
+        h(Fl,I).
+
+status(M,K,I) :-
+        h(status(M,K),I).
+success(M,I) :-
+        h(success(M),I).
+failure(M,I) :-
+        h(failure(M),I).
+cancelled(M,I) :-
+        h(cancelled(M),I).
+
+intended_index(M,E,I) :-
+        h(intended_action(M,E),I).
+intended_index(d,E,I) :-
+        h(intended_action(d,E),I).  
+in_progress_activity(M,I) :-
+            h(in_progress_activity(M),I).
+neg_ip(G) :- -h(in_progress_goal(G),I).            
+
+act_formed(M,G,I) :-
+            h(form_activity(M,G),I).           
+            
+
+active_activity(M,I) :-
+            h(active_activity(M),I).
+active_goal(G,I) :-
+            h(active_goal(G),I).
+inc_fluent(F,I) :-
+       h(F,I),
+       -h(F,I).
+
+inc_action(E,I) :-
+       o(E,I),
+       -o(E,I).
+
+
+
+meeting(I) :-
+    h(in(b,R),I),
+    h(in(j,R),I).
+
+
+neg_minor_goal(G,I) :- -h(minor_goal(G),I).
+neg_minor_activity(M,I) :- -h(minor_activity(M),I).
+cur_sub(M1,M,I) :- h(curr_subact(M1,M),I).
+////SCENARIO::::::::::::::::::::::::::::::::::::::::::::::;
+
+////SCENARIO::::::::::::::::::::::::::::::::::::::::::::::;
+
+obs(in(b,1),true,0).
+obs(in(j,3),true,0).
+
+//hpd(select(in(b,2)),0).
+
+hpd(select(meet(b,j)),0).

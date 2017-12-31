@@ -2,6 +2,8 @@ package tests;
 
 import org.junit.Test;
 
+import configuration.ASPSolver;
+import configuration.Settings;
 import parser.ParseException;
 import parser.SparcTranslator;
 
@@ -15,34 +17,38 @@ import java.io.Reader;
 public class TestParser {
  @Test 
  public void testAggregatesAndChoices() throws ParseException
- {	
-		testFile("test/choices_and_aggregates.sp");  
+ {
+	    ASPSolver current_solver = Settings.getSolver();
+	    
+	    Settings.setSolver(ASPSolver.Clingo);
+		testFile("test/programs/choices_and_aggregates.sp");
+		Settings.setSolver(current_solver);
  }
  
  @Test 
  public void testMysteryPuzzle() throws ParseException
  {	
-	testFile("test/mys.sp");  
+	testFile("test/programs/mys.sp");  
  }
  
  @Test public void testHamiltonPath() throws ParseException
  {
 	
-	testFile("test/ham.sp");
+	testFile("test/programs/ham.sp");
 	  
  }
  
  @Test public void testSudoku() throws ParseException
  {
 	
-	testFile("test/sudoku.sp");
+	testFile("test/programs/sudoku.sp");
 	  
  }
  
  @Test public void testUsaSmart() throws ParseException
  {
 	
-	testFile("test/usa.sp");
+	testFile("test/programs/usaSP1.sp");
 	  
  }
  private void testFile(String filePath) throws ParseException

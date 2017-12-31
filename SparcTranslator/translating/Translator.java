@@ -876,7 +876,7 @@ public class Translator {
 		if(generateASPWarnings)
 		{
 		  ArrayList<String> warningRules=
-					WarningRuleCreator.createWarningRules(originalRule, lineNumber, columnNumber, newSortAtoms);
+					WarningRuleCreator.createWarningRules(originalRule, lineNumber, columnNumber, newSortAtoms, sortRenaming);
 		  for(String warningRule:warningRules) {
 			appendStringToTranslation(warningRule);
 			appendNewLineToTranslation();

@@ -27,42 +27,42 @@ public class TestWarning {
 	public void testArithm1() throws FileNotFoundException {
 		assertEquals("Warning message was wrong",
 				"%WARNINGS %WARNING: Rule p(f(2,X)). at line 14, column 1 is an empty rule",
-				getError("../test/warnings/arithm1.sp"));
+				getError("test/warnings/arithm1.sp"));
 	}
 
 	@Test
 	public void testArithm2() throws FileNotFoundException {
 		assertEquals("Warning message was wrong",
 				"%WARNINGS %WARNING: Rule p(X+1):-p(X+7). at line 11, column 1 is an empty rule",
-				getError("../test/warnings/arithm2.sp"));
+				getError("test/warnings/arithm2.sp"));
 	}
 
 	@Test
 	public void testDisjArg() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				"%WARNINGS %WARNING: Rule p(X,Y):-q(X). at line 18, column 1 is an empty rule",
-				getError("../test/warnings/disjarg.sp"));
+				getError("test/warnings/disjarg.sp"));
 	}
 
 	@Test
 	public void testDisjoint2() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				"%WARNINGS %WARNING: Rule :-p(X),#count{V:p(V+1),q(V+1)}>0. at line 9, column 2 is an empty rule",
-				getError("../test/warnings/disjoint_2.sp"));
+				getError("test/warnings/disjoint_2.sp"));
 	}
 
 	@Test
 	public void testWarning() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				"%WARNINGS %WARNING: Rule p(f(X)):-q(X). at line 11, column 1 is an empty rule",
-				getError("../test/warnings/warning.sp"));
+				getError("test/warnings/warning.sp"));
 	}
 	
 	@Test
 	public void testTwoWarning() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				"%WARNINGS %WARNING: Rule p(X+10):-q(X). at line 7, column 1 is an empty rule %WARNING: Rule p(X+20):-p(X). at line 8, column 1 is an empty rule",
-				getError("../test/warnings/twoWarnings.sp"));
+				getError("test/warnings/twoWarnings.sp"));
 	}
 	
 

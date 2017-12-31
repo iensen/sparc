@@ -1,12 +1,13 @@
 package warnings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import parser.ASTatom;
 
 public class WarningRuleCreator {
 
 	public static ArrayList<String> createWarningRules(String originalRule,
-			int lineNumber, int columnNumber, ArrayList<ASTatom> bodySortAtoms) {
+			int lineNumber, int columnNumber, ArrayList<ASTatom> bodySortAtoms, HashMap<String, String> sortRenaming) {
 		
 		String ruleId = "\"" + originalRule + " ( line: " + lineNumber
 				+ ", column: " + columnNumber + ")\"";
@@ -21,7 +22,7 @@ public class WarningRuleCreator {
 		for (int i = 0; i < bodySortAtoms.size(); i++) {
 			if (i != 0)
 				rule1.append(",");
-			rule1.append(bodySortAtoms.get(i).toString());
+			rule1.append(bodySortAtoms.get(i).toString(sortRenaming));
 		}
 		rule1.append(".");
 

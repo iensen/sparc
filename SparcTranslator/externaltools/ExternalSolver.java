@@ -26,6 +26,8 @@ public abstract class ExternalSolver {
 	   this.program=program;
    }
    
+   public abstract String getDefaultOptions(); 
+   
    public String getProgram() {
 	   return program;
    }

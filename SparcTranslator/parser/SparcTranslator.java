@@ -128,7 +128,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.52");
+        System.err.println("SPARC  V2.53");
 
     if (jArguments.help)
     {
@@ -156,9 +156,12 @@ class Pair
         return;
       }
     }
-    if (jArguments.solver != null && jArguments.solver.equals("clingo"))
+    if (jArguments.solver != null)
     {
-      Settings.getSingletonInstance().setSolver(ASPSolver.Clingo);
+      if (jArguments.solver.equals("clingo"))
+         Settings.getSingletonInstance().setSolver(ASPSolver.Clingo);
+      else if (jArguments.solver.equals("dlv"))
+         Settings.getSingletonInstance().setSolver(ASPSolver.DLV);
     }
 
     Settings.setLOutputFormat(jArguments.lout);
@@ -4141,16 +4144,6 @@ class Pair
     finally { jj_save(33, xla); }
   }
 
-  private boolean jj_3R_108() {
-    if (jj_3R_33()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_82() {
-    if (jj_scan_token(NOTEQ)) return true;
-    return false;
-  }
-
   private boolean jj_3R_31() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(COLON)) return true;
@@ -4162,6 +4155,11 @@ class Pair
     return false;
   }
 
+  private boolean jj_3R_29() {
+    if (jj_3R_50()) return true;
+    return false;
+  }
+
   private boolean jj_3R_44() {
     Token xsp;
     xsp = jj_scanpos;
@@ -4169,11 +4167,6 @@ class Pair
     jj_scanpos = xsp;
     if (jj_3R_82()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_3R_50()) return true;
     return false;
   }
 
@@ -5110,6 +5103,16 @@ class Pair
       xsp = jj_scanpos;
       if (jj_3R_106()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3R_108() {
+    if (jj_3R_33()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_82() {
+    if (jj_scan_token(NOTEQ)) return true;
     return false;
   }
 

@@ -85,4 +85,9 @@ public class PrologSolver extends ExternalSolver {
 		}
 		return new File(dir, prefix +"_"+ Long.toString(n) + "_"+suffix);
 	}
+
+	@Override
+	public String getDefaultOptions() {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -50,10 +50,12 @@ public class DLVSolver extends ExternalSolver{
 	     * @return the output of DLV after running the program
 	     */
 	    public String run(boolean ignoreWarnings) {
-		        String options=" -silent -- ";
+		        String options= getDefaultOptions();
 		        //check for option passed as sparc arguments
 	        	if(Settings.getSingletonInstance().getOptions()!=null)
 	        		options+=Settings.getSingletonInstance().getOptions();
+	        	else
+	        		options = getDefaultOptions();
 		        OsUtils.runCommand(pathToDlv, options, program);
 		        if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
 		            	System.out.println(program);
@@ -62,6 +64,10 @@ public class DLVSolver extends ExternalSolver{
 		                                + OsUtils.errors.toString());
 		            }		       
 		        return OsUtils.result.toString();
+	    }
+	    
+	    public String getDefaultOptions() {
+	    	return " -silent -- ";
 	    }
 
 	    /**

@@ -23,7 +23,7 @@ public void setOptions(String options) {
 
 //  prevents any other class from instantiating
 private Settings(){
-	solver=ASPSolver.DLV;
+	solver=ASPSolver.Clingo;
 }
  
 // Providing Global point of access

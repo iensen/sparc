@@ -31,7 +31,6 @@ import parser.ASTterm;
 import parser.ASTtermList;
 import parser.ASTunlabeledProgramCrRule;
 import parser.ASTunlabeledProgramRule;
-import parser.Node;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslator;
@@ -903,8 +902,11 @@ public class Translator {
 			if (body != null) {
 				appendStringToTranslation(",");
 				appendStringToTranslation(body.toString(sortRenaming));
-			}
+			}			
 			appendStringToTranslation(".");
+			if(Settings.getSolver() == ASPSolver.Clingo) {
+				   appendStringToTranslation(" [1," + ruleName + "]");  	
+			}	
 			appendNewLineToTranslation();
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
 			newAtoms.add(applyAtom);

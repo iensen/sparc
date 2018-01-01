@@ -41,15 +41,15 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/1.sp", anss);
 	}
-	
+
 	@Test
 	public void testHugesp() throws FileNotFoundException, ParseException {
-		
+
 		String options = (solverId == ASPSolver.Clingo?" 1 ": " -n=1 "); 
 		testFile("test/programs/huge.sp", new AnswerCheckerH(), options);
 	}
-	
-	
+
+
 	@Test
 	public void test2sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "p(b)","#s1(a)", "#s1(b)"));
@@ -57,9 +57,9 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/2.sp", anss);
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void test3sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("s(1)","s(2)","s(3)","s(4)","s(5)",
@@ -68,8 +68,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/3.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void test3_2sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("s(1)"));
@@ -77,7 +77,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/3_2.sp", anss);
 	}
-	
+
 	@Test
 	public void test4sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)","p(c)","-r(a)", "p(b)"));
@@ -86,7 +86,7 @@ public class TestCorrectProgram {
 		testFile("test/programs/4.sp", anss);
 	}
 
-	
+
 	@Test
 	public void test5sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>();
@@ -94,41 +94,41 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/5.sp", anss);
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void testZhang1sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
 				Arrays.asList("#sp(startPoint(1,1,1))","#sp(startPoint(1,1,2))","#sp(startPoint(1,1,3))",
-						      "#sp(startPoint(1,2,1))","#sp(startPoint(1,2,2))","#sp(startPoint(1,2,3))",
-						      "#sp(startPoint(1,3,1))","#sp(startPoint(1,3,2))","#sp(startPoint(1,3,3))",
-						      "#sp(startPoint(2,1,1))","#sp(startPoint(2,1,2))","#sp(startPoint(2,1,3))",
-						      "#sp(startPoint(2,2,1))","#sp(startPoint(2,2,2))","#sp(startPoint(2,2,3))",
-						      "#sp(startPoint(2,3,1))","#sp(startPoint(2,3,2))","#sp(startPoint(2,3,3))",
-						      "#sp(startPoint(3,1,1))","#sp(startPoint(3,1,2))","#sp(startPoint(3,1,3))",
-						      "#sp(startPoint(3,2,1))","#sp(startPoint(3,2,2))","#sp(startPoint(3,2,3))",
-						      "#sp(startPoint(3,3,1))","#sp(startPoint(3,3,2))","#sp(startPoint(3,3,3))",
-						      "object(id(1),ccline(startPoint(1,2,2),endPoint(1,2,3)))")
-						);
+						"#sp(startPoint(1,2,1))","#sp(startPoint(1,2,2))","#sp(startPoint(1,2,3))",
+						"#sp(startPoint(1,3,1))","#sp(startPoint(1,3,2))","#sp(startPoint(1,3,3))",
+						"#sp(startPoint(2,1,1))","#sp(startPoint(2,1,2))","#sp(startPoint(2,1,3))",
+						"#sp(startPoint(2,2,1))","#sp(startPoint(2,2,2))","#sp(startPoint(2,2,3))",
+						"#sp(startPoint(2,3,1))","#sp(startPoint(2,3,2))","#sp(startPoint(2,3,3))",
+						"#sp(startPoint(3,1,1))","#sp(startPoint(3,1,2))","#sp(startPoint(3,1,3))",
+						"#sp(startPoint(3,2,1))","#sp(startPoint(3,2,2))","#sp(startPoint(3,2,3))",
+						"#sp(startPoint(3,3,1))","#sp(startPoint(3,3,2))","#sp(startPoint(3,3,3))",
+						"object(id(1),ccline(startPoint(1,2,2),endPoint(1,2,3)))")
+				);
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/zhang1.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testZhang2sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
 				Arrays.asList("father(bob,sara)")
-						);
+				);
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/zhang2.sp", anss);
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void test6sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -137,7 +137,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/6.sp", anss);
 	}
-	
+
 	@Test
 	public void test7sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -146,7 +146,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/7.sp", anss);
 	}
-	
+
 	@Test
 	public void test8sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -155,7 +155,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/8.sp", anss);
 	}
-	
+
 	@Test
 	public void test9sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -164,7 +164,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/9.sp", anss);
 	}
-	
+
 	@Test
 	public void test10sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -173,7 +173,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/10.sp", anss);
 	}
-	
+
 	@Test
 	public void test11sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -182,8 +182,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/11.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void test12sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -192,7 +192,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/12.sp", anss);
 	}
-	
+
 	@Test
 	public void test13sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -201,8 +201,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/13.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void test14sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -211,7 +211,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/14.sp", anss);
 	}
-	
+
 	@Test
 	public void test15sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -220,8 +220,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/15.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testAggr() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -230,7 +230,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/aggr.sp", anss);
 	}
-	
+
 	@Test
 	public void testArithmetics1() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -239,7 +239,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/arithmetics1.sp", anss);
 	}
-	
+
 	@Test
 	public void testArithmetics2() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -248,8 +248,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/arithmetics2.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testBlock() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -276,35 +276,35 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/blocks.sp", anss);
 	}
-	
+
 	@Test
 	public void testBug() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
 				Arrays.asList("holds(loc(rob0,office),0)", "#action(find(rob0,obj0))", "#action(move(rob0,aux_library))", 
-					           "#action(grasp(rob0,obj0))", "#action(move(rob0,main_library))", "#action(move(rob0,office))", 
-                              "#action(move(rob0,kitchen))", "#action(putdown(rob0,obj0))", "holds(loc(rob0,office),1)", 
-                              "holds(loc(rob0,office),2)", "holds(loc(rob0,office),3)", "holds(loc(rob0,office),4)", 
-                              "holds(loc(rob0,office),5)", "holds(loc(rob0,office),6)", "holds(loc(obj0,office),1)", 
-                              "holds(loc(obj0,office),2)", "holds(loc(obj0,office),3)", "holds(loc(obj0,office),4)", 
-                              "holds(loc(obj0,office),5)", "holds(loc(obj0,office),6)", "holds(same_loc(rob0,obj0),1)", 
-                              "holds(same_loc(rob0,obj0),2)", "holds(same_loc(rob0,obj0),3)", "holds(same_loc(rob0,obj0),4)", 
-                              "holds(same_loc(rob0,obj0),5)", "holds(same_loc(rob0,obj0),6)"));
+						"#action(grasp(rob0,obj0))", "#action(move(rob0,main_library))", "#action(move(rob0,office))", 
+						"#action(move(rob0,kitchen))", "#action(putdown(rob0,obj0))", "holds(loc(rob0,office),1)", 
+						"holds(loc(rob0,office),2)", "holds(loc(rob0,office),3)", "holds(loc(rob0,office),4)", 
+						"holds(loc(rob0,office),5)", "holds(loc(rob0,office),6)", "holds(loc(obj0,office),1)", 
+						"holds(loc(obj0,office),2)", "holds(loc(obj0,office),3)", "holds(loc(obj0,office),4)", 
+						"holds(loc(obj0,office),5)", "holds(loc(obj0,office),6)", "holds(same_loc(rob0,obj0),1)", 
+						"holds(same_loc(rob0,obj0),2)", "holds(same_loc(rob0,obj0),3)", "holds(same_loc(rob0,obj0),4)", 
+						"holds(same_loc(rob0,obj0),5)", "holds(same_loc(rob0,obj0),6)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/bug.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testBug2() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
 				Arrays.asList("#s(a)","#s(b)","#s(c)",
-						      "#all(a)","#all(b)","#all(c)", "#all(d)"));
+						"#all(a)","#all(b)","#all(c)", "#all(d)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/bug2.sp", anss);
 	}
-	
+
 	@Test
 	public void testBug3() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -313,8 +313,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/bug3.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testCar() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -323,7 +323,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/car.sp", anss);
 	}
-	
+
 
 	@Test
 	public void testCarSp() throws FileNotFoundException, ParseException {
@@ -333,7 +333,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/car_sp.sp", anss);
 	}
-	
+
 	@Test
 	public void testConstant() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -342,8 +342,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/constant.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testConstants() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -352,7 +352,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/constants.sp", anss);
 	}
-	
+
 	@Test
 	public void testCurlyBrackets2() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -363,8 +363,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/curlyBrackets2.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testDisplay1() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -373,8 +373,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/display1.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testDisplay2() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -383,8 +383,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/display2.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testEquation() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -393,7 +393,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/equation.sp", anss);
 	}
-	
+
 	@Test
 	public void testG() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(
@@ -402,7 +402,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/g.sp", anss);
 	}
-	
+
 	@Test
 	public void testGelfond() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>();
@@ -410,8 +410,8 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/gelfond.sp", anss);
 	}
-	
-	
+
+
 	@Test
 	public void testHam() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
@@ -420,33 +420,33 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/ham.sp", anss);
 	}
-	
+
 	@Test
 	public void testIgnite() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
 				"connected_to_tank(s1)","connected(s1,v1,s2)","connected(s2,v2,s3)",
-                "connected_to_burner(s3)","fluent(inertial,burner_on)","fluent(inertial,opened(v1))",
-                "fluent(inertial,opened(v2))","fluent(defined,pressurized(s1))",
-                "fluent(defined,pressurized(s2))","fluent(defined,pressurized(s3))",
-                "#section(s1)","#section(s2)",
-                "#section(s3)","#valve(v1)","#valve(v2)","#ov(opened(v1))",
-                "#ov(opened(v2))","#ps(pressurized(s1))","#ps(pressurized(s2))","#ps(pressurized(s3))",
-                "#fluent(pressurized(s1))","#fluent(pressurized(s2))","#fluent(pressurized(s3))",
-                "#fluent(opened(v1))","#fluent(opened(v2))","#fluent(burner_on)",
-                "#ft(inertial)","#ft(defined)","#action(ignite)","#action(open(v1))",
-                "#action(open(v2))","#action(close(v1))","#action(close(v2))","#step(1)",
-                "#step(2)","#step(3)","#step(4)", "#step(0)"));
+				"connected_to_burner(s3)","fluent(inertial,burner_on)","fluent(inertial,opened(v1))",
+				"fluent(inertial,opened(v2))","fluent(defined,pressurized(s1))",
+				"fluent(defined,pressurized(s2))","fluent(defined,pressurized(s3))",
+				"#section(s1)","#section(s2)",
+				"#section(s3)","#valve(v1)","#valve(v2)","#ov(opened(v1))",
+				"#ov(opened(v2))","#ps(pressurized(s1))","#ps(pressurized(s2))","#ps(pressurized(s3))",
+				"#fluent(pressurized(s1))","#fluent(pressurized(s2))","#fluent(pressurized(s3))",
+				"#fluent(opened(v1))","#fluent(opened(v2))","#fluent(burner_on)",
+				"#ft(inertial)","#ft(defined)","#action(ignite)","#action(open(v1))",
+				"#action(open(v2))","#action(close(v1))","#action(close(v2))","#step(1)",
+				"#step(2)","#step(3)","#step(4)", "#step(0)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/ignite.sp", anss);
 	}
-	
+
 	@Test
 	public void testInconsistent() throws FileNotFoundException, ParseException {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		testFile("test/programs/inconsistent.sp", anss);
 	}
-	
+
 	@Test
 	public void testInfinite() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("limit(3)"));
@@ -454,18 +454,18 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/infinite_program.sp", anss);
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void testMaxInt() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(1)","p(2)","p(3)","p(4)","p(5)","p(6)",
-				                                                          "p(7)","p(8)","p(9)","p(10)","p(0)"));
+				"p(7)","p(8)","p(9)","p(10)","p(0)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/maxint.sp", anss);
 	}
-	
+
 	@Test
 	public void testMurderer() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("murderer(ben)"));
@@ -473,16 +473,16 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/mys.sp", anss);
 	}
-	
+
 	@Test
 	public void testNat() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("#nat(1)","#nat(2)","#nat(3)","#nat(4)","#nat(5)",
-				                                                 "nat(1)","#nat(0)"));
+				"nat(1)","#nat(0)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		testFile("test/programs/nat.sp", anss);
 	}
-	
+
 	@Test
 	public void testParan() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(a)","p(1)"));
@@ -490,7 +490,7 @@ public class TestCorrectProgram {
 		anss.add(ans1);
 		testFile("test/programs/paran.sp", anss);
 	}
-	
+
 	@Test
 	public void testQsystemProgram() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("x","-p","a","-b"));
@@ -500,7 +500,7 @@ public class TestCorrectProgram {
 		anss.add(ans2);
 		testFile("test/programs/qsystem_program.sp", anss);
 	}
-	
+
 	@Test
 	public void testRange() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("q(bi)", "q(ba)", "q(ca)", "q(bu)", "q(be)", 
@@ -509,50 +509,50 @@ public class TestCorrectProgram {
 				"q(at)", "q(bo)", "q(ak)", "q(aj)", "q(cc)", "q(bk)", "q(ac)", "q(bg)", "q(bc)", "q(bw)", 
 				"q(an)", "q(br)", "q(ar)", "q(bn)", "q(ag)", "q(aw)", "q(cd)", "q(bl)", "q(bh)", "q(bd)", 
 				"q(az)", "q(bv)", "q(ad)", "q(bq)", "q(am)", "q(bm)", "q(aq)", "q(ah)", "q(av)", "q(bz)"));
-	
+
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		
+
 		testFile("test/programs/range.sp", anss);
 	}
-	
+
 	@Test
 	public void testRegions() throws FileNotFoundException, ParseException {
-		
+
 		// no choice rules in DLV
 		if(solverId ==  ASPSolver.DLV) {
 			return;
 		}
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("???"));
-	
+
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		
+
 		testFile("test/programs/regions.sp", anss);
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void testSimple123() throws FileNotFoundException, ParseException {
 
-		
+
 		// no negative arithmetics in DLV
 		if(solverId ==  ASPSolver.DLV) {
 			return;
 		}
-	
+
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(2)"));
-	
+
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		
+
 		testFile("test/programs/simple123.sp", anss);
 	}
-	
+
 	@Test
 	public void testSudoku() throws FileNotFoundException, ParseException {
-		
+
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
 				"pos(6,c(2,4))", "pos(6,c(5,5))", "pos(5,c(1,9))", "pos(6,c(8,7))", 
 				"pos(8,c(6,4))", "pos(8,c(4,7))", "pos(3,c(5,7))", "pos(8,c(8,6))", 
@@ -576,76 +576,107 @@ public class TestCorrectProgram {
 				"pos(2,c(7,5))", "pos(6,c(6,8))", "pos(3,c(7,1))", "pos(4,c(3,4))", 
 				"pos(8,c(5,3))", "pos(5,c(7,7))", "pos(2,c(1,4))", "pos(4,c(4,6))", 
 				"pos(4,c(1,3))"));
-	
+
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		
+
 		testFile("test/programs/sudoku.sp", anss);
 	}
+	
+	
+	@Test
+	public void testMohan() throws FileNotFoundException, ParseException {
 
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
+				"val(loc(text0,aux_library),true,0)", "val(loc(text0,aux_library),true,1)", 
+				"val(loc(text0,main_library),false,0)", "val(loc(text0,office),false,0)", 
+				"val(loc(text0,office),false,1)", "val(loc(text0,main_library),false,1)", 
+				"ab(d1(text0))", "ab(d3(text0))"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+
+		testFile("test/programs/mohan.sp", anss);
+	}
 	
 	
 
-	
 
 
-	 private void testFile(String filePath, IAnswerChecker checker, String options) throws ParseException, FileNotFoundException
-	 {
-		 testFile(filePath, options,  null, checker);
-	 }
-	 
-	 
-	 
-	 private void testFile(String filePath, HashSet<HashSet<String>> cAnswers) throws ParseException, FileNotFoundException
-	 {
-		 String options = (solverId == ASPSolver.Clingo?" 0 ": ""); 
-		 testFile(filePath,options,  cAnswers,null);
-	 }
-	 
-	 
-	 
 
-	 private void testFile(String filePath, String options, HashSet<HashSet<String>> cAnswers, IAnswerChecker checker) throws ParseException, FileNotFoundException
-	 {
-		  Reader sr = null;
-		  try {  
-		        sr = new FileReader(filePath);
-		  } catch (FileNotFoundException e) {
-		        e.printStackTrace();
-		 
-		  }
-		  Settings.setSolver(solverId);
-		  BuiltIn.setMaxInt(5000);
-		  
-		  
-		  SparcTranslator p= new SparcTranslator(sr);
-		  SimpleNode e=p.program();
-	      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
-	      TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
-	      Translator tr = new Translator(null, p, gen, false, false);
-	      tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
-	      StringBuilder translatedProgram=new StringBuilder();
-	      translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, p.sortRenaming, true));
-	      System.out.println(translatedProgram);
-	      	    
-	      
-	      ExternalSolver solver = null;
-	      
-	      if(solverId == ASPSolver.DLV)
-	         solver= new DLVSolver(translatedProgram.toString());
-	      else if(solverId == ASPSolver.Clingo) {
-	    	  solver= new ClingoSolver(translatedProgram.toString());
-	      }
-	      Settings.getSingletonInstance().setOptions(options);
-	      HashSet<HashSet<String>> oAnswers = new Runner().computeAnswerSets(e, solver);
-	      if(checker == null) {
-	    	  assertEquals("the answers do not match", cAnswers,oAnswers);
-	      } else {
-	    	  boolean check = checker.check(oAnswers);
-	    	  assertEquals("checker fails", true,check);
-	      }
-	      
 
-	      
-	 }
+
+
+	private void testFile(String filePath, IAnswerChecker checker, String options) throws ParseException, FileNotFoundException
+	{
+		testFile(filePath,  options, null, checker);
+	}
+
+
+
+	private void testFile(String filePath, HashSet<HashSet<String>> cAnswers) throws ParseException, FileNotFoundException
+	{
+		
+		testFile(filePath, null, cAnswers,null);
+	}
+
+
+
+
+	private void testFile(String filePath, String options, HashSet<HashSet<String>> cAnswers, IAnswerChecker checker) throws ParseException, FileNotFoundException
+	{
+		for (int solverId = 0; solverId < 2 ; solverId++) {
+			
+			
+			//exceptions
+			
+			// ignore, this is a DLV bug
+			if(filePath.equals("test/programs/mohan.sp") && solverId==1)
+				continue;
+				
+			BuiltIn.setMaxInt(5000);		  
+			
+			Reader sr = null;
+			try {  
+				sr = new FileReader(filePath);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+
+			}
+			
+			
+
+			Settings.setSolver(solverId==0?ASPSolver.Clingo:ASPSolver.DLV);
+			SparcTranslator p= new SparcTranslator(sr);
+			SimpleNode e=p.program();
+			InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
+			TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
+			Translator tr = new Translator(null, p, gen, false, false);
+			tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
+			StringBuilder translatedProgram=new StringBuilder();
+			translatedProgram.append(tr.translateProgram((ASTprogram) e, p.generatingSorts, p.sortRenaming, true));
+			System.out.println(translatedProgram);
+			ExternalSolver solver = null;
+			if(Settings.getSolver() == ASPSolver.DLV)
+				solver= new DLVSolver(translatedProgram.toString());
+			else if(Settings.getSolver() == ASPSolver.Clingo) {
+				solver= new ClingoSolver(translatedProgram.toString());
+			}
+			
+			if(options != null) {
+				Settings.getSingletonInstance().setOptions(options);
+			} else {
+				Settings.getSingletonInstance().setOptions(solver.getDefaultOptions());
+			}
+			HashSet<HashSet<String>> oAnswers = new Runner().computeAnswerSets(e, solver);
+			if(checker == null) {
+				assertEquals("the answers do not match", cAnswers,oAnswers);
+			} else {
+				boolean check = checker.check(oAnswers);
+				assertEquals("checker fails", true,check);
+			}
+		}
+
+
+
+	}
 }

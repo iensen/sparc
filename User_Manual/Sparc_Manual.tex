@@ -84,22 +84,23 @@
 \begin{enumerate}
 \item Java Runtime Environment (JRE) can be found at \\
 {\scriptsize
-\url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}
+\url{http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html}
 }.\\
-The system was tested on Java versions 1.6.0\_37 and 1.7.0\_25.
+Java versions 1.6.0\_45 or higher is required.
 \item The SPARC to ASP translator. It can be downloaded at \\ 
 {\scriptsize
 \url{https://github.com/iensen/sparc/blob/master/sparc.jar?raw=true}
 }.
 \item An ASP solver. It can be one of the following:
-\begin{enumerate} 
-\item DLV (recommended).
+  \begin{enumerate}
+  \item Clingo (recommended)  {\scriptsize
+ \url{https://github.com/potassco/clingo/releases}
+}.
+\item DLV
 {\scriptsize
  \url{http://www.dlvsystem.com/dlv/#1}
 }. You need to download the \textit{static} version of the executable file.
-\item Clingo  {\scriptsize
- \url{http://sourceforge.net/projects/potassco/files/clingo/4.2.1}
-}.
+
 \end{enumerate}
 
 \item (\textit{optional}) Swi-Prolog. {\scriptsize \url{http://www.swi-prolog.org/}}. This item is only required if option \textit{-wcon} is used for type warning detection.
@@ -113,7 +114,7 @@ Be sure the PATH system variable includes the directory where the solver executa
 \url{http://www.java.com/en/download/help/path.xml}\\
 \url{http://www.cyberciti.biz/faq/appleosx-bash-unix-change-set-path-environment-variable/}\\
 }
-To check if the solver is installed correctly, run the command \texttt{dlv -v} (for dlv) or \\ \texttt{clingo -v} (for clingo). See figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo.
+To check if the solver is installed correctly, run the command \texttt{dlv -v} (for dlv) or \\ \texttt{clingo -v} (for clingo). See figures \ref{fig:dlv_solver_check} for dlv and \ref{fig:clingo_solver_check} for clingo for examples of the expected output.
 
 \begin{figure}[p]
 \centering
@@ -223,7 +224,7 @@ an argument, and if so, we  describe its meaning.
     
   Show warnings determined by CLP-based algorithm. See section \ref{clp_type_warnings}
 
-\item \textbf{-wasp}
+\item \textbf{-wasp} (\textbf{temporarily unavailable})
     
   Show warnings determined by ASP-based algorithm. See section \ref{asp_type_warnings}
 
@@ -246,7 +247,7 @@ an argument, and if so, we  describe its meaning.
  {\scriptsize
   \url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
 }
-  Note that the options "0"  is passed to clingo solver by default.
+Note that the option "0"  is passed to clingo solver by default to compute all the answer sets of the program. Also, for programs containing CR-rules, the options \texttt{"--opt-mode=optN --quiet=1"} are passed to clingo to ensure correct output.
 
 \item \textbf{-Help, -H, -help, --Help, --help, -h}
 

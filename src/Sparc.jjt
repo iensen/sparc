@@ -1,7 +1,9 @@
 //TODO: change extendedNonRelAtom to extendedAtom.
-options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/iensen/SparcProject/SparcTranslator/parser";  MULTI = true;}PARSER_BEGIN(SparcTranslator)package parser;import java.io.*;import sorts.*;import java.util.HashMap;import java.util.ArrayList;import java.util.List;import java.util.HashSet;import java.util.Arrays;import java.util.Set;import translating.Translator;import typechecking.TypeChecker;import translating.InstanceGenerator;import com.beust.jcommander.Parameter;import com.beust.jcommander.JCommander;import com.beust.jcommander.ParameterException;import querying.QueryEngine;import querying.parsing.AnswerSets.AnswerSetParser;import querying.parsing.AnswerSets.ClingoAnswerSetParser;import querying.parsing.AnswerSets.DLVAnswerSetParser;import configuration.ASPSolver;import externaltools.ClingoSolver;import externaltools.DLVSolver;import externaltools.ExternalSolver;import configuration.Settings;import solving.Runner;
+options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/iensen/Projects/SparcProj/src/parser";  MULTI = true;}PARSER_BEGIN(SparcTranslator)package parser;import java.io.*;import sorts.*;import java.util.HashMap;import java.util.ArrayList;import java.util.List;import java.util.HashSet;import java.util.Arrays;import java.util.Set;import translating.Translator;import typechecking.TypeChecker;import translating.InstanceGenerator;import com.beust.jcommander.Parameter;import com.beust.jcommander.JCommander;import com.beust.jcommander.ParameterException;import querying.QueryEngine;import querying.parsing.AnswerSets.AnswerSetParser;import querying.parsing.AnswerSets.ClingoAnswerSetParser;import querying.parsing.AnswerSets.DLVAnswerSetParser;import configuration.ASPSolver;import externaltools.ClingoSolver;import externaltools.DLVSolver;import externaltools.ExternalSolver;import configuration.Settings;import solving.Runner;
+import signatureprinting.SortedSignaturePrinter;
 class Arguments{  @ Parameter(description = "Input files") List < String > inputFiles = new ArrayList < String > ();  @ Parameter(names = "-wasp", description = "Generate ASP debugging rules") boolean generateASPWarnings = false;  @ Parameter(names = "-wcon", description = "Generate warnings based on translation to clingcon") boolean generateClingconWarnings = false;  @ Parameter(names =  {    "-Help", "-H", "-help", "--Help", "--help", "-h"  }  , help = true) boolean help;
-  @ Parameter(names = "--disable-empty-sort-check", description = "Disable checking of sorts for being non-empty") boolean noEmptyCheck = false;  @ Parameter(names = "-o", description = "Output file") String outputFile = null;
+  @ Parameter(names = "--disable-empty-sort-check", description = "Disable checking of sorts for being non-empty") boolean noEmptyCheck = false;  @ Parameter(names = "--print-signature", description = "Print the signature in JSON format") boolean printSignature = false;
+  @ Parameter(names = "-o", description = "Output file") String outputFile = null;
   @ Parameter(names = "-q", description = "Query") String query = null;  @ Parameter(names = "-A", description = "outputAnswerSets") boolean outputAnswerSets = false;
   @ Parameter(names = "-web", description = "special things for online ide") boolean web = false;
   @ Parameter(names = "-loutput", description = "output answer sets in L format") boolean lout = false;  @ Parameter(names = "-solver", description = "selected solver") String solver = null;  @ Parameter(names = "-solveropts", description = "options passed to internal solver")   String solverOpts = null;}class Pair{  SimpleNode first;  boolean second;  public Pair(SimpleNode first, boolean second)  {    this.first = first;    this.second = second;  }}@ SuppressWarnings("all") public class SparcTranslator{  // mapping from sort names to sort expressions assigned to the sorts
@@ -28,7 +30,7 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
       Arguments jArguments = new Arguments();    try    {      new JCommander(jArguments, args);    }    catch (ParameterException ex)    {      System.err.println("ERROR: " + ex.getMessage());      return;    }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.53");
+        System.err.println("SPARC  V2.54");
        if (jArguments.help)    {      show_usage();      return;    }
     
     
@@ -53,14 +55,26 @@ options{  BUILD_PARSER = true;  STATIC = false;  OUTPUT_DIRECTORY = "/home/i
     }
      Reader sr = null;    Writer out = null;    if (jArguments.outputFile != null)    {      if (new File(jArguments.outputFile).exists() && !new File(jArguments.outputFile).isDirectory())      {        System.err.println("the output file already exists , do you want to overwrite it? y/n:");        char rep;        try        {
           InputStreamReader converter = new InputStreamReader(System.in);
-		  BufferedReader in = new BufferedReader(converter);          rep =in.readLine().charAt(0);         }        catch (IOException e)        {          e.printStackTrace();          return;        }        if (rep != 'y' && rep != 'Y')        {          return;        }      }      try      {        out = new FileWriter(jArguments.outputFile);      }      catch (IOException e)      {        e.printStackTrace();      }    }    TypeChecker tc = null;    StringBuilder translatedProgram = new StringBuilder();
+		  BufferedReader in = new BufferedReader(converter);          rep =in.readLine().charAt(0);         }        catch (IOException e)        {          e.printStackTrace();          return;        }        if (rep != 'y' && rep != 'Y')        {          return;        }      }      try      {        out = new FileWriter(jArguments.outputFile);      }      catch (IOException e)      {        e.printStackTrace();      }    }
+        TypeChecker tc = null;    StringBuilder translatedProgram = new StringBuilder();
     SimpleNode programTree = null;    try    {      if (jArguments.inputFiles != null && jArguments.inputFiles.size() != 0)      {        if (jArguments.inputFiles.size() > 1)        {          System.err.println("ERROR: multiple input files");          return;        }        try        {          sr = new FileReader(jArguments.inputFiles.get(0));        }        catch (FileNotFoundException fileException)        {          System.err.println("%INPUT FILE ERROR: " + fileException.getMessage());          return;        }      }      if (sr == null) sr = new InputStreamReader(System.in);      SparcTranslator p = new SparcTranslator(sr);      programTree = p.program();
-      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);      Translator tr = new Translator(out, p, gen, jArguments.generateASPWarnings, jArguments.generateClingconWarnings);
+      InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);      if (jArguments.inputFiles.size() != 0)
+      {
+        String fileName=getShortFileName(jArguments.inputFiles.get(0));
+        tc.setInputFileName(fileName);
+      }
+      tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
+      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
+      
+      if(jArguments.printSignature) {
+         SortedSignaturePrinter.print(p.predicateArgumentSorts, p.sortNameToExpression, gen);
+         return;
+      }
+      
+      Translator tr = new Translator(out, p, gen, jArguments.generateASPWarnings, jArguments.generateClingconWarnings);
       if (jArguments.inputFiles.size() != 0)      {
         String fileName=getShortFileName(jArguments.inputFiles.get(0));
-        tr.setInputFileName(fileName);        tc.setInputFileName(fileName);      }
-       tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
-      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
+        tr.setInputFileName(fileName);      }
             translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
 
       if(jArguments.outputFile != null)

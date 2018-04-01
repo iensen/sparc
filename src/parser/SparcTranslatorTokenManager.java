@@ -24,6 +24,7 @@ import externaltools.DLVSolver;
 import externaltools.ExternalSolver;
 import configuration.Settings;
 import solving.Runner;
+import signatureprinting.SortedSignaturePrinter;
 
 /** Token Manager. */
 public class SparcTranslatorTokenManager implements SparcTranslatorConstants

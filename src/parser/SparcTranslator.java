@@ -24,6 +24,7 @@ import externaltools.DLVSolver;
 import externaltools.ExternalSolver;
 import configuration.Settings;
 import solving.Runner;
+import signatureprinting.SortedSignaturePrinter;
 
 class Arguments
 {
@@ -36,6 +37,7 @@ class Arguments
   }
   , help = true) boolean help;
   @ Parameter(names = "--disable-empty-sort-check", description = "Disable checking of sorts for being non-empty") boolean noEmptyCheck = false;
+  @ Parameter(names = "--print-signature", description = "Print the signature in JSON format") boolean printSignature = false;
   @ Parameter(names = "-o", description = "Output file") String outputFile = null;
   @ Parameter(names = "-q", description = "Query") String query = null;
   @ Parameter(names = "-A", description = "outputAnswerSets") boolean outputAnswerSets = false;
@@ -128,7 +130,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.53");
+        System.err.println("SPARC  V2.54");
 
     if (jArguments.help)
     {
@@ -211,6 +213,7 @@ class Pair
         e.printStackTrace();
       }
     }
+
     TypeChecker tc = null;
     StringBuilder translatedProgram = new StringBuilder();
     SimpleNode programTree = null;
@@ -238,16 +241,25 @@ class Pair
       programTree = p.program();
       InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
       tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
+      if (jArguments.inputFiles.size() != 0)
+      {
+        String fileName=getShortFileName(jArguments.inputFiles.get(0));
+        tc.setInputFileName(fileName);
+      }
+      tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
+      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
+
+      if(jArguments.printSignature) {
+         SortedSignaturePrinter.print(p.predicateArgumentSorts, p.sortNameToExpression, gen);
+         return;
+      }
+
       Translator tr = new Translator(out, p, gen, jArguments.generateASPWarnings, jArguments.generateClingconWarnings);
       if (jArguments.inputFiles.size() != 0)
       {
         String fileName=getShortFileName(jArguments.inputFiles.get(0));
         tr.setInputFileName(fileName);
-        tc.setInputFileName(fileName);
       }
-
-      tc.checkRules((ASTprogramRules) programTree.jjtGetChild(2));
-      tc.checkDisplay((ASTdisplay) programTree.jjtGetChild(3));
 
       translatedProgram.append(tr.translateProgram((ASTprogram) programTree, p.generatingSorts, p.sortRenaming, true));
 
@@ -4144,39 +4156,6 @@ class Pair
     finally { jj_save(33, xla); }
   }
 
-  private boolean jj_3R_31() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(COLON)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_81() {
-    if (jj_scan_token(EQ)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_3R_50()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_44() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_81()) {
-    jj_scanpos = xsp;
-    if (jj_3R_82()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_122() {
-    if (jj_scan_token(OP)) return true;
-    if (jj_3R_38()) return true;
-    if (jj_scan_token(CP)) return true;
-    return false;
-  }
-
   private boolean jj_3R_43() {
     if (jj_scan_token(VARIABLE)) return true;
     return false;
@@ -5113,6 +5092,39 @@ class Pair
 
   private boolean jj_3R_82() {
     if (jj_scan_token(NOTEQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(COLON)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_81() {
+    if (jj_scan_token(EQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_29() {
+    if (jj_3R_50()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_44() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_81()) {
+    jj_scanpos = xsp;
+    if (jj_3R_82()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_122() {
+    if (jj_scan_token(OP)) return true;
+    if (jj_3R_38()) return true;
+    if (jj_scan_token(CP)) return true;
     return false;
   }
 

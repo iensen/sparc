@@ -82,6 +82,10 @@ public class SortedSignaturePrinter {
 		JSONArray predicateDeclarations = new JSONArray();
 		
 		for (String predicate: predicateArgumentSorts.keySet()) {
+			if(predicate.startsWith("#"))
+				continue;
+	
+			
 			JSONArray sorts = new JSONArray();
 			for (String sort:predicateArgumentSorts.get(predicate)) {
 				sorts.add(sort);
@@ -99,6 +103,8 @@ public class SortedSignaturePrinter {
 		JSONArray sortDefinitions = new JSONArray();
 		
 		for (String sort: sortNameToExpression.keySet()) {
+		
+			
 			JSONArray sortObjects = new JSONArray();
 		
 			HashSet<String> objectStrs = gen.generateInstances(sortNameToExpression.get(sort), true);

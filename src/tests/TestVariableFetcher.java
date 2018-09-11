@@ -26,17 +26,17 @@ public class TestVariableFetcher {
 
 	@Test
 	public void testUsa()  {
-		testFile("test/programs/usaSP1.sp");
+		testFile("../test/programs/usaSP1.sp");
 	}
 	
 	@Test
 	public void testPrimitive()  {
-		testFile("test/programs/fetcher1.sp");
+		testFile("../test/programs/fetcher1.sp");
 	}
     
 	@Test
 	public void testFetcher2() {
-		testFile("test/programs/fetcher2.sp");
+		testFile("../test/programs/fetcher2.sp");
 	}
 
 	private void testFile(String filePath) {

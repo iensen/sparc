@@ -21,52 +21,52 @@ public class TestTypeChecker {
 	 @Test 
 	 public void testUsaSmartPart() throws ParseException
 	 {	
-			testFile("test/programs/usaSP1.sp");  
+			testFile("../test/programs/usaSP1.sp");  
 	 }
 	 
 	 
 	 @Test 
 	 public void testRegularArithm() throws ParseException
 	 {	
-			testFile("test/programs/reg_arterm_check.sp");  
+			testFile("../test/programs/reg_arterm_check.sp");  
 	 }
 	 
 	 
 	 @Test 
 	 public void testAggregatesAndChoices() throws ParseException
 	 {	
-			testFile("test/programs/choices_and_aggregates.sp");  
+			testFile("../test/programs/choices_and_aggregates.sp");  
 	 }
 	 
 	 @Test 
 	 public void testSimpleFunction() throws ParseException
 	 {	
-			testFile("test/programs/simpleFunctionTypeCheck.sp");  
+			testFile("../test/programs/simpleFunctionTypeCheck.sp");  
 	 }
 	 
 	 @Test 
 	 public void testSimpleFunction2() throws ParseException
 	 {	
-			testFile("test/programs/simpleFunctionTypeCheck2.sp");  
+			testFile("../test/programs/simpleFunctionTypeCheck2.sp");  
 	 }
 	 
 	  
 	 @Test 
 	 public void testMysteryPuzzle() throws ParseException
 	 {	
-		testFile("test/programs/mys.sp");  
+		testFile("../test/programs/mys.sp");  
 	 }
 	 
 	 @Test public void testHamiltonPath() throws ParseException
 	 {
-		testFile("test/programs/ham.sp");  
+		testFile("../test/programs/ham.sp");  
 	 }
 	 
 	 @Test 
 	 public void testSudoku() throws ParseException
 	 {
 		
-		testFile("test/programs/sudoku.sp");
+		testFile("../test/programs/sudoku.sp");
 		  
 	 }
 
@@ -74,7 +74,7 @@ public class TestTypeChecker {
 	 @Test 
 	 public void testRange() throws ParseException
 	 {	
-		testFile("test/programs/rangetypecheck1.sp");  
+		testFile("../test/programs/rangetypecheck1.sp");  
 	 }
 	 
 	 private void testFile(String filePath) throws ParseException

@@ -39,14 +39,14 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "q(a)","#s1(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/1.sp", anss);
+		testFile("../test/programs/1.sp", anss);
 	}
 
 	@Test
 	public void testHugesp() throws FileNotFoundException, ParseException {
 
 		String options = (solverId == ASPSolver.Clingo?" 1 ": " -n=1 "); 
-		testFile("test/programs/huge.sp", new AnswerCheckerH(), options);
+		testFile("../test/programs/huge.sp", new AnswerCheckerH(), options);
 	}
 
 
@@ -55,7 +55,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "p(b)","#s1(a)", "#s1(b)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/2.sp", anss);
+		testFile("../test/programs/2.sp", anss);
 	}
 
 
@@ -66,7 +66,7 @@ public class TestCorrectProgram {
 				"#s(1)","#s(2)","#s(3)","#s(4)","#s(5)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/3.sp", anss);
+		testFile("../test/programs/3.sp", anss);
 	}
 
 
@@ -75,7 +75,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("s(1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/3_2.sp", anss);
+		testFile("../test/programs/3_2.sp", anss);
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)","p(c)","-r(a)", "p(b)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/4.sp", anss);
+		testFile("../test/programs/4.sp", anss);
 	}
 
 
@@ -92,7 +92,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>();
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/5.sp", anss);
+		testFile("../test/programs/5.sp", anss);
 	}
 
 
@@ -113,7 +113,7 @@ public class TestCorrectProgram {
 				);
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/zhang1.sp", anss);
+		testFile("../test/programs/zhang1.sp", anss);
 	}
 
 
@@ -124,7 +124,7 @@ public class TestCorrectProgram {
 				);
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/zhang2.sp", anss);
+		testFile("../test/programs/zhang2.sp", anss);
 	}
 
 
@@ -135,7 +135,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(1)", "p(2)", "p(3)", "q(2)", "q(3)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/6.sp", anss);
+		testFile("../test/programs/6.sp", anss);
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/7.sp", anss);
+		testFile("../test/programs/7.sp", anss);
 	}
 
 	@Test
@@ -153,7 +153,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/8.sp", anss);
+		testFile("../test/programs/8.sp", anss);
 	}
 
 	@Test
@@ -162,7 +162,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/9.sp", anss);
+		testFile("../test/programs/9.sp", anss);
 	}
 
 	@Test
@@ -171,7 +171,7 @@ public class TestCorrectProgram {
 				Arrays.asList("q(6)","p(6)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/10.sp", anss);
+		testFile("../test/programs/10.sp", anss);
 	}
 
 	@Test
@@ -180,7 +180,7 @@ public class TestCorrectProgram {
 				Arrays.asList("node(1)","a(1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/11.sp", anss);
+		testFile("../test/programs/11.sp", anss);
 	}
 
 
@@ -190,7 +190,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/12.sp", anss);
+		testFile("../test/programs/12.sp", anss);
 	}
 
 	@Test
@@ -199,7 +199,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(a)","p(b)","p(1)","p(f(a))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/13.sp", anss);
+		testFile("../test/programs/13.sp", anss);
 	}
 
 
@@ -209,7 +209,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(1)","#s(1)","#s(2)","#s(3)","#s(4)","#s(5)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/14.sp", anss);
+		testFile("../test/programs/14.sp", anss);
 	}
 
 	@Test
@@ -218,7 +218,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(f(a,b))", "p(f(c,d))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/15.sp", anss);
+		testFile("../test/programs/15.sp", anss);
 	}
 
 
@@ -228,7 +228,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(a)","q(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/aggr.sp", anss);
+		testFile("../test/programs/aggr.sp", anss);
 	}
 
 	@Test
@@ -237,7 +237,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(32)","q(1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/arithmetics1.sp", anss);
+		testFile("../test/programs/arithmetics1.sp", anss);
 	}
 
 	@Test
@@ -246,7 +246,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(1)","q(1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/arithmetics2.sp", anss);
+		testFile("../test/programs/arithmetics2.sp", anss);
 	}
 
 
@@ -274,7 +274,7 @@ public class TestCorrectProgram {
 						"#fluent(on(b6,b0))", "#fluent(on(b2,b1))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/blocks.sp", anss);
+		testFile("../test/programs/blocks.sp", anss);
 	}
 
 	@Test
@@ -291,7 +291,7 @@ public class TestCorrectProgram {
 						"holds(same_loc(rob0,obj0),5)", "holds(same_loc(rob0,obj0),6)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/bug.sp", anss);
+		testFile("../test/programs/bug.sp", anss);
 	}
 
 
@@ -302,7 +302,7 @@ public class TestCorrectProgram {
 						"#all(a)","#all(b)","#all(c)", "#all(d)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/bug2.sp", anss);
+		testFile("../test/programs/bug2.sp", anss);
 	}
 
 	@Test
@@ -311,7 +311,7 @@ public class TestCorrectProgram {
 				Arrays.asList("#s(a)","#s(b)","s(a)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/bug3.sp", anss);
+		testFile("../test/programs/bug3.sp", anss);
 	}
 
 
@@ -321,7 +321,7 @@ public class TestCorrectProgram {
 				Arrays.asList("#car(c)","-broken(c)","starts(c)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/car.sp", anss);
+		testFile("../test/programs/car.sp", anss);
 	}
 
 
@@ -331,7 +331,7 @@ public class TestCorrectProgram {
 				Arrays.asList("#car(c)","broken(c)","-starts(c)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/car_sp.sp", anss);
+		testFile("../test/programs/car_sp.sp", anss);
 	}
 
 	@Test
@@ -340,7 +340,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/constant.sp", anss);
+		testFile("../test/programs/constant.sp", anss);
 	}
 
 
@@ -350,7 +350,7 @@ public class TestCorrectProgram {
 				Arrays.asList("q(2)","p(1)","t(1)", "t(5)","t(f(5))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/constants.sp", anss);
+		testFile("../test/programs/constants.sp", anss);
 	}
 
 	@Test
@@ -361,7 +361,7 @@ public class TestCorrectProgram {
 						"p(f(g(b),c(d)))", "p(f(g(x),c(x)))","p(a)","p(b)","p(c)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/curlyBrackets2.sp", anss);
+		testFile("../test/programs/curlyBrackets2.sp", anss);
 	}
 
 
@@ -371,7 +371,7 @@ public class TestCorrectProgram {
 				Arrays.asList("#s(a)","#s(b)","#s(c)","#s(f(a))","#s(f(b))","-q","-p(f(b))","p(a)","p(f(a))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/display1.sp", anss);
+		testFile("../test/programs/display1.sp", anss);
 	}
 
 
@@ -381,7 +381,7 @@ public class TestCorrectProgram {
 				Arrays.asList("#s(a)","#s(b)","#s(c)","#s(f(a))","#s(f(b))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/display2.sp", anss);
+		testFile("../test/programs/display2.sp", anss);
 	}
 
 
@@ -391,7 +391,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(2)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/equation.sp", anss);
+		testFile("../test/programs/equation.sp", anss);
 	}
 
 	@Test
@@ -400,7 +400,7 @@ public class TestCorrectProgram {
 				Arrays.asList("p(1)","p(2)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/g.sp", anss);
+		testFile("../test/programs/g.sp", anss);
 	}
 
 	@Test
@@ -408,7 +408,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>();
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/gelfond.sp", anss);
+		testFile("../test/programs/gelfond.sp", anss);
 	}
 
 
@@ -418,7 +418,7 @@ public class TestCorrectProgram {
 				"in(5,6)", "in(2,3)", "in(1,2)", "in(4,5)", "in(3,4)", "in(6,1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/ham.sp", anss);
+		testFile("../test/programs/ham.sp", anss);
 	}
 
 	@Test
@@ -438,13 +438,13 @@ public class TestCorrectProgram {
 				"#step(2)","#step(3)","#step(4)", "#step(0)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/ignite.sp", anss);
+		testFile("../test/programs/ignite.sp", anss);
 	}
 
 	@Test
 	public void testInconsistent() throws FileNotFoundException, ParseException {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
-		testFile("test/programs/inconsistent.sp", anss);
+		testFile("../test/programs/inconsistent.sp", anss);
 	}
 
 	@Test
@@ -452,7 +452,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("limit(3)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/infinite_program.sp", anss);
+		testFile("../test/programs/infinite_program.sp", anss);
 	}
 
 
@@ -463,7 +463,7 @@ public class TestCorrectProgram {
 				"p(7)","p(8)","p(9)","p(10)","p(0)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/maxint.sp", anss);
+		testFile("../test/programs/maxint.sp", anss);
 	}
 
 	@Test
@@ -471,7 +471,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("murderer(ben)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/mys.sp", anss);
+		testFile("../test/programs/mys.sp", anss);
 	}
 
 	@Test
@@ -480,7 +480,7 @@ public class TestCorrectProgram {
 				"nat(1)","#nat(0)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/nat.sp", anss);
+		testFile("../test/programs/nat.sp", anss);
 	}
 
 	@Test
@@ -488,7 +488,7 @@ public class TestCorrectProgram {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(a)","p(1)"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-		testFile("test/programs/paran.sp", anss);
+		testFile("../test/programs/paran.sp", anss);
 	}
 
 	@Test
@@ -498,7 +498,7 @@ public class TestCorrectProgram {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 		anss.add(ans2);
-		testFile("test/programs/qsystem_program.sp", anss);
+		testFile("../test/programs/qsystem_program.sp", anss);
 	}
 
 	@Test
@@ -513,7 +513,7 @@ public class TestCorrectProgram {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 
-		testFile("test/programs/range.sp", anss);
+		testFile("../test/programs/range.sp", anss);
 	}
 
 	@Test
@@ -528,7 +528,7 @@ public class TestCorrectProgram {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 
-		testFile("test/programs/regions.sp", anss);
+		testFile("../test/programs/regions.sp", anss);
 	}
 
 
@@ -580,13 +580,16 @@ public class TestCorrectProgram {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 
-		testFile("test/programs/sudoku.sp", anss);
+		testFile("../test/programs/sudoku.sp", anss);
 	}
 	
 	
 	@Test
 	public void testMohan() throws FileNotFoundException, ParseException {
-
+		// A BUG IN DLV -- this program never terminates
+		if(solverId ==  ASPSolver.DLV) {
+			return;
+		}
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
 				"val(loc(text0,aux_library),true,0)", "val(loc(text0,aux_library),true,1)", 
 				"val(loc(text0,main_library),false,0)", "val(loc(text0,office),false,0)", 
@@ -595,7 +598,7 @@ public class TestCorrectProgram {
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 
-		testFile("test/programs/mohan.sp", anss);
+		testFile("../test/programs/mohan.sp", anss);
 	}
 	
 	

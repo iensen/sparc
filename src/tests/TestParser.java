@@ -21,34 +21,34 @@ public class TestParser {
 	    ASPSolver current_solver = Settings.getSolver();
 	    
 	    Settings.setSolver(ASPSolver.Clingo);
-		testFile("test/programs/choices_and_aggregates.sp");
+		testFile("../test/programs/choices_and_aggregates.sp");
 		Settings.setSolver(current_solver);
  }
  
  @Test 
  public void testMysteryPuzzle() throws ParseException
  {	
-	testFile("test/programs/mys.sp");  
+	testFile("../test/programs/mys.sp");  
  }
  
  @Test public void testHamiltonPath() throws ParseException
  {
 	
-	testFile("test/programs/ham.sp");
+	testFile("../test/programs/ham.sp");
 	  
  }
  
  @Test public void testSudoku() throws ParseException
  {
 	
-	testFile("test/programs/sudoku.sp");
+	testFile("../test/programs/sudoku.sp");
 	  
  }
  
  @Test public void testUsaSmart() throws ParseException
  {
 	
-	testFile("test/programs/usaSP1.sp");
+	testFile("../test/programs/usaSP1.sp");
 	  
  }
  private void testFile(String filePath) throws ParseException

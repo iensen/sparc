@@ -27,7 +27,7 @@ public class TestError {
 	@Test
 	public void testError1() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error1.sp"),
+				getError("../test/errors/error1.sp"),
 				"sort s at line 4 column 2 was already defined");
 	
 	}
@@ -35,7 +35,7 @@ public class TestError {
 	@Test
 	public void testError2() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error2.sp"),
+				getError("../test/errors/error2.sp"),
 				"sort #s1 at line 3 column 5 was not defined");
 	}
 
@@ -43,133 +43,133 @@ public class TestError {
 	public void testError3() throws FileNotFoundException {
 		assertEquals(
 				"Error message was wrong",
-				getError("test/errors/error3.sp"),
+				getError("../test/errors/error3.sp"),
 				"ERROR: the first identifier in identifier range should be lexicographically smaller or equal to  the second one at line 3, column 4");
 	}
 
 	@Test
 	public void testError4() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error4.sp"),
+				getError("../test/errors/error4.sp"),
 				"ERROR: the first number in numeric  range should be smaller or equal to  the second one at line 3, column 7");
 	}
 
 	@Test
 	public void testError5() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error5.sp"),
+				getError("../test/errors/error5.sp"),
 				"ERROR: Constant 'c5' at line 3, column 7 was not defined");
 	}
 
 	@Test
 	public void testError6() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error6.sp"),
+				getError("../test/errors/error6.sp"),
 				"ERROR: the length of the first identifier in identifier range should be smaller or equal to the length of the second one at line 3, column 4");
 	}
 
 	@Test
 	public void testError7() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error7.sp"),
+				getError("../test/errors/error7.sp"),
 				"ERROR: Sort '#s' at line 5, column 9 is not a basic sort");
 	}
 
 	@Test
 	public void testError8() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error9.sp"),
+				getError("../test/errors/error9.sp"),
 				"the definition of record f() at line 4 column 5 has a condition which involves checking less/greater relations on elements of non-basic sorts");
 	}
 
 	@Test
 	public void testError9() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error9.sp"),
+				getError("../test/errors/error9.sp"),
 				"the definition of record f() at line 4 column 5 has a condition which involves checking less/greater relations on elements of non-basic sorts");
 	}
 
 	@Test
 	public void testError10() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error10.sp"),
+				getError("../test/errors/error10.sp"),
 				"variable X at line 4, column 16 is used more than once in record definition");
 	}
 
 	@Test
 	public void testError11() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error11.sp"),
+				getError("../test/errors/error11.sp"),
 				"sort s1 defined at line 5 column 2 is empty");
 	}
 
 	@Test
 	public void testError12() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error12.sp"),
+				getError("../test/errors/error12.sp"),
 				"Line 6, column 4: sort '#s1' was not defined");
 	}
 
 	@Test
 	public void testError13() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error13.sp"),
+				getError("../test/errors/error13.sp"),
 				"Line 7, column 1: predicate p was already declared");
 	}
 
 	@Test
 	public void testError14_1() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error14(1).sp"),
+				getError("../test/errors/error14(1).sp"),
 				": argument number 1 of predicate p/1, \"7-3\", at line 8, column 1 violates definition of sort \"#s\"");
 	}
 
 	@Test
 	public void testError14_2() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error14(2).sp"),
+				getError("../test/errors/error14(2).sp"),
 				": non-ground term \"g(X)\" occuring  in program as 1 argument of predicate p/1 at line 7, column 1 is not a program term");
 	}
 
 	@Test
 	public void testError14_3() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error14(3).sp"),
+				getError("../test/errors/error14(3).sp"),
 				": non-ground term \"f(X,c)\" occuring  in program as 1 argument of predicate p/1 at line 7, column 1 is not a program term");
 	}
 
 	@Test
 	public void testError15() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error15.sp"),
+				getError("../test/errors/error15.sp"),
 				": argument number 1 of predicate p/1, \"f(b)\", at line 8, column 1 violates definition of sort \"#s\"");
 	}
 
 	@Test
 	public void testError16() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error16.sp"),
+				getError("../test/errors/error16.sp"),
 				": argument number 1 of predicate p/1, \"1*2\", at line 8, column 1 violates definition of sort \"#s\"");
 	}
 
 	@Test
 	public void testError17() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/error17.sp"),
+				getError("../test/errors/error17.sp"),
 				": argument number 1 of predicate p/1, \"X+1\", at line 8, column 1 is an arithmetic term and not a variable, but \"#s\" does not contain a number");
 	}
 
 	@Test
 	public void testErrorRange() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/errorRange.sp"),
+				getError("../test/errors/errorRange.sp"),
 				": Argument number 1 of predicate p/1, \"1..6\", at line 6, column 1 violates definition of sort \"s\"");
 	}
 
 	@Test
 	public void testUnrestr() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/unrestr.sp"),
+				getError("../test/errors/unrestr.sp"),
 				"null: program rule p(f(X)):-Y<2,Z<2,F>3,#count{Q:Q<W,p(W),T<2},p(Y). at line 6, column 1 contains unrestricted global variables Z,T,F and unrestricted local variables Q");
 	}
 	
@@ -177,14 +177,14 @@ public class TestError {
 	@Test
 	public void testUnrestr_local() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/unrestr_local.sp"),
+				getError("../test/errors/unrestr_local.sp"),
 				"null: program rule p(Z):-#count{X:p(Y)}. at line 6, column 1 contains unrestricted local variables X");
 	}
 	
 	@Test
 	public void testBug4() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/bug4.sp"),
+				getError("../test/errors/bug4.sp"),
 				": argument number 1 of predicate s/1, \"ab\", at line 6, column 1 violates definition of sort \"#s\"");
 	}
 	
@@ -192,7 +192,7 @@ public class TestError {
 	@Test
 	public void testCoffee() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
-				getError("test/errors/coffee.sp"),
+				getError("../test/errors/coffee.sp"),
 				"Line 31, column 16: sort \'#step\' was not defined");
 	}
 	

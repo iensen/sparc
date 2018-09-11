@@ -5,6 +5,7 @@ import java.util.HashSet;
 import parser.ASTconstantTerm;
 import parser.ASTconstantTermList;
 import parser.ASTcurlyBrackets;
+import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
 
@@ -27,6 +28,29 @@ public class CurlyBrackets {
 
 	}
 
+	/**
+	 * Retrieve all ground terms and their subterms occurring in the list of
+	 * constant(ground) terms
+	 * 
+	 * @param termList
+	 *            AST node representing the term list
+	 * @param terms
+	 *            the set where all found terms will be written
+	 * @throws ParseException 
+	 */
+	public static void checkNoKeyWordOccurrences(ASTconstantTermList termList) throws ParseException {
+		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
+		   ASTconstantTerm term = (ASTconstantTerm) termList.jjtGetChild(0);
+		   if(term.image.equals("not")) {
+			   throw new ParseException("ERROR: constant \"" + term.image + "\" at line " + 
+		                term.getBeginLine() + ", column " + term.getBeginColumn() + " is a reserved keyword.");
+		  
+		   }
+		}
+
+	}
+	
+	
 	/**
 	 * Retrieve all ground terms and their subterms occurring in the constant
 	 * term

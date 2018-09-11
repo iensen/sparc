@@ -447,7 +447,10 @@ import signatureprinting.SortedSignaturePrinter;
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    CurlyBrackets.retrieveAllTerms((ASTconstantTermList) child, curlyBracketTerms);    CurlyBrackets.retrieveAllFunctionalSymbols(jjtn000, definedRecordNames);    jjtn000.beginLine = t.beginLine;    jjtn000.beginColumn = t.beginColumn;    return jjtn000;  }/*@bgen(jjtree)*/
+/*@egen*/  {
+    jjtn000.beginLine = t.beginLine;
+    jjtn000.beginColumn = t.beginColumn;
+    CurlyBrackets.checkNoKeyWordOccurrences((ASTconstantTermList) child);    CurlyBrackets.retrieveAllTerms((ASTconstantTermList) child, curlyBracketTerms);    CurlyBrackets.retrieveAllFunctionalSymbols(jjtn000, definedRecordNames);    return jjtn000;  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -535,17 +538,20 @@ import signatureprinting.SortedSignaturePrinter;
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.image = t1.image;  }| LOOKAHEAD(2)  t1 = < IDENTIFIER > t3 = < OP > constantTermList() t2 = < CP >/*@bgen(jjtree)*/
+/*@egen*/  {
+    jjtn000.image = t1.image;  }| LOOKAHEAD(2)  t1 = < IDENTIFIER > t3 = < OP > constantTermList() t2 = < CP >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.image = t1.image + t3.image + " " + t2.image;  }| t1 = < IDENTIFIER >/*@bgen(jjtree)*/
+/*@egen*/  {      jjtn000.image = t1.image + t3.image + " " + t2.image;  }| t1 = < IDENTIFIER >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.image = t1.image;  }/*@bgen(jjtree)*/
+/*@egen*/  {
+    jjtn000.beginLine = t1.beginLine;
+    jjtn000.beginColumn = t1.beginColumn;    jjtn000.image = t1.image;  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

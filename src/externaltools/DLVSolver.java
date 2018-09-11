@@ -57,11 +57,11 @@ public class DLVSolver extends ExternalSolver{
 	        	else
 	        		options = getDefaultOptions();
 		        OsUtils.runCommand(pathToDlv, options, program);
-		        if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
-		            	System.out.println(program);
+		        if (OsUtils.stderr.toString().length()>0 && 
+		        		(!ignoreWarnings || OsUtils.stderr.toString().indexOf(": syntax error.")!= -1)){
 		                throw new IllegalArgumentException(
-		                        "constructed dlv program constructed contains errors: "
-		                                + OsUtils.errors.toString());
+		                        "ERROR: constructed dlv program contains errors: "
+		                                + OsUtils.stderr.toString());
 		            }		       
 		        return OsUtils.result.toString();
 	    }

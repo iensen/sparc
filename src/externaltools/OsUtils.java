@@ -46,7 +46,7 @@ extends Thread {
 					OsUtils.result.append(line).append("\n");  		
 				}
 				else if(type.equals("ERROR")) {	
-					    OsUtils.errors.append(line).append("\n");
+					    OsUtils.stderr.append(line).append("\n");
 				}
 
 			}
@@ -69,13 +69,13 @@ extends Thread {
 public class OsUtils {
 
 	public static StringBuffer result;
-	public static StringBuffer errors;
+	public static StringBuffer stderr;
 
 	public static void runCommand(String path, String options,String input) {
 		Object lockStdOut = new Object();
 		Object lockStdErr = new Object();
 		Process process = null;
-		OsUtils.errors=new StringBuffer();
+		OsUtils.stderr=new StringBuffer();
 		OsUtils.result = new StringBuffer();
 		try {
 			//create a new process for dlv

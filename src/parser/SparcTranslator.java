@@ -130,7 +130,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.54");
+        System.err.println("SPARC  V2.55");
 
     if (jArguments.help)
     {
@@ -273,6 +273,9 @@ class Pair
       System.err.println(pe.getMessage());
       return;
     }
+
+
+
     if(!jArguments.lout)
       System.err.println("program translated");
     ExternalSolver solver = null;
@@ -295,6 +298,8 @@ class Pair
     {
       System.err.println(ex.getMessage());
     }
+
+    try {
     if (jArguments.outputAnswerSets)
     {
       new Runner().outputAnswerSets(programTree, solver);
@@ -310,6 +315,12 @@ class Pair
       {
         qe.run();
       }
+    }
+}
+  catch (IllegalArgumentException pe)
+    {
+      System.err.println(pe.getMessage());
+      return;
     }
   }
 
@@ -4156,56 +4167,6 @@ class Pair
     finally { jj_save(33, xla); }
   }
 
-  private boolean jj_3R_43() {
-    if (jj_scan_token(VARIABLE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_80() {
-    if (jj_scan_token(EQR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_127() {
-    if (jj_scan_token(OB)) return true;
-    if (jj_3R_131()) return true;
-    if (jj_scan_token(CB)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_121() {
-    if (jj_3R_43()) return true;
-    return false;
-  }
-
-  private boolean jj_3_34() {
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_79() {
-    if (jj_scan_token(SMEQ)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_109() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_34()) jj_scanpos = xsp;
-    if (jj_3R_46()) return true;
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_3R_35()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_78() {
-    if (jj_scan_token(SM)) return true;
-    return false;
-  }
-
   private boolean jj_3_33() {
     if (jj_3R_38()) return true;
     if (jj_3R_42()) return true;
@@ -4750,15 +4711,15 @@ class Pair
     return false;
   }
 
+  private boolean jj_3R_60() {
+    if (jj_scan_token(NEGATIVE_SORT_ATOM_WITH_OP)) return true;
+    return false;
+  }
+
   private boolean jj_3_21() {
     if (jj_3R_43()) return true;
     if (jj_3R_42()) return true;
     if (jj_3R_41()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_60() {
-    if (jj_scan_token(NEGATIVE_SORT_ATOM_WITH_OP)) return true;
     return false;
   }
 
@@ -5125,6 +5086,56 @@ class Pair
     if (jj_scan_token(OP)) return true;
     if (jj_3R_38()) return true;
     if (jj_scan_token(CP)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_43() {
+    if (jj_scan_token(VARIABLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_80() {
+    if (jj_scan_token(EQR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_127() {
+    if (jj_scan_token(OB)) return true;
+    if (jj_3R_131()) return true;
+    if (jj_scan_token(CB)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_121() {
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  private boolean jj_3_34() {
+    if (jj_3R_38()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_79() {
+    if (jj_scan_token(SMEQ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_109() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_34()) jj_scanpos = xsp;
+    if (jj_3R_46()) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_3R_35()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_78() {
+    if (jj_scan_token(SM)) return true;
     return false;
   }
 

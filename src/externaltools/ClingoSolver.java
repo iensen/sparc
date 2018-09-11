@@ -37,22 +37,32 @@ public class ClingoSolver extends ExternalSolver {
 		}
 		
 		OsUtils.runCommand(pathToClingo, options, program);
-		String[] errorLines = OsUtils.errors.toString().split("\\n");
+		String[] errorLines = OsUtils.stderr.toString().split("\\n");
 		StringBuilder errors = new StringBuilder();
+		StringBuilder warnings = new StringBuilder();
 		for (String line: errorLines) {
 			line = line.trim();
-			if(ignoreWarnings && line.indexOf("% warning:")!=-1 && line.indexOf(": warning:")!=-1 ||!ignoreWarnings) {
-				errors.append(line);
+			if(line.indexOf("% warning:")!=-1 || line.indexOf(": warning:")!=-1) {
+				warnings.append(line);
 			}
 			
+			if(line.indexOf("% error:")!=-1 || line.indexOf(": error:")!=-1) {
+				errors.append(line);
+			}
 		}
 		
-		if (OsUtils.errors.toString().length()>0 && !ignoreWarnings) {
-           	System.out.println(program);
+		if (warnings.length()>0 && !ignoreWarnings) {
                throw new IllegalArgumentException(
-                       "constructed clingo program constructed contains errors: "
-                               + OsUtils.errors.toString());
-        }	
+                       "constructed clingo program contains warnings: "
+                               + warnings.toString());
+        }
+		
+
+		if (errors.length()>0) {
+               throw new IllegalArgumentException(
+                       "ERROR: constructed clingo program contains errors: "
+                               + errors.toString());
+        }
 		   
 		return OsUtils.result.toString();
 	}

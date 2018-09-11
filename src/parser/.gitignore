@@ -1,0 +1,17 @@
+/ASTnumericRange.java
+/SimpleCharStream.java
+/SparcTranslatorConstants.java
+/TokenMgrError.java
+/Token.java
+/SparcTranslatorTokenManager.java
+/SparcTranslator.java
+/ParseException.java
+/Sparc.jj
+/ASTidentifierRange.java
+/ASTatomSequence.java
+/SparcTranslatorTreeConstants.java
+/ASTbasicSort.java
+/ASTandCondition.java
+/ASTorCondition.java
+/JJTSparcTranslatorState.java
+/ASTconcatenation.java

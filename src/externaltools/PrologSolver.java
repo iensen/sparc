@@ -48,10 +48,10 @@ public class PrologSolver extends ExternalSolver {
 
 		OsUtils.runCommand(pathToProlog, options,null);
 
-		if (OsUtils.errors.length()>0) {
+		if (OsUtils.stderr.length()>0) {
 			throw new IllegalArgumentException(
 					"prolog program constructed from a rule for warnings "
-							+ "checking contains errors: " + OsUtils.errors.toString());
+							+ "checking contains errors: " + OsUtils.stderr.toString());
 
 		}
 		return OsUtils.result.toString().trim();

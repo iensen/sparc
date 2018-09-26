@@ -45,8 +45,9 @@ class Arguments
   @ Parameter(names = "-loutput", description = "output answer sets in L format") boolean lout = false;
   @ Parameter(names = "-solver", description = "selected solver") String solver = null;
   @ Parameter(names = "-solveropts", description = "options passed to internal solver")
-  String solverOpts = null;
-}
+    String solverOpts = null;
+  @ Parameter(names = "-n", description = "options passed to internal solver") int numberOfAnswerSets = 0;
+ }
 
 class Pair
 {
@@ -91,7 +92,8 @@ class Pair
   public HashMap<String, String > sortRenaming;
 
 
-  // controlling the parsing  boolean inHead = false;
+  // controlling the parsing
+  boolean inHead = false;
   boolean inDisplay = true;
 
   int anonSortId = 0;
@@ -130,7 +132,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.55");
+        System.err.println("SPARC  V2.56");
 
     if (jArguments.help)
     {
@@ -138,17 +140,11 @@ class Pair
       return;
     }
 
-
-
-
-    if(!jArguments.outputAnswerSets && jArguments.solverOpts != null &&
-    (jArguments.solverOpts.indexOf("filter=") !=-1 || jArguments.solverOpts.indexOf("-n=") !=-1 ||
-       jArguments.solverOpts.matches("\u005c\u005cs\u005c\u005cd+\u005c\u005cs")))
-       {
-           System.err.println("ERROR: Some of the solver arguments from the list \u005c""+jArguments.solverOpts+ "\u005c" \u005cncan change"+
-           " or filter the computed answer sets. Either remove them or\u005cnuse the argument -A to let SPARC compute the answer sets.");
+    if(!jArguments.outputAnswerSets && jArguments.numberOfAnswerSets != 0)
+    {
+           System.err.println("ERROR: Option -n=" + jArguments.numberOfAnswerSets + " cannot be used without option -A");
            return;
-       }
+    }
 
     if (jArguments.solver != null)
     {
@@ -169,10 +165,13 @@ class Pair
     Settings.setLOutputFormat(jArguments.lout);
     Settings.setWebMode(jArguments.web);
     Settings.setEmptySortCheckingDisabled(jArguments.noEmptyCheck);
+    Settings.setRequiredNumberOfComputedAnswerSets(jArguments.numberOfAnswerSets);
 
     if (jArguments.solverOpts != null)
     {
-      Settings.getSingletonInstance().setOptions(jArguments.solverOpts);
+      System.err.println("The option -solveropts is deprecated. Use option -n to specify the number" +
+      "of answer sets that need to be displayed and display statements to specify which predicates need to be displayed.");
+      return;
     }
 
     if(jArguments.query != null)
@@ -359,6 +358,10 @@ class Pair
     "    " + newLine +
     "  Compute answer sets of the loaded program." + newLine +
     newLine +
+    "-n arg" + newLine +
+    "  Specify the number of answer sets that need to be displayed." + newLine +
+    "  Example: -n=1 will only display one answer set. The default option, -n=0, will "+
+    " display all the answer sets " +
     "-wcon" + newLine +
     "    " + newLine +
     "  Show warnings determined by CLP-based algorithm. See type warnings section in the manual." +
@@ -4170,27 +4173,6 @@ class Pair
     finally { jj_save(33, xla); }
   }
 
-  private boolean jj_3R_111() {
-    Token xsp;
-    xsp = jj_scanpos;
-    jj_lookingAhead = true;
-    jj_semLA = (getToken(1) != null && getToken(1).image != null) && (constantsMapping.containsKey(getToken(1).image ) || isInteger(getToken(1).image ));
-    jj_lookingAhead = false;
-    if (!jj_semLA || jj_3R_120()) {
-    jj_scanpos = xsp;
-    if (jj_3R_121()) {
-    jj_scanpos = xsp;
-    if (jj_3R_122()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_77() {
-    if (jj_scan_token(GTEQ)) return true;
-    return false;
-  }
-
   private boolean jj_3R_98() {
     if (jj_3R_110()) return true;
     return false;
@@ -4240,6 +4222,13 @@ class Pair
     return false;
   }
 
+  private boolean jj_3_30() {
+    if (jj_3R_43()) return true;
+    if (jj_3R_42()) return true;
+    if (jj_3R_41()) return true;
+    return false;
+  }
+
   private boolean jj_3R_42() {
     Token xsp;
     xsp = jj_scanpos;
@@ -4262,13 +4251,6 @@ class Pair
     }
     }
     }
-    return false;
-  }
-
-  private boolean jj_3_30() {
-    if (jj_3R_43()) return true;
-    if (jj_3R_42()) return true;
-    if (jj_3R_41()) return true;
     return false;
   }
 
@@ -5139,6 +5121,27 @@ class Pair
 
   private boolean jj_3R_120() {
     if (jj_3R_34()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_111() {
+    Token xsp;
+    xsp = jj_scanpos;
+    jj_lookingAhead = true;
+    jj_semLA = (getToken(1) != null && getToken(1).image != null) && (constantsMapping.containsKey(getToken(1).image ) || isInteger(getToken(1).image ));
+    jj_lookingAhead = false;
+    if (!jj_semLA || jj_3R_120()) {
+    jj_scanpos = xsp;
+    if (jj_3R_121()) {
+    jj_scanpos = xsp;
+    if (jj_3R_122()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_77() {
+    if (jj_scan_token(GTEQ)) return true;
     return false;
   }
 

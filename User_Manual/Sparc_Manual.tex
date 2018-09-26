@@ -224,18 +224,21 @@ an argument, and if so, we  describe its meaning.
     
   Show warnings determined by CLP-based algorithm. See section \ref{clp_type_warnings}
 
-\item \textbf{-wasp} (\textbf{temporarily unavailable})
-    
+\item \textbf{-wasp} 
+  \footnote{\textcolor{red}{This option is temporary not working, use -wcon instead}}
   Show warnings determined by ASP-based algorithm. See section \ref{asp_type_warnings}
 
 \item \textbf{-solver arg}
-
   Specify the solver which will be used for computing answer sets. \textit{arg} can have two possible values: \textit{dlv} and \textit{clingo}. 
-\item \textbf{-solveropts arg}
+\item \textcolor{red}{(\textbf{new!})} \textbf{-n [number]}
 
-  Pass command line arguments to the ASP solver (DLV or Clingo).
+  Specify how many answer sets need to be displayed. This option can only be used with option -A.
   
-  Example: \texttt{-solveropts "-pfilter=p"}.
+  Examples:
+  \begin{itemize}
+  \item[$\bullet$] \texttt{-n 2} will display exactly one answer sets.
+  \item[$\bullet$] \texttt{-n 0} will display all the answer sets.
+    \end{itemize}
 
 
   For the complete list of dlv options, see 

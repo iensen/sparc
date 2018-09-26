@@ -14,7 +14,7 @@ public class DLVSolver extends ExternalSolver{
 	    private String pathToDlv;
         
 	    /**
-	     * Constuctor
+	     * Constructor
 	     * @throws FileNotFoundException if dlv was not found in the system
 	     */
 	    public DLVSolver() throws FileNotFoundException {
@@ -50,12 +50,7 @@ public class DLVSolver extends ExternalSolver{
 	     * @return the output of DLV after running the program
 	     */
 	    public String run(boolean ignoreWarnings) {
-		        String options= getDefaultOptions();
-		        //check for option passed as sparc arguments
-	        	if(Settings.getSingletonInstance().getOptions()!=null)
-	        		options+=Settings.getSingletonInstance().getOptions();
-	        	else
-	        		options = getDefaultOptions();
+		        String options = getOptions();
 		        OsUtils.runCommand(pathToDlv, options, program);
 		        if (OsUtils.stderr.toString().length()>0 && 
 		        		(!ignoreWarnings || OsUtils.stderr.toString().indexOf(": syntax error.")!= -1)){
@@ -66,8 +61,8 @@ public class DLVSolver extends ExternalSolver{
 		        return OsUtils.result.toString();
 	    }
 	    
-	    public String getDefaultOptions() {
-	    	return " -silent -- ";
+	    public String getOptions() {
+	    	return " -n=" + Settings.getRequiredNumberOfComputedAnswerSets() + " -silent -- ";
 	    }
 
 	    /**

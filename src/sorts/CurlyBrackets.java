@@ -23,7 +23,7 @@ public class CurlyBrackets {
 	public static void retrieveAllTerms(ASTconstantTermList termList,
 			HashSet<String> terms) {
 		for (int i = 0; i < termList.jjtGetNumChildren(); i++) {
-			retrieveAllTerms((ASTconstantTerm) termList.jjtGetChild(0), terms);
+			retrieveAllTerms((ASTconstantTerm) termList.jjtGetChild(i), terms);
 		}
 
 	}

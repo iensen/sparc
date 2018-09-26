@@ -210,7 +210,7 @@ public class Runner {
 	
 	
 	/**
-	 * Given a string representing a literal, repace it's predicate with a new one
+	 * Given a string representing a literal, replace it's predicate with a new one
 	 * @param lit - a string representing a literal
 	 * @param newPredicataName - a new predicate name
 	 * @return - a string representing a new literal, where predicate name of lit is replaced with newPredicataName

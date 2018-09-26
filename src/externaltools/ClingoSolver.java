@@ -28,14 +28,7 @@ public class ClingoSolver extends ExternalSolver {
 
 	@Override
 	public String run(boolean ignoreWarnings) {
-		String options = "";
-		
-		if(Settings.getSingletonInstance().getOptions()!=null)
-			options+=" "+ Settings.getSingletonInstance().getOptions()+" ";
-		else {
-			options= getDefaultOptions();
-		}
-		
+		String options = getOptions();
 		OsUtils.runCommand(pathToClingo, options, program);
 		String[] errorLines = OsUtils.stderr.toString().split("\\n");
 		StringBuilder errors = new StringBuilder();
@@ -67,12 +60,13 @@ public class ClingoSolver extends ExternalSolver {
 		return OsUtils.result.toString();
 	}
 	
-	public String getDefaultOptions() {
-		// this will not work once we introduce quoted strings
-		return " 0 "+ (program.indexOf('~')!=-1? "--opt-mode=optN --quiet=1 ":""); 
+	public String getOptions() {
+		// !!! this will not work once we introduce quoted strings
 		// the last options prints all models, but drops all intermediate
-		      // models computed during optimization for weak constraints
-	
+		// models computed during optimization for weak constraints	
+		return " " + Settings.getRequiredNumberOfComputedAnswerSets()  + " "
+		           + (program.indexOf('~')!=-1? "--opt-mode=optN --quiet=1 ":""); 
+		
 	}
 		private static String searchForExe() {
 			String[] candidates = { "clingo", "./clingo", "clingo.exe",

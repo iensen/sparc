@@ -87,7 +87,7 @@ public class PrologSolver extends ExternalSolver {
 	}
 
 	@Override
-	public String getDefaultOptions() {
+	public String getOptions() {
 		throw new UnsupportedOperationException();
 	}
 }

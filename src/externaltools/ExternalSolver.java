@@ -26,7 +26,11 @@ public abstract class ExternalSolver {
 	   this.program=program;
    }
    
-   public abstract String getDefaultOptions(); 
+   /**
+    * @return the options that will be passed to the solver 
+    * during SPARC execution
+    */
+   public abstract String getOptions(); 
    
    public String getProgram() {
 	   return program;

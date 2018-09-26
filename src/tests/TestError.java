@@ -197,6 +197,12 @@ public class TestError {
 	}
 	
 	
+	@Test
+	public void testKeyWordNot() throws FileNotFoundException {
+		assertEquals("Error message was wrong",
+				getError("../test/errors/notused.sp"),
+				"ERROR: constant \"not\" at line 2, column 7 is a reserved keyword.");
+	}
 	
 
 

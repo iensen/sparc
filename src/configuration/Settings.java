@@ -9,17 +9,9 @@ boolean lout;
 boolean web;
 boolean disabledEmptySortChecking;
 
-String options;
 String commandLineQuery = null;
+int requiredNumberOfComputedAnswerSets;
 
-
-public String getOptions() {
-	return options;
-}
-
-public void setOptions(String options) {
-	this.options = options;
-}
 
 //  prevents any other class from instantiating
 private Settings(){
@@ -28,7 +20,6 @@ private Settings(){
  
 // Providing Global point of access
 public static Settings getSingletonInstance() {
- 
 return singletonInstance;
 }
  
@@ -45,12 +36,20 @@ public static String getCommandLineQuery() {
 	return singletonInstance.commandLineQuery;
 }
 
+public static int getRequiredNumberOfComputedAnswerSets() {
+	return singletonInstance.requiredNumberOfComputedAnswerSets;
+}
+
 public static boolean isEmptySortCheckingEnabled() {
 	return !singletonInstance.disabledEmptySortChecking;
 }
 
 public static void setEmptySortCheckingDisabled(boolean escd) {
 	singletonInstance.disabledEmptySortChecking = escd;
+}
+
+public static void setRequiredNumberOfComputedAnswerSets( int numberOfAnswerSets) {
+	singletonInstance.requiredNumberOfComputedAnswerSets = numberOfAnswerSets;
 }
 
 

@@ -17,3 +17,6 @@ rules
  1{has(X,C)}1:- #region(X).
  :- neighbor(X,Y), has(X,C), has(Y,C).
 
+
+display
+  has(X,Y).

@@ -89,7 +89,7 @@ public class TestWarning {
 			
 			System.out.println(translatedProgram);
 			ExternalSolver solver = new DLVSolver(translatedProgram.toString());
-			Settings.getSingletonInstance().setOptions(" -n=1 ");
+			Settings.setRequiredNumberOfComputedAnswerSets(1);
 			System.out.println(solver.run(false));
 		} catch (ParseException ex) {
 			return ex.getMessage();

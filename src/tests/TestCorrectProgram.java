@@ -33,7 +33,6 @@ import static org.junit.Assert.*;
 
 public class TestCorrectProgram {
 
-	public ASPSolver solverId = ASPSolver.DLV;
 	@Test
 	public void test1sp() throws FileNotFoundException, ParseException {
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("-p(a)", "q(a)","#s1(a)"));
@@ -44,9 +43,7 @@ public class TestCorrectProgram {
 
 	@Test
 	public void testHugesp() throws FileNotFoundException, ParseException {
-
-		String options = (solverId == ASPSolver.Clingo?" 1 ": " -n=1 "); 
-		testFile("../test/programs/huge.sp", new AnswerCheckerH(), options);
+		testFile("../test/programs/huge.sp", new AnswerCheckerH(), 1);
 	}
 
 
@@ -518,16 +515,23 @@ public class TestCorrectProgram {
 
 	@Test
 	public void testRegions() throws FileNotFoundException, ParseException {
+				
 
-		// no choice rules in DLV
-		if(solverId ==  ASPSolver.DLV) {
-			return;
-		}
-		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("???"));
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("has(tx,green)", "has(co,blue)",  "has(ok,red)"));
+		HashSet<String> ans2 = new HashSet<String>(Arrays.asList("has(tx,green)", "has(co,red)",  "has(ok,blue)"));
+		HashSet<String> ans3 = new HashSet<String>(Arrays.asList("has(tx,blue)", "has(co,green)",  "has(ok,red)"));
+		HashSet<String> ans4 = new HashSet<String>(Arrays.asList("has(tx,blue)", "has(co,red)",  "has(ok,green)"));
+		HashSet<String> ans5 = new HashSet<String>(Arrays.asList("has(tx,red)", "has(co,blue)",  "has(ok,green)"));
+		HashSet<String> ans6 = new HashSet<String>(Arrays.asList("has(tx,red)", "has(co,green)",  "has(ok,blue)"));
+		
 
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-
+		anss.add(ans2);
+		anss.add(ans3);
+		anss.add(ans4);
+		anss.add(ans5);
+		anss.add(ans6);
 		testFile("../test/programs/regions.sp", anss);
 	}
 
@@ -537,17 +541,14 @@ public class TestCorrectProgram {
 	public void testSimple123() throws FileNotFoundException, ParseException {
 
 
-		// no negative arithmetics in DLV
-		if(solverId ==  ASPSolver.DLV) {
-			return;
-		}
+	
 
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p(2)"));
 
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
 
-		testFile("test/programs/simple123.sp", anss);
+		testFile("../test/programs/simple123.sp", anss);
 	}
 
 	@Test
@@ -583,13 +584,30 @@ public class TestCorrectProgram {
 		testFile("../test/programs/sudoku.sp", anss);
 	}
 	
+	@Test
+	public void testNumAns0() throws FileNotFoundException, ParseException {
+
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("p"));
+		HashSet<String> ans2 = new HashSet<String>(Arrays.asList("q"));
+		HashSet<String> ans3 = new HashSet<String>(Arrays.asList("r"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		anss.add(ans2);
+		anss.add(ans3);
+				
+		testFile("../test/programs/testNumOfAns.sp", anss);
+		testFile("../test/programs/testNumOfAns.sp", new SubsetChecker(anss,1), 1);
+		testFile("../test/programs/testNumOfAns.sp", new SubsetChecker(anss,2), 2);
+		testFile("../test/programs/testNumOfAns.sp", new SubsetChecker(anss,3), 3);
+	}
+	
+	
+	
+	
+	
 	
 	@Test
 	public void testMohan() throws FileNotFoundException, ParseException {
-		// A BUG IN DLV -- this program never terminates
-		if(solverId ==  ASPSolver.DLV) {
-			return;
-		}
 		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
 				"val(loc(text0,aux_library),true,0)", "val(loc(text0,aux_library),true,1)", 
 				"val(loc(text0,main_library),false,0)", "val(loc(text0,office),false,0)", 
@@ -597,10 +615,18 @@ public class TestCorrectProgram {
 				"ab(d1(text0))", "ab(d3(text0))"));
 		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
 		anss.add(ans1);
-
 		testFile("../test/programs/mohan.sp", anss);
 	}
 	
+	@Test
+	public void testIssue28() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList(
+				"father(f(a,bob),f(a,sara))", "father(f(a,bob),f(b,sara))"));
+		
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/issue28.sp", anss);
+	}
 	
 
 
@@ -608,10 +634,9 @@ public class TestCorrectProgram {
 
 
 
-
-	private void testFile(String filePath, IAnswerChecker checker, String options) throws ParseException, FileNotFoundException
+	private void testFile(String filePath, IAnswerChecker checker, int numberOfAnswerSets) throws ParseException, FileNotFoundException
 	{
-		testFile(filePath,  options, null, checker);
+		testFile(filePath,  numberOfAnswerSets, null, checker);
 	}
 
 
@@ -619,23 +644,35 @@ public class TestCorrectProgram {
 	private void testFile(String filePath, HashSet<HashSet<String>> cAnswers) throws ParseException, FileNotFoundException
 	{
 		
-		testFile(filePath, null, cAnswers,null);
+		testFile(filePath, 0, cAnswers,null);
 	}
 
 
 
 
-	private void testFile(String filePath, String options, HashSet<HashSet<String>> cAnswers, IAnswerChecker checker) throws ParseException, FileNotFoundException
+	private void testFile(String filePath, int numberOfAnswerSets, HashSet<HashSet<String>> cAnswers, IAnswerChecker checker) throws ParseException, FileNotFoundException
 	{
 		for (int solverId = 0; solverId < 2 ; solverId++) {
 			
 			
-			//exceptions
+			// Exceptions:
 			
 			// ignore, this is a DLV bug
-			if(filePath.equals("test/programs/mohan.sp") && solverId==1)
+			if(filePath.equals("../test/programs/mohan.sp") && solverId==1)
 				continue;
-				
+
+			// no choice rules in DLV
+			if(filePath.equals("../test/programs/regions.sp") && solverId==1) {
+				return;
+			}
+			
+			// no negative arithmetics in DLV
+			if(filePath.equals("../test/programs/simple123.sp") && solverId==1) {
+				return;
+			}
+			
+
+
 			BuiltIn.setMaxInt(5000);		  
 			
 			Reader sr = null;
@@ -665,11 +702,7 @@ public class TestCorrectProgram {
 				solver= new ClingoSolver(translatedProgram.toString());
 			}
 			
-			if(options != null) {
-				Settings.getSingletonInstance().setOptions(options);
-			} else {
-				Settings.getSingletonInstance().setOptions(solver.getDefaultOptions());
-			}
+			Settings.setRequiredNumberOfComputedAnswerSets(numberOfAnswerSets);
 			HashSet<HashSet<String>> oAnswers = new Runner().computeAnswerSets(e, solver);
 			if(checker == null) {
 				assertEquals("the answers do not match", cAnswers,oAnswers);

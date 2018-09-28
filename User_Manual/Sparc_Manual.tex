@@ -225,7 +225,7 @@ an argument, and if so, we  describe its meaning.
   Show warnings determined by CLP-based algorithm. See section \ref{clp_type_warnings}
 
 \item \textbf{-wasp} 
-  \footnote{\textcolor{red}{This option is temporary not working, use -wcon instead}}
+  \footnote{\textcolor{red}{This option is temporarily broken, use -wcon instead}}
   Show warnings determined by ASP-based algorithm. See section \ref{asp_type_warnings}
 
 \item \textbf{-solver arg}
@@ -236,21 +236,10 @@ an argument, and if so, we  describe its meaning.
   
   Examples:
   \begin{itemize}
-  \item[$\bullet$] \texttt{-n 2} will display exactly one answer sets.
+  \item[$\bullet$] \texttt{-n 2} will display two arbitrary answer sets. In case the program has less than two answer sets, all of them will be shown.
   \item[$\bullet$] \texttt{-n 0} will display all the answer sets.
     \end{itemize}
 
-
-  For the complete list of dlv options, see 
-  {\scriptsize
-  \url{http://www.dlvsystem.com/html/DLV_User_Manual.html }
-}
-
-  For the complete list of clingo options, see 
- {\scriptsize
-  \url{http://sourceforge.net/projects/potassco/files/potassco_guide/}
-}
-Note that the option "0"  is passed to clingo solver by default to compute all the answer sets of the program. Also, for programs containing CR-rules, the options \texttt{"--opt-mode=optN --quiet=1"} are passed to clingo to ensure correct output.
 
 \item \textbf{-Help, -H, -help, --Help, --help, -h}
 

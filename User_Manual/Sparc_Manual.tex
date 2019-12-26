@@ -359,17 +359,16 @@ then $f(\alpha_1,\dots, \alpha_n)$ is a ground term.
 f(sort\_name_1(var_1),..., sort\_name_n(var_n)):
                                      condition(var_1,...,var_n)
 \end{equation*}
-where $f$ is an identifier, for $ 1\leq i\leq m$ $sort\_name_i$ occurs in one of the preceeding sort definitions and  the condition on variables $var_1,...,var_n$ (written as $condition(var_1,...,var_n)$) is defined as follows:
+where $f$ is an identifier, for $ 1\leq i\leq n$, $sort\_name_i$ occurs in one of the preceeding sort definitions and a \textit{condition} on variables $var_1,...,var_n$ (written as $condition(var_1,...,var_n)$) is defined as follows:
 \begin{itemize}
-\item if $var_i$ and $var_j$ occur in the sequence  $var_1,...,var_n$ and $\odot$ is an element of $\{>,<,\le,\ge\}$, then $var_i \odot var_j$ is a condition on   $var_1,...,var_n$.
+\item if $var_i$ and $var_j$ occur in the sequence  $var_1,...,var_n$ and $\odot$ is an element of $\{>,<,\le,\ge\}$, then $var_i \odot var_j$ is a \textit{condition} on   $var_1,...,var_n$.
 \item if $\mathcal{C}_1$ and $\mathcal{C}_2$ are both conditions on  $var_1,...,var_n$, and $\oplus$ is an element of  $\{\cup,\cap\}$, then
-$(\mathcal{C}_1 \oplus \mathcal{C}_2)$ is a condition on  $var_1,...,var_n$.
-\item if $\mathcal{C}$ is a  condition on  $var_1,...,var_n$, then $not(\mathcal{C})$ is also a condition on  $var_1,...,var_n$.
+$(\mathcal{C}_1 \oplus \mathcal{C}_2)$ is a \textit{condition} on  $var_1,...,var_n$.
+\item if $\mathcal{C}$ is a  condition on  $var_1,...,var_n$, then $not(\mathcal{C})$ is also a \textit{condition} on  $var_1,...,var_n$.
 \end{itemize}
 Variables $var_1,...,var_n$ occurring in parenthesis after sort names are optional as well as the condition :$condition(var_1,...,var_n)$.
 
-If a condition contains a subcondition $var_i~\odot~var_j$,  then the sorts  $sortname_i$ and  $sortname_j$
-must be defined by basic statements (the definition of a basic statement is given below after the definition of a concatenation statement).
+If a condition contains a subcondition $var_i~\odot~var_j$,  then the sorts  $sortname_i$ and  $sortname_j$ must be defined by basic statements (the definition of which is given below after the definition of a concatenation statement).
 
 The expression defines a collection of ground terms 
 \\ $\{f(t_1,\dots,t_n):  t_1 \in s_i \land \dots \land t_n \in s_n \land (condition(X_1,\dots, X_n)|_{X_1 = t_1,\dots,X_n = t_n})\}$
@@ -384,11 +383,11 @@ The sort \texttt{\#sf} consists of records $\{f(1,1,2),f(1,1,1),f(2,1,1)\}$
 
 
 
- \item \textbf{set-theoretic expression} can be in one of the following forms:
+ \item \textbf{set-theoretic expression} is in one of the following forms:
 \begin{itemize}
 \item $\#sort\_name$  
-\item an expression of the form (3), denoting a set of ground terms
-\item an expression of the form (4), denoting a set of records
+\item an expression of the form 3, denoting a set of ground terms
+\item an expression of the form 4, denoting a set of records
 \item $(S_1 \bigtriangledown S_2)$, where $\bigtriangledown \in \{+,-,*\}$ and both $S_1$ and $S_2$ are set theoretic expressions
 \end{itemize}
 
@@ -411,12 +410,12 @@ $b\_stmt_1, \dots, b\_stmt_n$ must be \textit{basic statements}, defined as foll
 
 
 \begin{itemize}
- \item statements of the forms (1)-(3) are basic
- \item statement $S$ of the form (5) is basic if:
+ \item statements of the forms 1 to 3 are basic
+ \item statement $S$ of the form 5 is basic if:
  \begin{itemize}
- \item it does not contain sort expressions of the form (4), denoting sets of records
-  \item none of curly brackets occurring in $S$ contains a record
-  \item all sorts occurring in $S$ are defined by basic statements 
+ \item it does not contain sort expressions of the form 4, denoting sets of records,
+  \item there is no records between any pair of matching curly brackets,
+  \item all sorts occurring in $S$ are defined by basic statements .
  \end{itemize}
 \end{itemize}
 Note that basic statement can only define a basic sort.
@@ -433,10 +432,7 @@ Note that basic statement can only define a basic sort.
 \subsection{Predicate Declarations}
 
 \noindent  The second part of a  ${\cal SPARC}$ program starts with the keyword
-\st
-$predicates$
-
-\st and is followed by statements of the form
+$predicates$ and is followed by statements of the form
 
 \begin{equation*}
 pred\_symbol(\#sortName_1,\dots,\#sortName_n)

@@ -376,7 +376,7 @@ The expression defines a collection of ground terms
 \textit{Example}
 \begin{verbatim}
  #s=1..2.
- #sf=f(s(X),s(Y),s(Z)): (X=Y or Y=Z). 
+ #sf=f(#s(X),#s(Y),#s(Z)): (X=Y or Y=Z). 
 \end{verbatim}
 
 The sort \texttt{\#sf} consists of records $\{f(1,1,2),f(1,1,1),f(2,1,1)\}$
@@ -681,7 +681,7 @@ The following are possible causes of a sort definition error  that will result i
 \begin{verbatim}
  sorts
  #s=1..2.
- #fs=f(s,s2).
+ #fs=f(#s,#s2).
 \end{verbatim}
 
 

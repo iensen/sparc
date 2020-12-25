@@ -32,5 +32,32 @@ local.properties
 
 # Latex Aux. fules
 *.aux
-*.out
+*.glo
+*.idx
 *.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+./.predictive/*
+*region.*
+prv__.fmt
+prv__.log
+# auto folder when using emacs and auctex
+./auto/*
+*.el

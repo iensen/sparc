@@ -689,7 +689,7 @@ public class TestCorrectProgram {
 			SparcTranslator p= new SparcTranslator(sr);
 			SimpleNode e=p.program();
 			InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
-			TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
+			TypeChecker tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordArities, gen);
 			Translator tr = new Translator(null, p, gen, false, false);
 			tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 			StringBuilder translatedProgram=new StringBuilder();

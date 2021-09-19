@@ -1,5 +1,7 @@
 package sorts;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import parser.ASTconstantTerm;
@@ -76,22 +78,39 @@ public class CurlyBrackets {
 	/**
 	 * Retrieve all functional symbols in the curly Brackets
 	 * @param curlyBrackets
-	 * @param functionalSymbols the set where all found functional symbols will be stored 
+	 * @param functionalSymbols a map from function symbol names to an array of their supported arities
+	 *                          (will be filled in by the function)
 	 */
 	public static void retrieveAllFunctionalSymbols(
-			ASTcurlyBrackets curlyBrackets, HashSet<String> functionalSymbols) {
+			ASTcurlyBrackets curlyBrackets, HashMap<String, ArrayList<Integer>> functionalSymbols) {
          retrieveAllFunctionalSymbolsR(curlyBrackets, functionalSymbols);
 	}
 	
 	/**
 	 * Retrieve all functional symbols in the abstract syntax tree node
 	 * @param curlyBrackets
-	 * @param functionalSymbols the set where all found functional symbols will be stored 
-	 */
-	private static void retrieveAllFunctionalSymbolsR(SimpleNode n, HashSet<String> functionalSymbols) {
+	 * @param functionalSymbols a map from function symbol names to an array of their supported arities
+	 *                          (will be filled in by the function)
+	 */                          
+	private static void retrieveAllFunctionalSymbolsR(SimpleNode n, HashMap<String, ArrayList<Integer>> functionalSymbols) {
 		if(n.getId()==SparcTranslatorTreeConstants.JJTCONSTANTTERM) {
 			if(n.image.indexOf('(')!=-1) {
-				functionalSymbols.add(n.image.substring(0,n.image.indexOf('(')));
+				ASTconstantTerm term = (ASTconstantTerm)n;
+				ASTconstantTermList termArgList = (ASTconstantTermList)term.jjtGetChild(0);
+				
+				String recordName = n.image.substring(0,n.image.indexOf('('));
+				ArrayList<Integer>knownArities;
+				if(!functionalSymbols.containsKey(recordName)) {
+					knownArities = new ArrayList<Integer>();
+					functionalSymbols.put(recordName, knownArities);
+				} else {
+				  knownArities = functionalSymbols.get(recordName);
+				};
+				int functionSymbolArity = termArgList.jjtGetNumChildren();
+				if(!knownArities.contains(functionSymbolArity)) {
+					knownArities.add(functionSymbolArity);
+				}
+				
 			}
 		}
 		for(int i=0;i<n.jjtGetNumChildren();i++) {

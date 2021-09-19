@@ -92,7 +92,7 @@ public class TestTypeChecker {
 		  TypeChecker tc=new TypeChecker(p.sortNameToExpression, 
 				  p.predicateArgumentSorts,p.constantsMapping,
 				  p.curlyBracketTerms,
-				  p.definedRecordNames,gen);
+				  p.definedRecordArities,gen);
 		  Settings.setSolver(ASPSolver.Clingo); // allow choice rules		
 		  tc.checkRules((ASTprogramRules)program.jjtGetChild(2));
 	 }

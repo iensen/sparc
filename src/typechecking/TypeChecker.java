@@ -68,8 +68,10 @@ public class TypeChecker {
 	private String inputFileName = "";
 	// List of all terms occuring in brackets
 	private HashSet<String> curlyBracketTerms;
-	// List of all defined record names
-	private HashSet<String> definedRecordNames;
+	// Map from defined record names to their possible arities.
+	// Suppose program contains record f of arities 2 and 3, then 
+	// definedRecordNames["f"] will contain an array of two numbers: 2 and 3
+	private HashMap<String, ArrayList<Integer>> definedRecordArities;
     // used for checking if sort contains a number
 	private InstanceGenerator gen;
 	
@@ -85,14 +87,14 @@ public class TypeChecker {
 			HashMap<String, ArrayList<String>> predicateArgumentSorts,
 			HashMap<String, Long> constantsMapping,
 			HashSet<String> curlyBracketTerms,
-			HashSet<String> definedRecordNames,
+			HashMap<String, ArrayList<Integer>> definedRecordArities,
 			InstanceGenerator gen
 			) {
 		this.sortNameToExpression = sortNameToExpression;
 		this.predicateArgumentSorts = predicateArgumentSorts;
 		this.constantsMapping = constantsMapping;
 		this.curlyBracketTerms = curlyBracketTerms;
-		this.definedRecordNames = definedRecordNames;
+		this.definedRecordArities = definedRecordArities;
 		this.gen=gen;
 		this.ignoreLineNumbers=false;
 	}
@@ -446,20 +448,32 @@ public class TypeChecker {
 	    		return true;
 		}
 	}
-
+	
+	/**
+	 * Check if the term with variables is a term of given progam
+	 * 
+	 * @param termToCheck
+	 * @param sortName
+	 * @return true if termToCheck is a program term
+	 * @throws ParseException
+	*/
 	private boolean checkNonGroundTerm(ASTsymbolicTerm symTerm) {
 		SimpleNode child0 = (SimpleNode) symTerm.jjtGetChild(0);
 		if (child0.getId() == SparcTranslatorTreeConstants.JJTSYMBOLICCONSTANT) {
 			return isDomainElement(new ASTterm(child0.image));
-		} else {// symbolic Function
+		} else {// symbolic Function f(a1,...,an)
 
 			String functionSymbol = child0.image.substring(0,
-					child0.image.length() - 1);
-			if (!definedRecordNames.contains(functionSymbol))
-				return false;
-
+					child0.image.length() - 1);			
+			// return false if f doesn't occur anywhere in sort definitions
 			ASTtermList child1 = (ASTtermList) symTerm.jjtGetChild(1);
-
+			if (!definedRecordArities.containsKey(functionSymbol))
+				return false;
+			
+			// return false if f of the same arity doesn't occur anywhere in the sort definition 
+			if (!definedRecordArities.get(functionSymbol).contains(child1.jjtGetNumChildren()))
+				return false;
+						
 			for (int i = 0; i < child1.jjtGetNumChildren(); i++) {
 				ASTterm term = (ASTterm) child1.jjtGetChild(i);
 				if (term.isGround()) {

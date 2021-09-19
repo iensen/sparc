@@ -1,6 +1,7 @@
 package tests;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -24,7 +25,7 @@ public class testConditions {
     	Reader sr= new StringReader(test);
     	SparcTranslator p= new SparcTranslator(sr);
 	    p.sortNameToExpression=new HashMap<String, ASTsortExpression>();
-	    p.definedRecordNames = new HashSet<String>();
+	    p.definedRecordArities = new HashMap<String, ArrayList<Integer>>();
 	    ASTsortExpression h=new ASTsortExpression(SparcTranslatorTreeConstants.JJTSORTEXPRESSION);
 	    p.sortNameToExpression.put("block", h);
 	   try {

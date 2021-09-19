@@ -3,7 +3,7 @@ options
 {
   BUILD_PARSER = true;
   STATIC = false;
-  OUTPUT_DIRECTORY = "/home/iensen/projects/sparc/sparc/src/parser";
+  OUTPUT_DIRECTORY = "/home/iensen/Projects/sparc/src/project/src/parser";
   MULTI = true;
 }
 
@@ -94,8 +94,10 @@ class Pair
   // set of all terms occurring in curly brackets and their subterms
   public HashSet < String > curlyBracketTerms;
 
-  // set of all defined record names:
-  public HashSet < String > definedRecordNames;
+  // Map from defined record names to their possible arities.
+  // Suppose program contains record f of arities 2 and 3, then 
+  // definedRecordArities["f"] will contain an array of two numbers: 2 and 3
+  public HashMap<String, ArrayList<Integer>> definedRecordArities;
 
   // hashmap from original sort names to sort names which match ASP syntax
 
@@ -142,7 +144,7 @@ class Pair
     }
 
     if(!jArguments.lout)
-        System.err.println("SPARC  V2.56");
+        System.err.println("SPARC  V2.57");
    
     if (jArguments.help)
     {
@@ -249,7 +251,7 @@ class Pair
       SparcTranslator p = new SparcTranslator(sr);
       programTree = p.program();
       InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
-      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordNames, gen);
+      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordArities, gen);
       if (jArguments.inputFiles.size() != 0)
       {
         String fileName=getShortFileName(jArguments.inputFiles.get(0));
@@ -542,7 +544,7 @@ SimpleNode program() :
   constantsMapping = new HashMap < String, Long > ();
   warnings = new ArrayList < String > ();
   curlyBracketTerms = new HashSet < String > ();
-  definedRecordNames = new HashSet < String > ();
+  definedRecordArities= new HashMap < String, ArrayList<Integer> > ();
   sortRenaming = new HashMap<String,String > ();
   SimpleNode disp = null;
 }
@@ -772,7 +774,7 @@ SimpleNode curlyBrackets() :
     jjtThis.beginColumn = t.beginColumn;
     CurlyBrackets.checkNoKeyWordOccurrences((ASTconstantTermList) child);
     CurlyBrackets.retrieveAllTerms((ASTconstantTermList) child, curlyBracketTerms);
-    CurlyBrackets.retrieveAllFunctionalSymbols(jjtThis, definedRecordNames);
+    CurlyBrackets.retrieveAllFunctionalSymbols(jjtThis, definedRecordArities);
     return jjtThis;
   }
 }
@@ -905,7 +907,15 @@ SimpleNode functionalSymbol() :
   {}
   map = specialSortExpressionList() t2 = < CP > [ < COLON > c = condition(map) ]
   {
-    definedRecordNames.add(t1.image);
+    ArrayList<Integer>knownArities;
+    String recordName = t1.image;
+	if(!definedRecordArities.containsKey(recordName)) {
+		 knownArities = new ArrayList<Integer>();
+		 definedRecordArities.put(recordName, knownArities);
+	} else {
+		 knownArities = definedRecordArities.get(recordName);
+	};
+    knownArities.add(jjtThis.jjtGetChild(0).jjtGetNumChildren());
     jjtThis.beginLine = t1.beginLine;
     jjtThis.beginColumn = t1.beginColumn;
     jjtThis.image = t1.image + t3.image + t2.image;

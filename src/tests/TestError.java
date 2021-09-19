@@ -139,6 +139,13 @@ public class TestError {
 	}
 
 	@Test
+	public void testError14_4() throws FileNotFoundException {
+		assertEquals("Error message was wrong",
+				getError("../test/errors/error14(4).sp"),
+				": non-ground term \"occupied(B1,B2)\" occuring  in program as 1 argument of predicate holds/1 at line 9, column 5 is not a program term");
+	}
+
+	@Test
 	public void testError15() throws FileNotFoundException {
 		assertEquals("Error message was wrong",
 				getError("../test/errors/error15.sp"),
@@ -223,7 +230,7 @@ public class TestError {
 					p.sortNameToExpression);
 			TypeChecker tc = new TypeChecker(p.sortNameToExpression,
 					p.predicateArgumentSorts, p.constantsMapping,
-					p.curlyBracketTerms, p.definedRecordNames, gen);
+					p.curlyBracketTerms, p.definedRecordArities, gen);
 			Translator tr = new Translator(null, p, gen, true, true);
 			tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 			StringBuilder translatedProgram = new StringBuilder();

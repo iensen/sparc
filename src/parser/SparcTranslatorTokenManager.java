@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Set;
 import translating.Translator;
 import typechecking.TypeChecker;
+import typechecking.RecordInfo;
 import translating.InstanceGenerator;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.JCommander;

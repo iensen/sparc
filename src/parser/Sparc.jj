@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Set;
 import translating.Translator;
 import typechecking.TypeChecker;
+import typechecking.RecordInfo;
 import translating.InstanceGenerator;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.JCommander;
@@ -98,10 +99,8 @@ class Pair
   // set of all terms occurring in curly brackets and their subterms
   public HashSet < String > curlyBracketTerms;
 
-  // Map from defined record names to their possible arities.
-  // Suppose program contains record f of arities 2 and 3, then 
-  // definedRecordArities["f"] will contain an array of two numbers: 2 and 3
-  public HashMap<String, ArrayList<Integer>> definedRecordArities;
+  // set of all defined records
+  public HashSet<RecordInfo> definedRecords;
 
   // hashmap from original sort names to sort names which match ASP syntax
 
@@ -255,7 +254,7 @@ class Pair
       SparcTranslator p = new SparcTranslator(sr);
       programTree = p.program();
       InstanceGenerator gen = new InstanceGenerator(p.sortNameToExpression);
-      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecordArities, gen);
+      tc = new TypeChecker(p.sortNameToExpression, p.predicateArgumentSorts, p.constantsMapping, p.curlyBracketTerms, p.definedRecords, gen);
       if (jArguments.inputFiles.size() != 0)
       {
         String fileName=getShortFileName(jArguments.inputFiles.get(0));
@@ -552,7 +551,7 @@ SimpleNode program() :
   constantsMapping = new HashMap < String, Long > ();
   warnings = new ArrayList < String > ();
   curlyBracketTerms = new HashSet < String > ();
-  definedRecordArities= new HashMap < String, ArrayList<Integer> > ();
+  definedRecords= new HashSet < RecordInfo > ();
   sortRenaming = new HashMap<String,String > ();
   SimpleNode disp = null;
 }
@@ -1084,7 +1083,7 @@ SimpleNode curlyBrackets() :
     jjtn000.beginColumn = t.beginColumn;
     CurlyBrackets.checkNoKeyWordOccurrences((ASTconstantTermList) child);
     CurlyBrackets.retrieveAllTerms((ASTconstantTermList) child, curlyBracketTerms);
-    CurlyBrackets.retrieveAllFunctionalSymbols(jjtn000, definedRecordArities);
+    CurlyBrackets.retrieveAllFunctionalSymbols(jjtn000, definedRecords);
     return jjtn000;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
@@ -1501,15 +1500,9 @@ SimpleNode functionalSymbol() :
   }
 /*@egen*/
   {
-    ArrayList<Integer>knownArities;
     String recordName = t1.image;
-	if(!definedRecordArities.containsKey(recordName)) {
-		 knownArities = new ArrayList<Integer>();
-		 definedRecordArities.put(recordName, knownArities);
-	} else {
-		 knownArities = definedRecordArities.get(recordName);
-	};
-    knownArities.add(jjtn000.jjtGetChild(0).jjtGetNumChildren());
+    int arity = jjtn000.jjtGetChild(0).jjtGetNumChildren();
+    definedRecords.add(new RecordInfo(recordName,arity)); 
     jjtn000.beginLine = t1.beginLine;
     jjtn000.beginColumn = t1.beginColumn;
     jjtn000.image = t1.image + t3.image + t2.image;

@@ -10,6 +10,7 @@ import parser.ASTcurlyBrackets;
 import parser.ParseException;
 import parser.SimpleNode;
 import parser.SparcTranslatorTreeConstants;
+import typechecking.RecordInfo;
 
 public class CurlyBrackets {
 
@@ -82,8 +83,8 @@ public class CurlyBrackets {
 	 *                          (will be filled in by the function)
 	 */
 	public static void retrieveAllFunctionalSymbols(
-			ASTcurlyBrackets curlyBrackets, HashMap<String, ArrayList<Integer>> functionalSymbols) {
-         retrieveAllFunctionalSymbolsR(curlyBrackets, functionalSymbols);
+			ASTcurlyBrackets curlyBrackets, HashSet<RecordInfo> records) {
+         retrieveAllFunctionalSymbolsR(curlyBrackets, records);
 	}
 	
 	/**
@@ -92,29 +93,19 @@ public class CurlyBrackets {
 	 * @param functionalSymbols a map from function symbol names to an array of their supported arities
 	 *                          (will be filled in by the function)
 	 */                          
-	private static void retrieveAllFunctionalSymbolsR(SimpleNode n, HashMap<String, ArrayList<Integer>> functionalSymbols) {
+	private static void retrieveAllFunctionalSymbolsR(SimpleNode n, HashSet<RecordInfo> records) {
 		if(n.getId()==SparcTranslatorTreeConstants.JJTCONSTANTTERM) {
 			if(n.image.indexOf('(')!=-1) {
 				ASTconstantTerm term = (ASTconstantTerm)n;
 				ASTconstantTermList termArgList = (ASTconstantTermList)term.jjtGetChild(0);
 				
 				String recordName = n.image.substring(0,n.image.indexOf('('));
-				ArrayList<Integer>knownArities;
-				if(!functionalSymbols.containsKey(recordName)) {
-					knownArities = new ArrayList<Integer>();
-					functionalSymbols.put(recordName, knownArities);
-				} else {
-				  knownArities = functionalSymbols.get(recordName);
-				};
 				int functionSymbolArity = termArgList.jjtGetNumChildren();
-				if(!knownArities.contains(functionSymbolArity)) {
-					knownArities.add(functionSymbolArity);
-				}
-				
+				records.add(new RecordInfo(recordName, functionSymbolArity));
 			}
 		}
 		for(int i=0;i<n.jjtGetNumChildren();i++) {
-			retrieveAllFunctionalSymbolsR((SimpleNode)n.jjtGetChild(i), functionalSymbols);
+			retrieveAllFunctionalSymbolsR((SimpleNode)n.jjtGetChild(i), records);
 		}
 	}
 }

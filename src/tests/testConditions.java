@@ -10,6 +10,7 @@ import org.junit.Test;
 import parser.ASTsortExpression;
 import parser.ParseException;
 import parser.SparcTranslatorTreeConstants;
+import typechecking.RecordInfo;
 import parser.SparcTranslator;
 
 
@@ -25,7 +26,7 @@ public class testConditions {
     	Reader sr= new StringReader(test);
     	SparcTranslator p= new SparcTranslator(sr);
 	    p.sortNameToExpression=new HashMap<String, ASTsortExpression>();
-	    p.definedRecordArities = new HashMap<String, ArrayList<Integer>>();
+	    p.definedRecords = new HashSet<RecordInfo>();
 	    ASTsortExpression h=new ASTsortExpression(SparcTranslatorTreeConstants.JJTSORTEXPRESSION);
 	    p.sortNameToExpression.put("block", h);
 	   try {

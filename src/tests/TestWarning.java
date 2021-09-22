@@ -80,7 +80,7 @@ public class TestWarning {
 					p.sortNameToExpression);
 			TypeChecker tc = new TypeChecker(p.sortNameToExpression,
 					p.predicateArgumentSorts, p.constantsMapping,
-					p.curlyBracketTerms, p.definedRecordArities, gen);
+					p.curlyBracketTerms, p.definedRecords, gen);
 			Translator tr = new Translator(null, p, gen, true, true);
 			tc.checkRules((ASTprogramRules) e.jjtGetChild(2));
 			StringBuilder translatedProgram = new StringBuilder();

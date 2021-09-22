@@ -68,11 +68,9 @@ public class TypeChecker {
 	private String inputFileName = "";
 	// List of all terms occuring in brackets
 	private HashSet<String> curlyBracketTerms;
-	// Map from defined record names to their possible arities.
-	// Suppose program contains record f of arities 2 and 3, then 
-	// definedRecordNames["f"] will contain an array of two numbers: 2 and 3
-	private HashMap<String, ArrayList<Integer>> definedRecordArities;
-    // used for checking if sort contains a number
+	// set of objects representing information about all defined records (i.e, function symbols)
+	private HashSet<RecordInfo> definedRecords;
+	// used for checking if sort contains a number
 	private InstanceGenerator gen;
 	
 	public boolean ignoreLineNumbers;
@@ -87,14 +85,14 @@ public class TypeChecker {
 			HashMap<String, ArrayList<String>> predicateArgumentSorts,
 			HashMap<String, Long> constantsMapping,
 			HashSet<String> curlyBracketTerms,
-			HashMap<String, ArrayList<Integer>> definedRecordArities,
+			HashSet<RecordInfo> definedRecords,
 			InstanceGenerator gen
 			) {
 		this.sortNameToExpression = sortNameToExpression;
 		this.predicateArgumentSorts = predicateArgumentSorts;
 		this.constantsMapping = constantsMapping;
 		this.curlyBracketTerms = curlyBracketTerms;
-		this.definedRecordArities = definedRecordArities;
+		this.definedRecords = definedRecords;
 		this.gen=gen;
 		this.ignoreLineNumbers=false;
 	}
@@ -467,12 +465,9 @@ public class TypeChecker {
 					child0.image.length() - 1);			
 			// return false if f doesn't occur anywhere in sort definitions
 			ASTtermList child1 = (ASTtermList) symTerm.jjtGetChild(1);
-			if (!definedRecordArities.containsKey(functionSymbol))
+			if (!definedRecords.contains(new RecordInfo(functionSymbol, child1.jjtGetNumChildren()))) {
 				return false;
-			
-			// return false if f of the same arity doesn't occur anywhere in the sort definition 
-			if (!definedRecordArities.get(functionSymbol).contains(child1.jjtGetNumChildren()))
-				return false;
+			}
 						
 			for (int i = 0; i < child1.jjtGetNumChildren(); i++) {
 				ASTterm term = (ASTterm) child1.jjtGetChild(i);

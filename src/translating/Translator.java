@@ -11,8 +11,13 @@ import configuration.ASPSolver;
 import configuration.Settings;
 import parser.ASTaggregateElement;
 import parser.ASTatom;
+import parser.ASThead;
 import parser.ASTbody;
 import parser.ASTchoice_element;
+import parser.ASToptimize_statement;
+import parser.ASToptimizeParameterList;
+import parser.ASToptimizeParameter;
+import parser.ASTnonRelAtomList;
 import parser.ASTdisplay;
 import parser.ASTextendedNonRelAtom;
 import parser.ASTextendedSimpleAtomList;
@@ -831,7 +836,13 @@ public class Translator {
 	 *             if sort of some variable cannot be detected
 	 */
 	private void translateRule(ASTprogramRule rule,boolean writeWarningsToSTDERR) throws ParseException {
-		
+            	RuleAnalyzer ra = new RuleAnalyzer(rule);
+                // check for optimization statements
+                if (ra.isOptimizeStatement()) {
+                    processOptimizationStatement(rule);
+                    return;
+		}
+                
 		String originalRule = rule.toString(new HashMap<String,String>());
 		int lineNumber = rule.getBeginLine();
 		int columnNumber = rule.getBeginColumn();
@@ -881,8 +892,7 @@ public class Translator {
 			appendNewLineToTranslation();
 	      }
 		}
-	
-		RuleAnalyzer ra = new RuleAnalyzer(rule);
+                
 		// add new weak constraints and rules for a CR-rule
 		if (ra.isCrRule()) {
 			String ruleName = getRuleName(rule);
@@ -916,6 +926,19 @@ public class Translator {
 		appendNewLineToTranslation();
 	}
 
+        private void processOptimizationStatement(ASTprogramRule rule) throws ParseException {
+            if(Settings.getSolver() == ASPSolver.Clingo) {
+                ASThead head = null;
+                ASToptimize_statement opt_statement = null;
+                
+                ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+                head = (ASThead) (urule.jjtGetChild(0));
+                opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
+                appendStringToTranslation(opt_statement.toString(sortRenaming));
+                appendNewLineToTranslation();
+            }
+            return;
+        }
 	private void ensureVariableSafety(ASTprogramRule rule, String originalRule,
 			HashMap<String, String> originalNameMapping,
 			ArrayList<ASTatom> newSortAtoms) throws ParseException {

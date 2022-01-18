@@ -501,6 +501,9 @@ TOKEN :
 | < OSB : "[" >
 | < OCB : "]" >
 | < POUND_SIGN : "#" >
+| < MINIMIZE_OB : "#minimize"([ "\t", "\r", "\n"," " ])* "{" >
+| < MAXIMIZE_OB : "#maximize"([ "\t", "\r", "\n"," " ])* "{" >
+| < AT : "@" >
 }
 
 < IN_PROGRAM_RULES >
@@ -1432,6 +1435,83 @@ SimpleNode head() :
     jjtThis.beginLine = n.beginLine;
     jjtThis.beginColumn = n.beginColumn;
     return jjtThis;
+  }
+| n = optimize_statement()
+  {
+    jjtThis.beginLine = n.beginLine;
+    jjtThis.beginColumn = n.beginColumn;
+    return jjtThis;
+  }
+}
+        
+SimpleNode optimize_statement() :
+{
+  Token t;
+}
+{
+  t = < MINIMIZE_OB > [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >
+  { 
+    jjtThis.image = t.image;
+    jjtThis.beginLine = t.beginLine;
+    jjtThis.beginColumn = t.beginColumn;
+    if (Settings.getSingletonInstance().getSolver() != ASPSolver.Clingo) 
+        throw new ParseException("line " + jjtThis.beginLine + ", column " + jjtThis.beginColumn + ": optimization statements are not supported in DLV");
+    return jjtThis;
+  }
+| t = < MAXIMIZE_OB > [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >
+  { 
+    jjtThis.image = t.image;
+    jjtThis.beginLine = t.beginLine;
+    jjtThis.beginColumn = t.beginColumn;
+    if (Settings.getSingletonInstance().getSolver() != ASPSolver.Clingo) 
+        throw new ParseException("line " + jjtThis.beginLine + ", column " + jjtThis.beginColumn + ": optimization statements are not supported in DLV");
+    return jjtThis;
+  }
+}
+
+void optimizeParameterList() :
+{}
+{
+    optimizeParameter()
+    (
+    < COMMA > optimizeParameter()
+    )*
+}
+
+void nonRelAtomList() :
+{}
+{
+    nonRelAtom()
+    (
+    < COMMA > nonRelAtom()
+    )*
+}
+        
+void optimizeParameter() :
+{
+    Token t1, t2, t3;
+    jjtThis.image = "";
+}
+{
+  LOOKAHEAD(var() < AT > number())
+  t1 = var() t2 = <AT> t3 = number()
+  {
+    jjtThis.image = t1.image + t2.image + t3.image; 
+  }
+| LOOKAHEAD(number() < AT > number())
+  t1 = number() t2 = <AT> t3 = number()
+  {
+    jjtThis.image = t1.image + t2.image + t3.image;
+  }
+| LOOKAHEAD(var())
+  t1 = var()
+  {
+    jjtThis.image = t1.image;
+  }
+| LOOKAHEAD(number())
+  t1 = number()
+  {
+    jjtThis.image = t1.image;
   }
 }
 

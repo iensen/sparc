@@ -67,4 +67,17 @@ public class RuleAnalyzer {
 			return false;
 		}
 	}
+        
+    /**
+	 * @return true if the rule is an optimization statement
+	 */
+	public boolean isOptimizeStatement() {
+            SimpleNode head = null;
+            ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+            head = (SimpleNode) (urule.jjtGetChild(0));
+            if (((SimpleNode) (head.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTOPTIMIZE_STATEMENT) {
+                return true;
+            } 
+            return false;
+	}
 }

@@ -16,6 +16,8 @@ import parser.ASTbody;
 import parser.ASTchoice_element;
 import parser.ASTchoice_elements;
 import parser.ASTchoice_rule;
+import parser.ASToptimize_statement;
+import parser.ASTnonRelAtomList;
 import parser.ASTconcatenation;
 import parser.ASTcondition;
 import parser.ASTconstantTerm;
@@ -641,7 +643,10 @@ public class TypeChecker {
 	private void checkHead(ASThead head) throws ParseException {
 		if (((SimpleNode) (head.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTDISJUNCTION) {
 			checkDisjunction((ASTdisjunction) (head.jjtGetChild(0)));
-		} else {
+		} else if(((SimpleNode) (head.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTOPTIMIZE_STATEMENT){
+                        checkOptimizeStatement((ASToptimize_statement) (head.jjtGetChild(0)));
+                }
+                else {
 			checkChoiceRule((ASTchoice_rule) (head.jjtGetChild(0)));
 		}
 	}
@@ -721,6 +726,40 @@ public class TypeChecker {
 		}
 	}
 
+        /**
+	 * Do typechecking of optimizer statement given by AST node
+	 * 
+	 * @param optimize_statement
+	 *            to be checked
+	 * @throws ParseException
+	 *             if sort violation occurs or undeclared predicate found
+	 */
+	private void checkOptimizeStatement(ASToptimize_statement optimize_statement)
+			throws ParseException {
+		for (int i = 0; i < optimize_statement.jjtGetNumChildren(); i++) {
+			if (((SimpleNode) (optimize_statement.jjtGetChild(i))).getId() == SparcTranslatorTreeConstants.JJTNONRELATOMLIST) {
+				checkNonRelAtomList((ASTnonRelAtomList) (optimize_statement
+						.jjtGetChild(i)));
+			}
+		}
+	}
+
+	/**
+	 * Do typechecking of non Rel Atom List given by AST node
+	 * 
+	 * @param nonRelAtomList
+	 *            to be checked
+	 * @throws ParseException
+	 *             if sort violation occurs
+	 */
+	private void checkNonRelAtomList(ASTnonRelAtomList nonRelAtomList)
+			throws ParseException {
+		for (int i = 0; i < nonRelAtomList.jjtGetNumChildren(); i++) {
+			checkNonRelAtom((ASTnonRelAtom) (nonRelAtomList
+					.jjtGetChild(i)));
+		}
+	}
+        
 	/**
 	 * Do typechecking of unlabeled program consistency restoring rule given by
 	 * AST node

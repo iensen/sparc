@@ -2510,21 +2510,7 @@ SimpleNode optimize_statement() :
 {/*@bgen(jjtree) optimize_statement */
   try {
 /*@egen*/
-  t = < MINIMIZE_OB > [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >/*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-  }
-/*@egen*/
-  { 
-    jjtn000.image = t.image;
-    jjtn000.beginLine = t.beginLine;
-    jjtn000.beginColumn = t.beginColumn;
-    if (Settings.getSingletonInstance().getSolver() != ASPSolver.Clingo) 
-        throw new ParseException("line " + jjtn000.beginLine + ", column " + jjtn000.beginColumn + ": optimization statements are not supported in DLV");
-    return jjtn000;
-  }
-| t = < MAXIMIZE_OB > [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >/*@bgen(jjtree)*/
+  t = optimize_ob() [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -2558,6 +2544,21 @@ SimpleNode optimize_statement() :
     }
   }
 /*@egen*/
+}
+
+Token optimize_ob()       :
+{
+  Token t;
+}
+{
+  t = < MINIMIZE_OB >
+  {
+    return t;
+  }
+| t = < MAXIMIZE_OB >
+  {
+    return t;
+  }
 }
 
 void optimizeParameterList() :

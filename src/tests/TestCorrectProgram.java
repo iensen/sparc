@@ -674,6 +674,10 @@ public class TestCorrectProgram {
 				return;
 			}
 			
+            // no optimisation statements in DLV
+			if(filePath.equals("../test/programs/testMinimize.sp") && solverId==1) {
+				return;
+			}
 
 
 			BuiltIn.setMaxInt(5000);		  

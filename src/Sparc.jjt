@@ -1449,7 +1449,7 @@ SimpleNode optimize_statement() :
   Token t;
 }
 {
-  t = < MINIMIZE_OB > [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >
+  t = optimize_ob() [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >
   { 
     jjtThis.image = t.image;
     jjtThis.beginLine = t.beginLine;
@@ -1458,14 +1458,20 @@ SimpleNode optimize_statement() :
         throw new ParseException("line " + jjtThis.beginLine + ", column " + jjtThis.beginColumn + ": optimization statements are not supported in DLV");
     return jjtThis;
   }
-| t = < MAXIMIZE_OB > [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >
-  { 
-    jjtThis.image = t.image;
-    jjtThis.beginLine = t.beginLine;
-    jjtThis.beginColumn = t.beginColumn;
-    if (Settings.getSingletonInstance().getSolver() != ASPSolver.Clingo) 
-        throw new ParseException("line " + jjtThis.beginLine + ", column " + jjtThis.beginColumn + ": optimization statements are not supported in DLV");
-    return jjtThis;
+}
+
+Token optimize_ob() #void :
+{
+  Token t;
+}
+{
+  t = < MINIMIZE_OB >
+  {
+    return t;
+  }
+| t = < MAXIMIZE_OB >
+  {
+    return t;
   }
 }
 

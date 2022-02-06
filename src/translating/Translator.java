@@ -77,8 +77,10 @@ public class Translator {
 	// flags indicating whether or not warnings need to be generated
 	private boolean generateASPWarnings;
 	private boolean generateClingconWarnings;
-	
-	
+        
+        //Highest priority in optimisation statements
+	private int optPriority = 1;
+        
 	private RuleReducer ruleReducer;
 
 	/**
@@ -160,6 +162,7 @@ public class Translator {
 		}
 
 		writeDirectives(program);
+                getOptStatementPriority((ASTprogramRules) program.jjtGetChild(2));
 		translateRules((ASTprogramRules) program.jjtGetChild(2),writeWarningsToSTDERR);
 		
 		// translate display:
@@ -380,7 +383,39 @@ public class Translator {
 			translateRule((ASTprogramRule) rules.jjtGetChild(i),writeWarningsToSTDERR);
 		}
 	}
+        
+        /**
+	 * search for optimisation statements availability and update the highest priority
+	 * 
+	 * @param rules
+	 *            to translate
+	 * @throws ParseException
+	 *             if sort cannot be determined
+	 */
+	private void getOptStatementPriority(ASTprogramRules rules) throws ParseException {
+            for (int i = 0; i < rules.jjtGetNumChildren(); i++) {
+                ASTprogramRule rule = (ASTprogramRule) rules.jjtGetChild(i);
+                RuleAnalyzer ra = new RuleAnalyzer(rule);
+                if (ra.isOptimizeStatement()) {
+                    ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+                    ASThead head = (ASThead) (urule.jjtGetChild(0));
+                    ASToptimize_statement opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
+                    ASToptimizeParameterList opt_paramlist = (ASToptimizeParameterList) (opt_statement.jjtGetChild(0));
 
+                    for (int j = 0; j < opt_paramlist.jjtGetNumChildren(); j++) {
+                        StringBuilder parameter = new StringBuilder();
+                        parameter.append(((ASToptimizeParameter) opt_paramlist.jjtGetChild(j)).image);
+                        int position = parameter.lastIndexOf("@");
+                        if (position != -1){
+                            String value = parameter.substring(position + 1);
+                            if (optPriority <= Integer.parseInt(value)) {
+                                optPriority = Integer.parseInt(value) + 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 	
 	public String translateAndWriteRules(ASTprogramRules rules,
@@ -915,7 +950,7 @@ public class Translator {
 			}			
 			appendStringToTranslation(".");
 			if(Settings.getSolver() == ASPSolver.Clingo) {
-				   appendStringToTranslation(" [1," + ruleName + "]");  	
+				   appendStringToTranslation(" [1@" + optPriority + "," + ruleName + "]");  	
 			}	
 			appendNewLineToTranslation();
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
@@ -927,17 +962,13 @@ public class Translator {
 	}
 
         private void processOptimizationStatement(ASTprogramRule rule) throws ParseException {
-            if(Settings.getSolver() == ASPSolver.Clingo) {
-                ASThead head = null;
-                ASToptimize_statement opt_statement = null;
-                
-                ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
-                head = (ASThead) (urule.jjtGetChild(0));
-                opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
-                appendStringToTranslation(opt_statement.toString(sortRenaming));
-                appendNewLineToTranslation();
-            }
-            return;
+            assert Settings.getSolver() == ASPSolver.Clingo;
+            ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+            ASThead head = (ASThead) (urule.jjtGetChild(0));
+            ASToptimize_statement opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
+
+            appendStringToTranslation(opt_statement.toString(sortRenaming));
+            appendNewLineToTranslation();
         }
 	private void ensureVariableSafety(ASTprogramRule rule, String originalRule,
 			HashMap<String, String> originalNameMapping,

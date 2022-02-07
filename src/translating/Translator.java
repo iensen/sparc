@@ -79,7 +79,7 @@ public class Translator {
 	private boolean generateClingconWarnings;
         
         //Highest priority in optimisation statements
-	private int optPriority = 1;
+	private int maxOptPriority = 1;
         
 	private RuleReducer ruleReducer;
 
@@ -388,11 +388,8 @@ public class Translator {
 	 * search for optimisation statements availability and update the highest priority
 	 * 
 	 * @param rules
-	 *            to translate
-	 * @throws ParseException
-	 *             if sort cannot be determined
 	 */
-	private void getOptStatementPriority(ASTprogramRules rules) throws ParseException {
+	private void getOptStatementPriority(ASTprogramRules rules) {
             for (int i = 0; i < rules.jjtGetNumChildren(); i++) {
                 ASTprogramRule rule = (ASTprogramRule) rules.jjtGetChild(i);
                 RuleAnalyzer ra = new RuleAnalyzer(rule);
@@ -402,14 +399,13 @@ public class Translator {
                     ASToptimize_statement opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
                     ASToptimizeParameterList opt_paramlist = (ASToptimizeParameterList) (opt_statement.jjtGetChild(0));
 
-                    for (int j = 0; j < opt_paramlist.jjtGetNumChildren(); j++) {
-                        StringBuilder parameter = new StringBuilder();
-                        parameter.append(((ASToptimizeParameter) opt_paramlist.jjtGetChild(j)).image);
+                    for (int j = 0; j < opt_paramlist.jjtGetNumChildren(); j++) { 
+                        String parameter = ((ASToptimizeParameter) opt_paramlist.jjtGetChild(j)).image;
                         int position = parameter.lastIndexOf("@");
                         if (position != -1){
                             String value = parameter.substring(position + 1);
-                            if (optPriority <= Integer.parseInt(value)) {
-                                optPriority = Integer.parseInt(value) + 1;
+                            if (maxOptPriority <= Integer.parseInt(value)) {
+                                maxOptPriority = Integer.parseInt(value);
                             }
                         }
                     }
@@ -950,7 +946,7 @@ public class Translator {
 			}			
 			appendStringToTranslation(".");
 			if(Settings.getSolver() == ASPSolver.Clingo) {
-				   appendStringToTranslation(" [1@" + optPriority + "," + ruleName + "]");  	
+				   appendStringToTranslation(" [1@" + (maxOptPriority + 1) + "," + ruleName + "]");  	
 			}	
 			appendNewLineToTranslation();
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();

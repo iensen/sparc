@@ -1,6 +1,7 @@
 package translating;
 
 import parser.ASTbody;
+import parser.ASThead;
 import parser.ASTprogramRule;
 import parser.ASTunlabeledProgramRule;
 import parser.SimpleNode;
@@ -66,5 +67,21 @@ public class RuleAnalyzer {
 			}
 			return false;
 		}
+	}
+        
+    /**
+	 * @return true if the rule is an optimization statement
+	 */
+	public boolean isOptimizeStatement() {
+        if (((SimpleNode) (rule.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTUNLABELEDPROGRAMRULE) {
+            ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+            if (((SimpleNode) (urule.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTHEAD) {
+                ASThead head = (ASThead) (urule.jjtGetChild(0));
+                if (((SimpleNode) (head.jjtGetChild(0))).getId() == SparcTranslatorTreeConstants.JJTOPTIMIZE_STATEMENT) {
+                    return true;
+                } 
+            }
+        }
+        return false;
 	}
 }

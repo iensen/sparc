@@ -505,6 +505,9 @@ TOKEN :
 | < OSB : "[" >
 | < OCB : "]" >
 | < POUND_SIGN : "#" >
+| < MINIMIZE_OB : "#minimize"([ "\t", "\r", "\n"," " ])* "{" >
+| < MAXIMIZE_OB : "#maximize"([ "\t", "\r", "\n"," " ])* "{" >
+| < AT : "@" >
 }
 
 < IN_PROGRAM_RULES >
@@ -2462,6 +2465,223 @@ SimpleNode head() :
     jjtn000.beginLine = n.beginLine;
     jjtn000.beginColumn = n.beginColumn;
     return jjtn000;
+  }
+| n = optimize_statement()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.beginLine = n.beginLine;
+    jjtn000.beginColumn = n.beginColumn;
+    return jjtn000;
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+        
+SimpleNode optimize_statement() :
+{/*@bgen(jjtree) optimize_statement */
+  ASToptimize_statement jjtn000 = new ASToptimize_statement(JJTOPTIMIZE_STATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) optimize_statement */
+  try {
+/*@egen*/
+  t = optimize_ob() [ optimizeParameterList() ] < COLON > [ nonRelAtomList() ] < CB >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  { 
+    jjtn000.image = t.image;
+    jjtn000.beginLine = t.beginLine;
+    jjtn000.beginColumn = t.beginColumn;
+    if (Settings.getSingletonInstance().getSolver() != ASPSolver.Clingo) 
+        throw new ParseException("line " + jjtn000.beginLine + ", column " + jjtn000.beginColumn + ": optimization statements are not supported in DLV");
+    return jjtn000;
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
+Token optimize_ob()       :
+{
+  Token t;
+}
+{
+  t = < MINIMIZE_OB >
+  {
+    return t;
+  }
+| t = < MAXIMIZE_OB >
+  {
+    return t;
+  }
+}
+
+void optimizeParameterList() :
+{/*@bgen(jjtree) optimizeParameterList */
+  ASToptimizeParameterList jjtn000 = new ASToptimizeParameterList(JJTOPTIMIZEPARAMETERLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) optimizeParameterList */
+    try {
+/*@egen*/
+    optimizeParameter()
+    (
+    < COMMA > optimizeParameter()
+    )*/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void nonRelAtomList() :
+{/*@bgen(jjtree) nonRelAtomList */
+  ASTnonRelAtomList jjtn000 = new ASTnonRelAtomList(JJTNONRELATOMLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) nonRelAtomList */
+    try {
+/*@egen*/
+    nonRelAtom()
+    (
+    < COMMA > nonRelAtom()
+    )*/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+        
+void optimizeParameter() :
+{/*@bgen(jjtree) optimizeParameter */
+    ASToptimizeParameter jjtn000 = new ASToptimizeParameter(JJTOPTIMIZEPARAMETER);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t1, t2, t3;
+    jjtn000.image = "";
+}
+{/*@bgen(jjtree) optimizeParameter */
+  try {
+/*@egen*/
+  LOOKAHEAD(var() < AT > number())
+  t1 = var() t2 = <AT> t3 = number()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.image = t1.image + t2.image + t3.image; 
+  }
+| LOOKAHEAD(number() < AT > number())
+  t1 = number() t2 = <AT> t3 = number()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.image = t1.image + t2.image + t3.image;
+  }
+| LOOKAHEAD(var())
+  t1 = var()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.image = t1.image;
+  }
+| LOOKAHEAD(number())
+  t1 = number()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.image = t1.image;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {

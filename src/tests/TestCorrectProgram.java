@@ -628,10 +628,13 @@ public class TestCorrectProgram {
 		testFile("../test/programs/issue28.sp", anss);
 	}
 	
-
-
-
-
+	@Test
+	public void testMinimize() throws FileNotFoundException, ParseException {
+		HashSet<String> ans1 = new HashSet<String>(Arrays.asList("hotel(2)"));
+		HashSet<HashSet<String>> anss = new HashSet<HashSet<String>>();
+		anss.add(ans1);
+		testFile("../test/programs/testMinimize.sp", anss);
+	}
 
 
 	private void testFile(String filePath, IAnswerChecker checker, int numberOfAnswerSets) throws ParseException, FileNotFoundException
@@ -671,6 +674,10 @@ public class TestCorrectProgram {
 				return;
 			}
 			
+            // no optimisation statements in DLV
+			if(filePath.equals("../test/programs/testMinimize.sp") && solverId==1) {
+				return;
+			}
 
 
 			BuiltIn.setMaxInt(5000);		  

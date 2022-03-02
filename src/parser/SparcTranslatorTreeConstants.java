@@ -35,33 +35,37 @@ public interface SparcTranslatorTreeConstants
   public int JJTCONSTRAINTPARAMS = 29;
   public int JJTUNLABELEDPROGRAMCRRULE = 30;
   public int JJTHEAD = 31;
-  public int JJTDISJUNCTION = 32;
-  public int JJTCHOICE_RULE = 33;
-  public int JJTCHOICE_ELEMENTS = 34;
-  public int JJTCHOICE_ELEMENT = 35;
-  public int JJTEXTENDEDSIMPLEATOMLIST = 36;
-  public int JJTBODY = 37;
-  public int JJTVAR = 38;
-  public int JJTNONRELATOM = 39;
-  public int JJTSIMPLEATOM = 40;
-  public int JJTEXTENDEDNONRELATOM = 41;
-  public int JJTARITHMETICTERM = 42;
-  public int JJTATOMICARITHMETICTERM = 43;
-  public int JJTADDITIVEARITHMETICTERM = 44;
-  public int JJTMULTIPLICATIVEARITHMETICTERM = 45;
-  public int JJTSYMBOLICFUNCTION = 46;
-  public int JJTSYMBOLICCONSTANT = 47;
-  public int JJTSYMBOLICTERM = 48;
-  public int JJTTERM = 49;
-  public int JJTTERMLIST = 50;
-  public int JJTPREDSYMBOL = 51;
-  public int JJTATOM = 52;
-  public int JJTAGGREGATE = 53;
-  public int JJTAGGREGATEELEMENTS = 54;
-  public int JJTAGGREGATEELEMENT = 55;
-  public int JJTAGGREGATEFUNCTION = 56;
-  public int JJTATOMSEQUENCE = 57;
-  public int JJTDISPLAY = 58;
+  public int JJTOPTIMIZE_STATEMENT = 32;
+  public int JJTOPTIMIZEPARAMETERLIST = 33;
+  public int JJTNONRELATOMLIST = 34;
+  public int JJTOPTIMIZEPARAMETER = 35;
+  public int JJTDISJUNCTION = 36;
+  public int JJTCHOICE_RULE = 37;
+  public int JJTCHOICE_ELEMENTS = 38;
+  public int JJTCHOICE_ELEMENT = 39;
+  public int JJTEXTENDEDSIMPLEATOMLIST = 40;
+  public int JJTBODY = 41;
+  public int JJTVAR = 42;
+  public int JJTNONRELATOM = 43;
+  public int JJTSIMPLEATOM = 44;
+  public int JJTEXTENDEDNONRELATOM = 45;
+  public int JJTARITHMETICTERM = 46;
+  public int JJTATOMICARITHMETICTERM = 47;
+  public int JJTADDITIVEARITHMETICTERM = 48;
+  public int JJTMULTIPLICATIVEARITHMETICTERM = 49;
+  public int JJTSYMBOLICFUNCTION = 50;
+  public int JJTSYMBOLICCONSTANT = 51;
+  public int JJTSYMBOLICTERM = 52;
+  public int JJTTERM = 53;
+  public int JJTTERMLIST = 54;
+  public int JJTPREDSYMBOL = 55;
+  public int JJTATOM = 56;
+  public int JJTAGGREGATE = 57;
+  public int JJTAGGREGATEELEMENTS = 58;
+  public int JJTAGGREGATEELEMENT = 59;
+  public int JJTAGGREGATEFUNCTION = 60;
+  public int JJTATOMSEQUENCE = 61;
+  public int JJTDISPLAY = 62;
 
 
   public String[] jjtNodeName = {
@@ -97,6 +101,10 @@ public interface SparcTranslatorTreeConstants
     "constraintParams",
     "unlabeledProgramCrRule",
     "head",
+    "optimize_statement",
+    "optimizeParameterList",
+    "nonRelAtomList",
+    "optimizeParameter",
     "disjunction",
     "choice_rule",
     "choice_elements",
@@ -126,4 +134,4 @@ public interface SparcTranslatorTreeConstants
     "display",
   };
 }
-/* JavaCC - OriginalChecksum=d7d7715437ef6b3f58987e3de8fd18bc (do not edit this line) */
+/* JavaCC - OriginalChecksum=e7c037058da10176a2d9a4b82ffdc305 (do not edit this line) */

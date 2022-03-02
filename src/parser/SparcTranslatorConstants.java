@@ -103,25 +103,31 @@ public interface SparcTranslatorConstants {
   /** RegularExpression Id. */
   int POUND_SIGN = 46;
   /** RegularExpression Id. */
-  int IDENTIFIER_WITH_OP = 47;
+  int MINIMIZE_OB = 47;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM_WITH_OP = 48;
+  int MAXIMIZE_OB = 48;
   /** RegularExpression Id. */
-  int NEGATIVE_SORT_ATOM_WITH_OP = 49;
+  int AT = 49;
   /** RegularExpression Id. */
-  int SORT_ATOM = 50;
+  int IDENTIFIER_WITH_OP = 50;
   /** RegularExpression Id. */
-  int SORT_ATOM_WITH_OP = 51;
+  int NEGATIVE_ATOM_WITH_OP = 51;
   /** RegularExpression Id. */
-  int NEGATIVE_SORT_ATOM = 52;
+  int NEGATIVE_SORT_ATOM_WITH_OP = 52;
   /** RegularExpression Id. */
-  int NEGATIVE_ATOM = 53;
+  int SORT_ATOM = 53;
   /** RegularExpression Id. */
-  int SINGLE_LINE_COMMENT = 54;
+  int SORT_ATOM_WITH_OP = 54;
   /** RegularExpression Id. */
-  int SPACE = 55;
+  int NEGATIVE_SORT_ATOM = 55;
   /** RegularExpression Id. */
-  int MINUS = 56;
+  int NEGATIVE_ATOM = 56;
+  /** RegularExpression Id. */
+  int SINGLE_LINE_COMMENT = 57;
+  /** RegularExpression Id. */
+  int SPACE = 58;
+  /** RegularExpression Id. */
+  int MINUS = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -179,6 +185,9 @@ public interface SparcTranslatorConstants {
     "\"[\"",
     "\"]\"",
     "\"#\"",
+    "<MINIMIZE_OB>",
+    "<MAXIMIZE_OB>",
+    "\"@\"",
     "<IDENTIFIER_WITH_OP>",
     "<NEGATIVE_ATOM_WITH_OP>",
     "<NEGATIVE_SORT_ATOM_WITH_OP>",

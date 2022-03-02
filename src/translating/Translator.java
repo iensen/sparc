@@ -11,8 +11,13 @@ import configuration.ASPSolver;
 import configuration.Settings;
 import parser.ASTaggregateElement;
 import parser.ASTatom;
+import parser.ASThead;
 import parser.ASTbody;
 import parser.ASTchoice_element;
+import parser.ASToptimize_statement;
+import parser.ASToptimizeParameterList;
+import parser.ASToptimizeParameter;
+import parser.ASTnonRelAtomList;
 import parser.ASTdisplay;
 import parser.ASTextendedNonRelAtom;
 import parser.ASTextendedSimpleAtomList;
@@ -72,8 +77,10 @@ public class Translator {
 	// flags indicating whether or not warnings need to be generated
 	private boolean generateASPWarnings;
 	private boolean generateClingconWarnings;
-	
-	
+        
+        //Highest priority in optimisation statements
+	private int maxOptPriority = 1;
+        
 	private RuleReducer ruleReducer;
 
 	/**
@@ -155,6 +162,7 @@ public class Translator {
 		}
 
 		writeDirectives(program);
+                getOptStatementPriority((ASTprogramRules) program.jjtGetChild(2));
 		translateRules((ASTprogramRules) program.jjtGetChild(2),writeWarningsToSTDERR);
 		
 		// translate display:
@@ -375,7 +383,35 @@ public class Translator {
 			translateRule((ASTprogramRule) rules.jjtGetChild(i),writeWarningsToSTDERR);
 		}
 	}
+        
+        /**
+	 * search for optimisation statements availability and update the highest priority
+	 * 
+	 * @param rules
+	 */
+	private void getOptStatementPriority(ASTprogramRules rules) {
+            for (int i = 0; i < rules.jjtGetNumChildren(); i++) {
+                ASTprogramRule rule = (ASTprogramRule) rules.jjtGetChild(i);
+                RuleAnalyzer ra = new RuleAnalyzer(rule);
+                if (ra.isOptimizeStatement()) {
+                    ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+                    ASThead head = (ASThead) (urule.jjtGetChild(0));
+                    ASToptimize_statement opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
+                    ASToptimizeParameterList opt_paramlist = (ASToptimizeParameterList) (opt_statement.jjtGetChild(0));
 
+                    for (int j = 0; j < opt_paramlist.jjtGetNumChildren(); j++) { 
+                        String parameter = ((ASToptimizeParameter) opt_paramlist.jjtGetChild(j)).image;
+                        int position = parameter.lastIndexOf("@");
+                        if (position != -1){
+                            String value = parameter.substring(position + 1);
+                            if (maxOptPriority <= Integer.parseInt(value)) {
+                                maxOptPriority = Integer.parseInt(value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 	
 	public String translateAndWriteRules(ASTprogramRules rules,
@@ -831,7 +867,13 @@ public class Translator {
 	 *             if sort of some variable cannot be detected
 	 */
 	private void translateRule(ASTprogramRule rule,boolean writeWarningsToSTDERR) throws ParseException {
-		
+            	RuleAnalyzer ra = new RuleAnalyzer(rule);
+                // check for optimization statements
+                if (ra.isOptimizeStatement()) {
+                    processOptimizationStatement(rule);
+                    return;
+		}
+                
 		String originalRule = rule.toString(new HashMap<String,String>());
 		int lineNumber = rule.getBeginLine();
 		int columnNumber = rule.getBeginColumn();
@@ -881,8 +923,7 @@ public class Translator {
 			appendNewLineToTranslation();
 	      }
 		}
-	
-		RuleAnalyzer ra = new RuleAnalyzer(rule);
+                
 		// add new weak constraints and rules for a CR-rule
 		if (ra.isCrRule()) {
 			String ruleName = getRuleName(rule);
@@ -905,7 +946,7 @@ public class Translator {
 			}			
 			appendStringToTranslation(".");
 			if(Settings.getSolver() == ASPSolver.Clingo) {
-				   appendStringToTranslation(" [1," + ruleName + "]");  	
+				   appendStringToTranslation(" [1@" + (maxOptPriority + 1) + "," + ruleName + "]");  	
 			}	
 			appendNewLineToTranslation();
 			ArrayList<ASTatom> newAtoms = new ArrayList<ASTatom>();
@@ -916,6 +957,15 @@ public class Translator {
 		appendNewLineToTranslation();
 	}
 
+        private void processOptimizationStatement(ASTprogramRule rule) throws ParseException {
+            assert Settings.getSolver() == ASPSolver.Clingo;
+            ASTunlabeledProgramRule urule = (ASTunlabeledProgramRule) rule.jjtGetChild(0);
+            ASThead head = (ASThead) (urule.jjtGetChild(0));
+            ASToptimize_statement opt_statement = (ASToptimize_statement) (head.jjtGetChild(0));
+
+            appendStringToTranslation(opt_statement.toString(sortRenaming));
+            appendNewLineToTranslation();
+        }
 	private void ensureVariableSafety(ASTprogramRule rule, String originalRule,
 			HashMap<String, String> originalNameMapping,
 			ArrayList<ASTatom> newSortAtoms) throws ParseException {
